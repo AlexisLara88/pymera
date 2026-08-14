@@ -1,0 +1,606 @@
+.workflow-main {
+    width: min(86rem, 100%);
+}
+
+.objective-modal-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: none;
+    place-items: center;
+    padding: 1rem;
+    overflow: auto;
+    overscroll-behavior: contain;
+    background: rgb(4 27 29 / 78%);
+    backdrop-filter: blur(8px);
+}
+
+.objective-modal-layer:target,
+.objective-modal-layer.is-open,
+.objective-modal-layer[data-initial-open="true"] {
+    display: grid;
+}
+
+.objective-modal {
+    width: min(47.5rem, calc(100% - 2rem));
+    max-width: none;
+    max-height: min(88vh, 51.25rem);
+    margin: auto;
+    padding: 0;
+    overflow: visible;
+    border: 0;
+    border-radius: 1.4rem;
+    outline: 0;
+    color: var(--ink);
+    background: transparent;
+    box-shadow: none;
+}
+
+.objective-modal .modal-dialog {
+    width: 100%;
+    max-width: none;
+    min-height: 0;
+    margin: 0;
+}
+
+.objective-modal-content {
+    max-height: min(88vh, 51.25rem);
+    overflow: hidden;
+    border: 0;
+    border-radius: 1.4rem;
+    background: var(--paper);
+    box-shadow: 0 1.8rem 5.5rem rgb(0 10 12 / 45%);
+}
+
+.objective-modal-header {
+    position: relative;
+    align-items: flex-start;
+    padding: 1.4rem 4.25rem 1.1rem 1.5rem;
+    border-bottom: 1px solid var(--line);
+}
+
+.objective-modal-header > div {
+    max-width: 38.75rem;
+}
+
+.objective-modal-header h2 {
+    margin: 0.15rem 0 0.3rem;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+}
+
+.objective-modal-header p:last-child {
+    margin: 0;
+    color: var(--muted);
+}
+
+.objective-modal-close {
+    position: absolute;
+    top: 1.15rem;
+    right: 1.15rem;
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: 1px solid rgb(25 75 77 / 18%);
+    border-radius: 50%;
+    color: var(--ink);
+    background: rgb(240 246 245 / 94%);
+    box-shadow: 0 0.35rem 1rem rgb(7 39 41 / 10%);
+    cursor: pointer;
+    transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.objective-modal-close span {
+    position: relative;
+    display: block;
+    width: 1rem;
+    height: 1rem;
+    overflow: hidden;
+    color: var(--ink);
+    font-size: 0;
+    transform: rotate(0deg);
+    transform-origin: center;
+    transition: transform 240ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.objective-modal-close span::before,
+.objective-modal-close span::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1.15rem;
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+    content: "";
+}
+
+.objective-modal-close span::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.objective-modal-close span::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.objective-modal-close:hover {
+    border-color: rgb(25 75 77 / 36%);
+    background: #fff;
+    transform: translateY(-1px);
+}
+
+.objective-modal-close:hover span {
+    transform: rotate(90deg);
+}
+
+.objective-modal-close:focus-visible {
+    outline: 3px solid rgb(242 145 119 / 42%);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .objective-modal-close,
+    .objective-modal-close span {
+        transition: none;
+    }
+}
+
+.objective-modal .workflow-create-card {
+    display: block;
+    margin: 0;
+    padding: 1.4rem 1.5rem 1.5rem;
+    overflow-y: auto;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.objective-modal-actions {
+    display: flex;
+    gap: 0.65rem;
+    justify-content: flex-end;
+    margin-top: 1.1rem;
+}
+
+body.objective-modal-is-open {
+    overflow: hidden;
+}
+
+body.objective-modal-is-open .business-shell > :not(.module-main),
+body.objective-modal-is-open .module-main > :not(.objective-creator-app) {
+    pointer-events: none;
+    user-select: none;
+}
+
+body:has(.objective-modal-layer:target) {
+    overflow: hidden;
+}
+
+body:has(.objective-modal-layer:target) .business-shell > :not(.module-main),
+body:has(.objective-modal-layer:target) .module-main > :not(.objective-creator-app) {
+    pointer-events: none;
+    user-select: none;
+}
+
+@media (max-width: 40rem) {
+    .objective-modal {
+        width: 100%;
+        max-height: calc(100dvh - 1.25rem);
+        border-radius: 1.1rem;
+    }
+
+    .objective-modal-layer {
+        padding: 0.625rem;
+    }
+
+    .objective-modal-content {
+        max-height: calc(100dvh - 1.25rem);
+        border-radius: 1.1rem;
+    }
+
+    .objective-modal-header,
+    .objective-modal .workflow-create-card {
+        padding-inline: 1.1rem;
+    }
+
+    .objective-modal-header {
+        padding-right: 3.9rem;
+    }
+
+    .objective-modal-close {
+        top: 0.9rem;
+        right: 0.9rem;
+    }
+
+    .objective-modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .objective-modal-actions .button {
+        justify-content: center;
+        width: 100%;
+    }
+}
+
+.workflow-create-card,
+.objective-card,
+.matrix-note {
+    border: 1px solid var(--line);
+    border-radius: 1.35rem;
+    background: var(--paper);
+    box-shadow: var(--shadow);
+}
+
+.workflow-create-card {
+    display: grid;
+    grid-template-columns: minmax(13rem, 0.72fr) minmax(0, 1.8fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    margin-bottom: 2.4rem;
+    padding: clamp(1.25rem, 3vw, 2rem);
+}
+
+.workflow-create-card h2,
+.section-heading-row h2,
+.objective-card h3,
+.quadrant h2 {
+    font-family: Georgia, "Times New Roman", serif;
+}
+
+.workflow-create-card h2 {
+    margin: 0.25rem 0 0.65rem;
+    font-size: clamp(1.65rem, 3vw, 2.45rem);
+    line-height: 1;
+}
+
+.workflow-create-card > div > p:last-child,
+.section-heading-row p,
+.objective-card-header p,
+.empty-state p,
+.matrix-note p {
+    color: var(--muted);
+}
+
+.workflow-form {
+    display: grid;
+    gap: 1rem;
+}
+
+.workflow-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.workflow-form .field-wide {
+    grid-column: 1 / -1;
+}
+
+.workflow-form textarea.form-control {
+    min-height: 6.2rem;
+}
+
+.workflow-form > .button {
+    justify-self: start;
+}
+
+.objectives-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.section-heading-row {
+    display: flex;
+    gap: 1rem;
+    align-items: end;
+    justify-content: space-between;
+    margin-bottom: 0.25rem;
+}
+
+.section-heading-row h2 {
+    margin: 0.2rem 0 0;
+    font-size: clamp(1.65rem, 3vw, 2.2rem);
+}
+
+.count-badge,
+.activity-count,
+.category-chip {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.count-badge {
+    padding: 0.45rem 0.7rem;
+    color: var(--teal);
+    background: var(--teal-soft);
+}
+
+.empty-state {
+    padding: 2rem;
+    border: 1px dashed #c8c1b2;
+    border-radius: 1rem;
+    text-align: center;
+}
+
+.empty-state p {
+    margin: 0.35rem 0 0;
+}
+
+.objective-card {
+    overflow: hidden;
+}
+
+.objective-card-header {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 1.35rem clamp(1rem, 3vw, 1.6rem);
+}
+
+.objective-card-header h3 {
+    margin: 0.5rem 0 0.25rem;
+    font-size: clamp(1.35rem, 2vw, 1.75rem);
+}
+
+.objective-card-header p {
+    margin: 0;
+    font-size: 0.83rem;
+}
+
+.category-chip {
+    padding: 0.35rem 0.6rem;
+    color: var(--orange-dark);
+    background: rgb(232 121 50 / 12%);
+}
+
+.activity-count {
+    flex: 0 0 auto;
+    padding: 0.4rem 0.65rem;
+    color: var(--muted);
+    background: var(--canvas);
+}
+
+.edit-panel,
+.new-activity-panel,
+.activity-row {
+    border-top: 1px solid var(--line);
+}
+
+.edit-panel > summary,
+.new-activity-panel > summary,
+.activity-row > summary {
+    cursor: pointer;
+    list-style: none;
+}
+
+.edit-panel > summary::-webkit-details-marker,
+.new-activity-panel > summary::-webkit-details-marker,
+.activity-row > summary::-webkit-details-marker {
+    display: none;
+}
+
+.edit-panel > summary,
+.new-activity-panel > summary {
+    padding: 0.85rem clamp(1rem, 3vw, 1.6rem);
+    color: var(--teal);
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.compact-form {
+    padding: 1rem clamp(1rem, 3vw, 1.6rem) 1.35rem;
+    background: #fff;
+}
+
+.archive-form {
+    padding: 0 clamp(1rem, 3vw, 1.6rem) 1rem;
+    background: #fff;
+}
+
+.text-danger-button {
+    padding: 0;
+    border: 0;
+    color: var(--danger);
+    background: transparent;
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.activities-section {
+    background: rgb(244 241 233 / 50%);
+}
+
+.activity-row > summary {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 0.8rem;
+    align-items: center;
+    padding: 0.95rem clamp(1rem, 3vw, 1.6rem);
+}
+
+.activity-row > summary > span:nth-child(2) {
+    display: grid;
+}
+
+.activity-row > summary small,
+.activity-row > summary time {
+    color: var(--muted);
+    font-size: 0.74rem;
+}
+
+.priority-dot {
+    display: inline-block;
+    width: 0.72rem;
+    height: 0.72rem;
+    border-radius: 50%;
+}
+
+.priority-do_now {
+    background: #3879a5;
+}
+
+.priority-schedule {
+    background: #2c8c68;
+}
+
+.priority-delegate {
+    background: #d77a35;
+}
+
+.priority-eliminate {
+    background: #bd5f59;
+}
+
+.priority-flags {
+    display: flex;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+}
+
+.priority-flags label {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin: 0;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid var(--line);
+    border-radius: 0.8rem;
+    background: var(--canvas);
+    cursor: pointer;
+}
+
+.priority-flags input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    accent-color: var(--orange);
+}
+
+.priority-matrix {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.quadrant {
+    min-height: 17rem;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 1.2rem;
+    background: rgb(255 253 248 / 90%);
+    box-shadow: var(--shadow);
+}
+
+.quadrant > header {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.15rem;
+    border-bottom: 1px solid var(--line);
+}
+
+.quadrant > header > div {
+    display: flex;
+    gap: 0.65rem;
+    align-items: center;
+}
+
+.quadrant h2 {
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.quadrant > header > span {
+    display: inline-grid;
+    min-width: 1.8rem;
+    height: 1.8rem;
+    place-items: center;
+    border-radius: 50%;
+    color: var(--muted);
+    background: var(--canvas);
+    font-size: 0.76rem;
+    font-weight: 800;
+}
+
+.quadrant-items {
+    display: grid;
+    gap: 0.7rem;
+    padding: 1rem;
+}
+
+.priority-card {
+    padding: 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: 0.85rem;
+    background: #fff;
+}
+
+.priority-card > p {
+    margin: 0.3rem 0 0.7rem;
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
+.priority-card footer {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: space-between;
+    color: var(--muted);
+    font-size: 0.72rem;
+}
+
+.quadrant-empty {
+    margin: 0;
+    padding: 1.5rem 0.5rem;
+    color: var(--muted);
+    font-size: 0.82rem;
+    text-align: center;
+}
+
+.matrix-note {
+    margin-top: 1rem;
+    padding: 1rem 1.15rem;
+}
+
+.matrix-note p {
+    margin: 0.25rem 0 0;
+    font-size: 0.84rem;
+}
+
+@media (max-width: 900px) {
+    .workflow-create-card {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+    .workflow-form-grid,
+    .priority-matrix {
+        grid-template-columns: 1fr;
+    }
+
+    .workflow-form .field-wide {
+        grid-column: auto;
+    }
+
+    .objective-card-header,
+    .section-heading-row {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .activity-row > summary {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .activity-row > summary time {
+        grid-column: 2;
+    }
+}

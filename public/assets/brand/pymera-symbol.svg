@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">Símbolo de PyMERA</title>
+  <desc id="desc">Módulos conectados que forman una ruta de crecimiento.</desc>
+  <rect x="6" y="6" width="20" height="20" rx="6" fill="#0f6f68"/>
+  <rect x="30" y="6" width="28" height="20" rx="6" fill="#17343a"/>
+  <rect x="6" y="30" width="20" height="28" rx="6" fill="#17343a"/>
+  <rect x="30" y="30" width="20" height="20" rx="6" fill="#0f6f68"/>
+  <path d="M39 39 53 53" fill="none" stroke="#e87932" stroke-linecap="round" stroke-width="4"/>
+  <circle cx="54" cy="54" r="5" fill="#e87932"/>
+</svg>

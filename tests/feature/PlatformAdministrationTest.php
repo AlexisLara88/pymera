@@ -1,0 +1,174 @@
+<?php
+
+declare(strict_types=1);
+
+use CodeIgniter\Config\Services;
+use CodeIgniter\Security\Exceptions\SecurityException;
+use CodeIgniter\Shield\Entities\User;
+use CodeIgniter\Shield\Test\AuthenticationTesting;
+use CodeIgniter\Test\CIUnitTestCase;
+use CodeIgniter\Test\DatabaseTestTrait;
+use CodeIgniter\Test\FeatureTestTrait;
+
+/** @internal */
+final class PlatformAdministrationTest extends CIUnitTestCase
+{
+    use AuthenticationTesting;
+    use DatabaseTestTrait;
+    use FeatureTestTrait;
+
+    protected $namespace = [
+        'CodeIgniter\Settings',
+        'CodeIgniter\Shield',
+        'App',
+    ];
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Services::resetSingle('auth');
+    }
+
+    public function testAdministratorCanReadTheSeparatedPlatformPanel(): void
+    {
+        $admin = $this->createAdministrator();
+        $this->actingAs($admin);
+
+        $response = $this->withSession($_SESSION)->get('/admin');
+
+        $response->assertStatus(200);
+        $response->assertSee('Administración de plataforma');
+        $response->assertSee('Este panel no abre información operativa de las PyMEs.');
+        $response->assertSee('admin@example.test');
+        $response->assertSee('platform-create-disclosure');
+        $response->assertSee('Nuevo propietario y negocio');
+        $response->assertSee('Nuevo administrador');
+        $response->assertSee('platform-account-action is-protected');
+        $response->assertSee('disabled');
+        $response->assertSee('csrf_test_name');
+    }
+
+    public function testAdministratorCreatesOwnerBusinessAndAuditedMembership(): void
+    {
+        $admin = $this->createAdministrator();
+        $this->actingAs($admin);
+
+        $response = $this->withSession($_SESSION)->post('/admin/accounts/owner', [
+            'email'                 => 'new-owner@example.test',
+            'username'              => 'new-owner',
+            'business_name'         => 'Negocio nuevo',
+            'currency_code'         => 'USD',
+            'timezone'              => 'America/Guayaquil',
+            'password'              => 'Safe-Test-Password-42!',
+            'password_confirmation' => 'Safe-Test-Password-42!',
+            csrf_token()            => csrf_hash(),
+        ]);
+
+        $response->assertRedirectTo('/admin');
+        $this->seeInDatabase('businesses', ['name' => 'Negocio nuevo']);
+        $this->seeInDatabase('business_users', [
+            'role_code' => 'owner',
+            'status'    => 'active',
+        ]);
+        $this->seeInDatabase('platform_audit_events', [
+            'actor_user_id' => $admin->id,
+            'subject_type'  => 'business_membership',
+            'action'        => 'membership_created',
+        ]);
+    }
+
+    public function testAdministratorCreationDoesNotGrantBusinessMembership(): void
+    {
+        $admin = $this->createAdministrator();
+        $this->actingAs($admin);
+
+        $this->withSession($_SESSION)->post('/admin/accounts/platform-admin', [
+            'email'                 => 'second-admin@example.test',
+            'username'              => 'second-admin',
+            'password'              => 'Safe-Test-Password-42!',
+            'password_confirmation' => 'Safe-Test-Password-42!',
+            csrf_token()            => csrf_hash(),
+        ])->assertRedirectTo('/admin');
+
+        $created = auth()->getProvider()->findByCredentials([
+            'email' => 'second-admin@example.test',
+        ]);
+        $this->assertInstanceOf(User::class, $created);
+        $this->assertTrue($created->inGroup('platform_admin'));
+        $this->dontSeeInDatabase('business_users', ['user_id' => $created->id]);
+    }
+
+    public function testAdministratorCannotDeactivateItsOwnAccount(): void
+    {
+        $admin = $this->createAdministrator();
+        $this->actingAs($admin);
+
+        $response = $this->withSession($_SESSION)->post(
+            '/admin/accounts/' . $admin->id . '/status',
+            [
+                'status'     => 'inactive',
+                csrf_token() => csrf_hash(),
+            ],
+        );
+
+        $response->assertRedirectTo('/admin');
+        $response->assertSessionHas('error', 'El administrador no puede desactivar su propia cuenta.');
+        $this->assertTrue(auth()->getProvider()->findById($admin->id)->active);
+    }
+
+    public function testAdministratorCannotDeactivateAnotherPlatformAdministrator(): void
+    {
+        $admin = $this->createAdministrator();
+        $secondAdmin = $this->createAdministrator('second-admin@example.test', 'second-admin');
+        $this->actingAs($admin);
+
+        $response = $this->withSession($_SESSION)->post(
+            '/admin/accounts/' . $secondAdmin->id . '/status',
+            [
+                'status'     => 'inactive',
+                csrf_token() => csrf_hash(),
+            ],
+        );
+
+        $response->assertRedirectTo('/admin');
+        $response->assertSessionHas(
+            'error',
+            'Las cuentas administradoras de plataforma no pueden desactivarse desde este panel.',
+        );
+        $this->assertTrue(auth()->getProvider()->findById($secondAdmin->id)->active);
+    }
+
+    public function testAdministrativeMutationRequiresCsrf(): void
+    {
+        $admin = $this->createAdministrator();
+        $this->actingAs($admin);
+
+        $this->expectException(SecurityException::class);
+
+        $this->withSession($_SESSION)->post('/admin/accounts/owner', [
+            'email' => 'without-csrf@example.test',
+        ]);
+    }
+
+    private function createAdministrator(
+        string $email = 'admin@example.test',
+        string $username = 'admin-test',
+    ): User
+    {
+        $users = auth()->getProvider();
+        $user = new User([
+            'username' => $username,
+            'email'    => $email,
+            'password' => 'Safe-Test-Password-42!',
+            'active'   => 1,
+        ]);
+        $this->assertTrue($users->save($user));
+
+        $saved = $users->findById($users->getInsertID());
+        $this->assertInstanceOf(User::class, $saved);
+        $saved->addGroup('platform_admin');
+
+        return $saved;
+    }
+}

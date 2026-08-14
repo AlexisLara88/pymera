@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 80" role="img" aria-labelledby="title desc">
+  <title id="title">PyMERA</title>
+  <desc id="desc">PyMERA, gestión simple para hacer avanzar tu negocio.</desc>
+  <g transform="translate(5 8)">
+    <rect x="3" y="3" width="20" height="20" rx="6" fill="#0f6f68"/>
+    <rect x="27" y="3" width="28" height="20" rx="6" fill="#17343a"/>
+    <rect x="3" y="27" width="20" height="28" rx="6" fill="#17343a"/>
+    <rect x="27" y="27" width="20" height="20" rx="6" fill="#0f6f68"/>
+    <path d="m36 36 14 14" fill="none" stroke="#e87932" stroke-linecap="round" stroke-width="4"/>
+    <circle cx="51" cy="51" r="5" fill="#e87932"/>
+  </g>
+  <text x="82" y="39" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="800" letter-spacing="-.8">
+    <tspan fill="#0f6f68">PyME</tspan><tspan fill="#17343a">RA</tspan>
+  </text>
+  <text x="83" y="59" fill="#5e7276" font-family="Arial, Helvetica, sans-serif" font-size="11.5" font-weight="600" letter-spacing=".15">Gestión simple para hacer avanzar tu negocio</text>
+</svg>
