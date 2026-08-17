@@ -76,8 +76,11 @@ final class DashboardModuleTest extends CIUnitTestCase
             ->get('/app/mi-negocio');
 
         $profile->assertOK();
-        $profile->assertSee('Completá las cuatro respuestas mínimas');
         $profile->assertSee('Configurar negocio');
+        $this->assertStringNotContainsString(
+            'Completá las cuatro respuestas mínimas para configurar el perfil inicial de tu negocio.',
+            $profile->getBody(),
+        );
         $this->assertStringNotContainsString('Objetivos', $this->primaryNavigation($profile->getBody()));
         $this->assertStringContainsString(
             'id="businessEditor" open',

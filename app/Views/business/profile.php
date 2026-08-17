@@ -106,12 +106,6 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
             </div>
         <?php endif ?>
 
-        <?php if ($onboardingNotice !== null): ?>
-            <div class="module-alert module-alert-info" role="status">
-                <?= esc($onboardingNotice) ?>
-            </div>
-        <?php endif ?>
-
         <?php if ($operationError !== null): ?>
             <div class="module-alert module-alert-error" role="alert">
                 <?= esc($operationError) ?>
