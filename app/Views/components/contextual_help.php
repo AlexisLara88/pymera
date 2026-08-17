@@ -8,15 +8,21 @@
  * @var list<string> $paragraphs
  * @var list<string> $items
  * @var string|null  $example
+ * @var string|null  $targetId
  */
 
-$paragraphs = $paragraphs ?? [];
-$items      = $items ?? [];
-$example    = $example ?? null;
-$titleId    = $id . '-title';
-$contentId  = $id . '-content';
+$paragraphs  = $paragraphs ?? [];
+$items       = $items ?? [];
+$example     = $example ?? null;
+$targetId     = $targetId ?? null;
+$titleId     = $id . '-title';
+$contentId   = $id . '-content';
 ?>
-<details class="context-help" data-context-help>
+<details
+    class="context-help"
+    data-context-help
+    <?= $targetId !== null ? 'data-context-help-target="' . esc($targetId, 'attr') . '"' : '' ?>
+>
     <summary
         class="context-help-trigger"
         aria-label="Abrir ayuda: <?= esc($title, 'attr') ?>"
@@ -32,7 +38,7 @@ $contentId  = $id . '-content';
         role="dialog"
         aria-labelledby="<?= esc($titleId, 'attr') ?>"
     >
-        <header class="context-help-card-header">
+        <header class="context-help-card-header" data-context-help-drag-handle title="Arrastrá para mover">
             <strong id="<?= esc($titleId, 'attr') ?>"><?= esc($title) ?></strong>
             <button class="context-help-close" type="button" aria-label="Cerrar ayuda" data-context-help-close>
                 <span aria-hidden="true">×</span>

@@ -24,13 +24,15 @@ const styles = fs.readFileSync(
 );
 
 test('contextual help is server-rendered, escaped and progressively enhanced', () => {
-    assert.match(component, /<details class="context-help" data-context-help>/);
+    assert.match(component, /class="context-help"[\s\S]*data-context-help/);
     assert.match(component, /<summary[\s\S]*aria-controls=/);
     assert.match(component, /aria-expanded="false"/);
     assert.match(component, /aria-haspopup="dialog"/);
     assert.match(component, /role="dialog"/);
     assert.match(component, /aria-labelledby=/);
     assert.match(component, /data-context-help-close/);
+    assert.match(component, /data-context-help-drag-handle/);
+    assert.match(component, /data-context-help-target/);
     assert.match(component, /esc\(\$title/);
     assert.match(component, /esc\(\$paragraph\)/);
     assert.match(component, /esc\(\$item\)/);
@@ -40,9 +42,13 @@ test('contextual help is server-rendered, escaped and progressively enhanced', (
 
 test('Mi negocio owns six concise contextual explanations', () => {
     const instances = profile.match(/view\('components\/contextual_help'/g) || [];
+    const focusedForms = profile.match(/<section class="form-card"[^>]*data-context-help-focus-target/g) || [];
 
     assert.equal(instances.length, 6);
+    assert.equal(focusedForms.length, 3);
     assert.match(profile, /business-help-purpose/);
+    assert.match(profile, /'targetId' => 'businessDiagnosisPanel'/);
+    assert.match(profile, /id="businessDiagnosisPanel" data-context-help-focus-target/);
     assert.match(profile, /business-help-completion/);
     assert.match(profile, /business-help-general-data/);
     assert.match(profile, /business-help-minimum-profile/);
@@ -51,6 +57,10 @@ test('Mi negocio owns six concise contextual explanations', () => {
     assert.match(profile, /data-context-help-focus-target/);
     assert.match(profile, /'contextual-help\.css'/);
     assert.match(profile, /assets\/js\/contextual-help\.js/);
+    assert.ok(
+        profile.indexOf('assets/js/business/profile.js') < profile.indexOf('assets/js/contextual-help.js'),
+        'Vue must mount before contextual help binds to the final editor nodes',
+    );
 });
 
 test('the interaction builds a focused backdrop without affecting business state', () => {
@@ -63,7 +73,22 @@ test('the interaction builds a focused backdrop without affecting business state
     assert.match(script, /is-context-help-focus/);
     assert.match(script, /closest\('\[data-context-help-focus-target\]'\)/);
     assert.match(script, /moduleMain\?\.getBoundingClientRect/);
+    assert.match(script, /activeFocusTarget\?\.getBoundingClientRect/);
+    assert.match(script, /rectangleContainsPoint/);
+    assert.match(script, /rectanglesOverlap/);
+    assert.match(script, /triggerRect\.right \+ viewportGap/);
+    assert.match(script, /help\.dataset\.contextHelpTarget/);
+    assert.match(script, /document\.getElementById\(explicitTargetId\)/);
     assert.match(script, /is-positioned/);
+    assert.match(script, /startHelpDrag/);
+    assert.match(script, /manuallyPositionedHelp/);
+    assert.match(script, /setPointerCapture/);
+    assert.match(script, /releasePointerCapture/);
+    assert.match(script, /addEventListener\('pointermove'/);
+    assert.match(script, /addEventListener\('pointerup'/);
+    assert.match(script, /addEventListener\('pointercancel'/);
+    assert.match(script, /positionBounds/);
+    assert.match(script, /constrainHelpPosition/);
     assert.match(script, /event\.key === 'Escape'/);
     assert.match(script, /addEventListener\('pointerdown'/);
     assert.match(script, /addEventListener\('resize'/);
@@ -80,6 +105,11 @@ test('the visual component spotlights its target without altering the sidebar', 
     assert.match(styles, /\.context-help-backdrop\s*\{[\s\S]*?backdrop-filter:\s*blur\(9px\)/);
     assert.match(styles, /body\.context-help-is-open \.module-sidebar\s*\{[\s\S]*?z-index:\s*140/);
     assert.match(styles, /\.is-context-help-focus\s*\{[\s\S]*?z-index:\s*90/);
+    assert.match(styles, /\.form-card\.is-context-help-focus/);
+    assert.match(styles, /cursor:\s*grab/);
+    assert.match(styles, /cursor:\s*grabbing/);
+    assert.match(styles, /touch-action:\s*none/);
+    assert.match(styles, /\.context-help\.is-dragging \.context-help-card/);
     assert.match(styles, /\.context-help\.is-enhanced \.context-help-card\s*\{[\s\S]*?visibility:\s*hidden/);
     assert.match(styles, /\.context-help\.is-enhanced\.is-positioned \.context-help-card/);
     assert.match(styles, /max-height:\s*min\(24rem, calc\(100vh - 2rem\)\)/);

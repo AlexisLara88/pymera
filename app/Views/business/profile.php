@@ -60,11 +60,12 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
         <header class="module-header">
             <div>
                 <span class="step-pill"><?= $isOnboarding ? 'Primer paso' : 'Información de la empresa' ?></span>
-                <div class="context-help-heading" data-context-help-focus-target>
+                <div class="context-help-heading">
                     <h2><?= $isOnboarding ? 'Primero, configuremos tu negocio' : 'Así se presenta tu negocio' ?></h2>
                     <?= view('components/contextual_help', [
                         'id'    => 'business-help-purpose',
                         'title' => '¿Para qué sirve este perfil?',
+                        'targetId' => 'businessDiagnosisPanel',
                         'paragraphs' => [
                             'Describe tu negocio una vez y aporta contexto a tus objetivos, prioridades y finanzas.',
                         ],
@@ -119,7 +120,7 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
         <?php endif ?>
 
         <section class="content-grid alpha-business-overview" aria-label="Resumen del negocio">
-            <article class="panel diagnosis-panel">
+            <article class="panel diagnosis-panel" id="businessDiagnosisPanel" data-context-help-focus-target>
                 <div class="panel-heading">
                     <div>
                         <span class="section-kicker">Tu punto de partida</span>
@@ -201,8 +202,8 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
         <form class="business-form" action="<?= site_url('app/mi-negocio') ?>" method="post" novalidate @submit="startSubmitting">
             <?= csrf_field() ?>
 
-            <section class="form-card" aria-labelledby="identityTitle">
-                <div class="form-card-heading" data-context-help-focus-target>
+            <section class="form-card" aria-labelledby="identityTitle" data-context-help-focus-target>
+                <div class="form-card-heading">
                     <span class="section-number">01</span>
                     <div>
                         <p class="eyebrow">Identidad operativa</p>
@@ -285,8 +286,8 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                 </div>
             </section>
 
-            <section class="form-card" aria-labelledby="profileTitle">
-                <div class="form-card-heading" data-context-help-focus-target>
+            <section class="form-card" aria-labelledby="profileTitle" data-context-help-focus-target>
+                <div class="form-card-heading">
                     <span class="section-number">02</span>
                     <div>
                         <p class="eyebrow">Contexto mínimo</p>
@@ -344,8 +345,8 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                 </div>
             </section>
 
-            <section class="form-card" aria-labelledby="diagnosisTitle">
-                <div class="form-card-heading" data-context-help-focus-target>
+            <section class="form-card" aria-labelledby="diagnosisTitle" data-context-help-focus-target>
+                <div class="form-card-heading">
                     <span class="section-number">03</span>
                     <div>
                         <p class="eyebrow">Profundización gradual</p>
@@ -438,8 +439,8 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
 </div>
 
 <?= view('layouts/alpha_frontend_scripts') ?>
-<script src="<?= base_url('assets/js/contextual-help.js?v=' . filemtime(FCPATH . 'assets/js/contextual-help.js')) ?>" defer></script>
 <script src="<?= base_url('assets/js/business/profile.js?v=' . filemtime(FCPATH . 'assets/js/business/profile.js')) ?>" defer></script>
+<script src="<?= base_url('assets/js/contextual-help.js?v=' . filemtime(FCPATH . 'assets/js/contextual-help.js')) ?>" defer></script>
 <script src="<?= base_url('assets/js/alpha-shell.js?v=' . filemtime(FCPATH . 'assets/js/alpha-shell.js')) ?>" defer></script>
 </body>
 </html>

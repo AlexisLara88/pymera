@@ -4,8 +4,11 @@ const contextualHelps = [...document.querySelectorAll('[data-context-help]')];
 const moduleMain = document.querySelector('.module-main');
 const backdrop = document.createElement('div');
 const closeTransitionDuration = 220;
+const viewportGap = 12;
 let openContextualHelp = null;
 let activeFocusTarget = null;
+let manuallyPositionedHelp = null;
+let dragState = null;
 
 backdrop.className = 'context-help-backdrop';
 backdrop.setAttribute('aria-hidden', 'true');
@@ -16,6 +19,42 @@ if (contextualHelps.length > 0) {
 
 const helpTrigger = (help) => help.querySelector('.context-help-trigger');
 const helpCard = (help) => help.querySelector('.context-help-card');
+const clamp = (value, minimum, maximum) => Math.min(Math.max(value, minimum), maximum);
+
+const positionBounds = (card) => {
+    const mainRect = moduleMain?.getBoundingClientRect();
+    const minimumLeft = Math.max(viewportGap, (mainRect?.left ?? 0) + viewportGap);
+    const rightBoundary = Math.min(
+        window.innerWidth - viewportGap,
+        (mainRect?.right ?? window.innerWidth) - viewportGap,
+    );
+
+    return {
+        minimumLeft,
+        maximumLeft: Math.max(minimumLeft, rightBoundary - card.offsetWidth),
+        minimumTop: viewportGap,
+        maximumTop: Math.max(viewportGap, window.innerHeight - card.offsetHeight - viewportGap),
+    };
+};
+
+const setHelpPosition = (help, left, top) => {
+    help.style.setProperty('--context-help-left', `${Math.round(left)}px`);
+    help.style.setProperty('--context-help-top', `${Math.round(top)}px`);
+};
+
+const rectangleContainsPoint = (rectangle, x, y) => (
+    x >= rectangle.left
+    && x <= rectangle.right
+    && y >= rectangle.top
+    && y <= rectangle.bottom
+);
+
+const rectanglesOverlap = (first, second, gap = 0) => !(
+    first.right + gap <= second.left
+    || first.left >= second.right + gap
+    || first.bottom + gap <= second.top
+    || first.top >= second.bottom + gap
+);
 
 const setExpanded = (help, expanded) => {
     helpTrigger(help)?.setAttribute('aria-expanded', expanded ? 'true' : 'false');
@@ -29,33 +68,142 @@ const positionHelp = (help) => {
         return;
     }
 
-    const viewportGap = 12;
     const triggerRect = trigger.getBoundingClientRect();
     const cardRect = card.getBoundingClientRect();
-    const mainRect = moduleMain?.getBoundingClientRect();
-    const minimumLeft = Math.max(viewportGap, (mainRect?.left ?? 0) + viewportGap);
-    const rightBoundary = Math.min(
-        window.innerWidth - viewportGap,
-        (mainRect?.right ?? window.innerWidth) - viewportGap,
-    );
+    const focusRect = activeFocusTarget?.getBoundingClientRect() ?? triggerRect;
+    const bounds = positionBounds(card);
+    const sideTop = clamp(triggerRect.top - 8, bounds.minimumTop, bounds.maximumTop);
     const centeredLeft = triggerRect.left + (triggerRect.width / 2) - (cardRect.width / 2);
-    const maximumLeft = Math.max(minimumLeft, rightBoundary - cardRect.width);
-    const left = Math.min(Math.max(centeredLeft, minimumLeft), maximumLeft);
-    const below = triggerRect.bottom + viewportGap;
-    const above = triggerRect.top - cardRect.height - viewportGap;
-    const maximumTop = Math.max(viewportGap, window.innerHeight - cardRect.height - viewportGap);
-    const top = below + cardRect.height <= window.innerHeight - viewportGap
-        ? below
-        : Math.min(Math.max(above, viewportGap), maximumTop);
+    const adjacentCandidates = [
+        { left: triggerRect.right + viewportGap, top: sideTop },
+        { left: triggerRect.left - cardRect.width - viewportGap, top: sideTop },
+        { left: centeredLeft, top: triggerRect.bottom + viewportGap },
+        { left: centeredLeft, top: triggerRect.top - cardRect.height - viewportGap },
+    ];
+    const focusAlignedLeft = clamp(
+        triggerRect.right + viewportGap,
+        bounds.minimumLeft,
+        bounds.maximumLeft,
+    );
+    const candidates = [
+        ...adjacentCandidates,
+        { left: focusAlignedLeft, top: focusRect.top - cardRect.height - viewportGap },
+        { left: focusAlignedLeft, top: focusRect.bottom + viewportGap },
+        { left: focusRect.right + viewportGap, top: sideTop },
+        { left: focusRect.left - cardRect.width - viewportGap, top: sideTop },
+    ];
+    const triggerIsInsideFocus = rectangleContainsPoint(
+        focusRect,
+        triggerRect.left + (triggerRect.width / 2),
+        triggerRect.top + (triggerRect.height / 2),
+    );
+    const candidateFits = (candidate) => (
+        candidate.left >= bounds.minimumLeft
+        && candidate.left <= bounds.maximumLeft
+        && candidate.top >= bounds.minimumTop
+        && candidate.top <= bounds.maximumTop
+    );
+    const candidateRectangle = (candidate) => ({
+        left: candidate.left,
+        right: candidate.left + cardRect.width,
+        top: candidate.top,
+        bottom: candidate.top + cardRect.height,
+    });
+    const candidate = candidates.find((position) => (
+        candidateFits(position)
+        && (triggerIsInsideFocus || !rectanglesOverlap(candidateRectangle(position), focusRect, viewportGap))
+    )) ?? candidates.find(candidateFits) ?? candidates[0];
 
-    help.style.setProperty('--context-help-left', `${Math.round(left)}px`);
-    help.style.setProperty('--context-help-top', `${Math.round(top)}px`);
+    setHelpPosition(
+        help,
+        clamp(candidate.left, bounds.minimumLeft, bounds.maximumLeft),
+        clamp(candidate.top, bounds.minimumTop, bounds.maximumTop),
+    );
 
     window.requestAnimationFrame(() => {
         if (help.open) {
             help.classList.add('is-positioned');
         }
     });
+};
+
+const constrainHelpPosition = (help) => {
+    const card = helpCard(help);
+
+    if (!card || !help.open) {
+        return;
+    }
+
+    const cardRect = card.getBoundingClientRect();
+    const bounds = positionBounds(card);
+
+    setHelpPosition(
+        help,
+        clamp(cardRect.left, bounds.minimumLeft, bounds.maximumLeft),
+        clamp(cardRect.top, bounds.minimumTop, bounds.maximumTop),
+    );
+};
+
+const stopHelpDrag = () => {
+    if (!dragState) {
+        return;
+    }
+
+    const { handle, help, pointerId } = dragState;
+
+    if (handle.hasPointerCapture?.(pointerId)) {
+        handle.releasePointerCapture(pointerId);
+    }
+
+    help.classList.remove('is-dragging');
+    dragState = null;
+};
+
+const startHelpDrag = (event, help, handle) => {
+    if ((event.pointerType === 'mouse' && event.button !== 0)
+        || event.target.closest('[data-context-help-close]')) {
+        return;
+    }
+
+    const card = helpCard(help);
+
+    if (!card || !help.open) {
+        return;
+    }
+
+    const cardRect = card.getBoundingClientRect();
+
+    dragState = {
+        help,
+        handle,
+        pointerId: event.pointerId,
+        offsetX: event.clientX - cardRect.left,
+        offsetY: event.clientY - cardRect.top,
+    };
+    manuallyPositionedHelp = help;
+    help.classList.add('is-dragging');
+    handle.setPointerCapture?.(event.pointerId);
+    event.preventDefault();
+};
+
+const moveHelp = (event) => {
+    if (!dragState || dragState.pointerId !== event.pointerId) {
+        return;
+    }
+
+    const card = helpCard(dragState.help);
+
+    if (!card) {
+        stopHelpDrag();
+        return;
+    }
+
+    const bounds = positionBounds(card);
+    const left = clamp(event.clientX - dragState.offsetX, bounds.minimumLeft, bounds.maximumLeft);
+    const top = clamp(event.clientY - dragState.offsetY, bounds.minimumTop, bounds.maximumTop);
+
+    setHelpPosition(dragState.help, left, top);
+    event.preventDefault();
 };
 
 const clearFocusTarget = () => {
@@ -69,6 +217,14 @@ const closeHelp = (help, restoreFocus = false, immediately = false) => {
     }
 
     help.classList.remove('is-positioned');
+
+    if (dragState?.help === help) {
+        stopHelpDrag();
+    }
+
+    if (manuallyPositionedHelp === help) {
+        manuallyPositionedHelp = null;
+    }
     setExpanded(help, false);
 
     if (openContextualHelp === help) {
@@ -120,7 +276,12 @@ contextualHelps.forEach((help) => {
         }
 
         openContextualHelp = help;
-        activeFocusTarget = help.closest('[data-context-help-focus-target]');
+        manuallyPositionedHelp = null;
+        const explicitTargetId = help.dataset.contextHelpTarget;
+
+        activeFocusTarget = explicitTargetId
+            ? document.getElementById(explicitTargetId)
+            : help.closest('[data-context-help-focus-target]');
         activeFocusTarget?.classList.add('is-context-help-focus');
         document.body.classList.add('context-help-is-open');
         positionHelp(help);
@@ -129,6 +290,13 @@ contextualHelps.forEach((help) => {
     help.querySelector('[data-context-help-close]')?.addEventListener('click', () => {
         closeHelp(help, true);
     });
+
+    const dragHandle = help.querySelector('[data-context-help-drag-handle]');
+
+    dragHandle?.addEventListener('pointerdown', (event) => startHelpDrag(event, help, dragHandle));
+    dragHandle?.addEventListener('pointermove', moveHelp);
+    dragHandle?.addEventListener('pointerup', stopHelpDrag);
+    dragHandle?.addEventListener('pointercancel', stopHelpDrag);
 });
 
 document.addEventListener('pointerdown', (event) => {
@@ -146,9 +314,17 @@ document.addEventListener('keydown', (event) => {
 
 const repositionOpenHelp = () => {
     if (openContextualHelp) {
-        positionHelp(openContextualHelp);
+        if (manuallyPositionedHelp === openContextualHelp) {
+            constrainHelpPosition(openContextualHelp);
+        } else {
+            positionHelp(openContextualHelp);
+        }
     }
 };
 
 window.addEventListener('resize', repositionOpenHelp);
-window.addEventListener('scroll', repositionOpenHelp, { passive: true });
+window.addEventListener('scroll', () => {
+    if (openContextualHelp && manuallyPositionedHelp !== openContextualHelp) {
+        positionHelp(openContextualHelp);
+    }
+}, { passive: true });

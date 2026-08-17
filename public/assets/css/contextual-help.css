@@ -49,7 +49,7 @@ body.context-help-is-open .module-sidebar {
     transition: box-shadow 240ms ease, background-color 240ms ease;
 }
 
-[data-context-help-focus-target].is-context-help-focus {
+.is-context-help-focus {
     position: relative;
     z-index: 90;
     border-radius: 0.85rem;
@@ -59,6 +59,7 @@ body.context-help-is-open .module-sidebar {
         0 22px 55px rgb(7 22 27 / 38%);
 }
 
+.form-card.is-context-help-focus,
 .form-card:has(.is-context-help-focus) {
     overflow: visible;
 }
@@ -156,6 +157,9 @@ body.context-help-is-open .module-sidebar {
     justify-content: space-between;
     padding: 1rem 1rem 0.8rem;
     border-bottom: 1px solid var(--line);
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
 }
 
 .context-help-card-header strong {
@@ -179,6 +183,14 @@ body.context-help-is-open .module-sidebar {
     line-height: 1;
     cursor: pointer;
     transition: color 180ms ease, background 180ms ease, transform 220ms ease;
+}
+
+.context-help.is-dragging .context-help-card {
+    transition: none;
+}
+
+.context-help.is-dragging .context-help-card-header {
+    cursor: grabbing;
 }
 
 .context-help-close:hover {
