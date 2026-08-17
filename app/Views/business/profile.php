@@ -18,6 +18,11 @@ $summaryValue = static fn (string $field): string => trim($form[$field] ?? '') !
 $fieldError = static fn (string $field): ?string => $errors[$field] ?? null;
 $invalid    = static fn (string $field): string => isset($errors[$field]) ? 'true' : 'false';
 $fieldLength = static fn (string $field): int => mb_strlen($form[$field] ?? '');
+$contextualHelp = static fn (array $configuration): string => view(
+    'components/contextual_help',
+    ['contextualHelp' => $configuration],
+    ['saveData' => false],
+);
 $businessName = (string) ($business['name'] ?? 'Negocio');
 $initialWords = preg_split('/\s+/', trim($businessName)) ?: [];
 $businessInitials = '';
@@ -62,7 +67,7 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                 <span class="step-pill"><?= $isOnboarding ? 'Primer paso' : 'Información de la empresa' ?></span>
                 <div class="context-help-heading">
                     <h2><?= $isOnboarding ? 'Primero, configuremos tu negocio' : 'Así se presenta tu negocio' ?></h2>
-                    <?= view('components/contextual_help', [
+                    <?= $contextualHelp([
                         'id'    => 'business-help-purpose',
                         'title' => '¿Para qué sirve este perfil?',
                         'targetId' => 'businessDiagnosisPanel',
@@ -82,7 +87,7 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                 <div>
                     <div class="context-help-completion-title">
                         <strong>Perfil del negocio</strong>
-                        <?= view('components/contextual_help', [
+                        <?= $contextualHelp([
                             'id'    => 'business-help-completion',
                             'title' => '¿Cuándo está listo mi perfil?',
                             'paragraphs' => [
@@ -209,7 +214,7 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                         <p class="eyebrow">Identidad operativa</p>
                         <div class="context-help-heading">
                             <h2 id="identityTitle">Datos generales</h2>
-                            <?= view('components/contextual_help', [
+                            <?= $contextualHelp([
                                 'id'    => 'business-help-general-data',
                                 'title' => '¿Para qué se utilizan la moneda y la zona horaria?',
                                 'paragraphs' => [
@@ -293,7 +298,7 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                         <p class="eyebrow">Contexto mínimo</p>
                         <div class="context-help-heading">
                             <h2 id="profileTitle">Cómo funciona el negocio</h2>
-                            <?= view('components/contextual_help', [
+                            <?= $contextualHelp([
                                 'id'    => 'business-help-minimum-profile',
                                 'title' => '¿Qué información necesito completar?',
                                 'paragraphs' => [
@@ -308,10 +313,10 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                 <div class="form-grid">
                     <?php
                     $minimumQuestions = [
-                        'what_it_does'       => ['Qué hace el negocio', 'Describí brevemente su actividad principal.'],
-                        'customers_served'   => ['A quién atiende', 'Indicá los tipos de clientes que reciben la propuesta.'],
-                        'products_offered'   => ['Qué productos o servicios ofrece', 'Resumí la oferta actual.'],
-                        'objectives_summary' => ['Qué objetivos persigue', 'Contá qué busca conseguir en esta etapa.'],
+                        'what_it_does'       => ['¿Qué hace el negocio?', 'Describí brevemente su actividad principal.'],
+                        'customers_served'   => ['¿A quién atiende?', 'Indicá los tipos de clientes que reciben la propuesta.'],
+                        'products_offered'   => ['¿Qué productos o servicios ofrece?', 'Resumí la oferta actual.'],
+                        'objectives_summary' => ['¿Qué objetivos persigue?', 'Contá qué busca conseguir en esta etapa.'],
                     ];
                     ?>
                     <?php foreach ($minimumQuestions as $field => [$label, $hint]): ?>
@@ -352,7 +357,7 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                         <p class="eyebrow">Profundización gradual</p>
                         <div class="context-help-heading">
                             <h2 id="diagnosisTitle">Diagnóstico guiado</h2>
-                            <?= view('components/contextual_help', [
+                            <?= $contextualHelp([
                                 'id'    => 'business-help-diagnosis',
                                 'title' => '¿Para qué se utiliza este diagnóstico?',
                                 'paragraphs' => [
@@ -379,7 +384,7 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                             <?php if ($field === 'differentiator'): ?>
                                 <div class="context-help-label">
                                     <label for="<?= esc($field) ?>"><?= esc($label) ?></label>
-                                    <?= view('components/contextual_help', [
+                                    <?= $contextualHelp([
                                         'id'    => 'business-help-differentiation',
                                         'title' => '¿Qué diferencia hay entre el diferenciador y cómo se entrega?',
                                         'paragraphs' => [

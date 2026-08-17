@@ -3,18 +3,22 @@
 /**
  * Reusable contextual help presentation.
  *
- * @var string       $id
- * @var string       $title
- * @var list<string> $paragraphs
- * @var list<string> $items
- * @var string|null  $example
- * @var string|null  $targetId
+ * @var array{
+ *     id: string,
+ *     title: string,
+ *     paragraphs?: list<string>,
+ *     items?: list<string>,
+ *     example?: string|null,
+ *     targetId?: string|null
+ * } $contextualHelp
  */
 
-$paragraphs  = $paragraphs ?? [];
-$items       = $items ?? [];
-$example     = $example ?? null;
-$targetId     = $targetId ?? null;
+$id           = $contextualHelp['id'];
+$title        = $contextualHelp['title'];
+$paragraphs   = $contextualHelp['paragraphs'] ?? [];
+$items        = $contextualHelp['items'] ?? [];
+$example      = $contextualHelp['example'] ?? null;
+$targetId     = $contextualHelp['targetId'] ?? null;
 $titleId     = $id . '-title';
 $contentId   = $id . '-content';
 ?>

@@ -41,10 +41,12 @@ test('contextual help is server-rendered, escaped and progressively enhanced', (
 });
 
 test('Mi negocio owns six concise contextual explanations', () => {
-    const instances = profile.match(/view\('components\/contextual_help'/g) || [];
+    const instances = profile.match(/\$contextualHelp\(\[/g) || [];
     const focusedForms = profile.match(/<section class="form-card"[^>]*data-context-help-focus-target/g) || [];
 
     assert.equal(instances.length, 6);
+    assert.match(profile, /\['saveData' => false\]/);
+    assert.match(component, /\$contextualHelp\['targetId'\] \?\? null/);
     assert.equal(focusedForms.length, 3);
     assert.match(profile, /business-help-purpose/);
     assert.match(profile, /'targetId' => 'businessDiagnosisPanel'/);

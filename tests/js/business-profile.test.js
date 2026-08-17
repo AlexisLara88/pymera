@@ -72,3 +72,10 @@ test('profile Vue directives do not overwrite server fallback children', () => {
     assert.match(view, /data-submit-default/);
     assert.match(view, /data-submit-progress/);
 });
+
+test('minimum business profile labels are written as complete questions', () => {
+    assert.match(view, /¿Qué hace el negocio\?/);
+    assert.match(view, /¿A quién atiende\?/);
+    assert.match(view, /¿Qué productos o servicios ofrece\?/);
+    assert.match(view, /¿Qué objetivos persigue\?/);
+});
