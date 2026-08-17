@@ -26,10 +26,6 @@ const themeHead = fs.readFileSync(
     path.join(projectRoot, 'app/Views/layouts/theme_head.php'),
     'utf8',
 );
-const themeSelector = fs.readFileSync(
-    path.join(projectRoot, 'app/Views/layouts/theme_selector.php'),
-    'utf8',
-);
 const projectHead = fs.readFileSync(
     path.join(projectRoot, 'app/Views/layouts/alpha_project_head.php'),
     'utf8',
@@ -89,12 +85,7 @@ test('the shared sidebar exposes the complete functional route and a protected l
     assert.match(topbar, /Cuenta del negocio/);
     assert.doesNotMatch(topbar, /notification-button|notification-icon|Notificaciones|Sin notificaciones/);
     assert.doesNotMatch(stylesheet, /\.notification-button|\.notification-icon/);
-    assert.match(topbar, /view\('layouts\/theme_selector'\)/);
-    assert.match(themeSelector, /data-theme-toggle/);
-    assert.match(themeSelector, /theme-toggle-icon-sun/);
-    assert.match(themeSelector, /theme-toggle-icon-moon/);
-    assert.match(themeSelector, /aria-pressed="false"/);
-    assert.doesNotMatch(themeSelector, /data-theme-option|Sistema|theme-option-label/);
+    assert.doesNotMatch(topbar, /theme_selector|data-theme-toggle/);
     assert.match(themeHead, /theme\.css\?v=/);
     assert.match(themeHead, /theme\.js\?v=/);
 });

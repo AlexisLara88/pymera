@@ -25,7 +25,6 @@ $businessInitial = function_exists('mb_substr')
         <h1><?= esc($title) ?></h1>
     </div>
     <div class="topbar-actions">
-        <?= view('layouts/theme_selector') ?>
         <div class="user-profile">
             <span class="user-avatar" aria-hidden="true"><?= esc($businessInitial) ?></span>
             <span>

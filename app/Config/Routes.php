@@ -22,7 +22,12 @@ if ($alphaAccess->authenticationRoutesEnabled) {
 }
 
 if ($alphaAccess->functionalRoutesEnabled) {
-    $routes->group('admin', ['filter' => ['session', 'permission:platform.access']], static function (RouteCollection $routes): void {
+    $routes->group('account', ['filter' => ['session', 'user-preferences']], static function (RouteCollection $routes): void {
+        $routes->get('preferences', 'AccountPreferenceController::index', ['as' => 'account.preferences']);
+        $routes->post('preferences', 'AccountPreferenceController::update', ['as' => 'account.preferences.update']);
+    });
+
+    $routes->group('admin', ['filter' => ['session', 'permission:platform.access', 'user-preferences']], static function (RouteCollection $routes): void {
         $routes->get('', 'PlatformAdminController::index', ['as' => 'platform.index']);
         $routes->post(
             'accounts/owner',
@@ -46,7 +51,7 @@ if ($alphaAccess->functionalRoutesEnabled) {
         );
     });
 
-    $routes->group('app', ['filter' => ['session', 'permission:app.access']], static function (RouteCollection $routes): void {
+    $routes->group('app', ['filter' => ['session', 'permission:app.access', 'user-preferences']], static function (RouteCollection $routes): void {
         $routes->get('mi-negocio', 'BusinessController::show', ['as' => 'business.show']);
         $routes->post('mi-negocio', 'BusinessController::update', ['as' => 'business.update']);
 

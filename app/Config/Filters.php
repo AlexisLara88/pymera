@@ -3,6 +3,7 @@
 namespace Config;
 
 use App\Filters\BusinessOnboardingFilter;
+use App\Filters\UserPreferenceFilter;
 use CodeIgniter\Config\Filters as BaseFilters;
 use CodeIgniter\Filters\Cors;
 use CodeIgniter\Filters\CSRF;
@@ -36,6 +37,7 @@ class Filters extends BaseFilters
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
         'business-onboarding' => BusinessOnboardingFilter::class,
+        'user-preferences'    => UserPreferenceFilter::class,
     ];
 
     /**

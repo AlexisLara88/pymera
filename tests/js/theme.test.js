@@ -23,12 +23,6 @@ const head = fs.readFileSync(
 const makeBrowser = ({ systemDark = false, stored = null } = {}) => {
     const values = new Map();
     const listeners = {};
-    const button = {
-        attributes: {},
-        setAttribute(name, value) {
-            this.attributes[name] = value;
-        },
-    };
 
     if (stored !== null) {
         values.set('pyme_erp_lite_theme', stored);
@@ -40,12 +34,6 @@ const makeBrowser = ({ systemDark = false, stored = null } = {}) => {
     };
     const document = {
         documentElement: root,
-        addEventListener(name, callback) {
-            listeners[name] = callback;
-        },
-        querySelector() {
-            return button;
-        },
     };
     const window = {
         addEventListener(name, callback) {
@@ -66,7 +54,7 @@ const makeBrowser = ({ systemDark = false, stored = null } = {}) => {
 
     vm.runInNewContext(script, { document, Set, window });
 
-    return { button, listeners, media, root, values, window };
+    return { listeners, media, root, values, window };
 };
 
 test('explicit selection wins over the operating-system preference and persists', () => {
@@ -75,9 +63,6 @@ test('explicit selection wins over the operating-system preference and persists'
     assert.equal(browser.root.dataset.themePreference, 'light');
     assert.equal(browser.root.dataset.theme, 'light');
     assert.equal(browser.root.style.colorScheme, 'only light');
-    assert.equal(browser.button.attributes['aria-pressed'], 'false');
-    assert.equal(browser.button.attributes['aria-label'], 'Activar tema oscuro');
-
     browser.media.matches = false;
     assert.equal(browser.root.dataset.theme, 'light');
 
@@ -85,11 +70,9 @@ test('explicit selection wins over the operating-system preference and persists'
     assert.equal(browser.values.get('pyme_erp_lite_theme'), 'dark');
     assert.equal(browser.root.dataset.theme, 'dark');
     assert.equal(browser.root.style.colorScheme, 'only dark');
-    assert.equal(browser.button.attributes['aria-pressed'], 'true');
-    assert.equal(browser.button.attributes['aria-label'], 'Activar tema claro');
 });
 
-test('the system chooses only the first theme and the circular control toggles it', () => {
+test('the system chooses only the first theme and preferences can replace it', () => {
     const browser = makeBrowser({ systemDark: true });
 
     assert.equal(browser.root.dataset.themePreference, 'dark');
@@ -99,10 +82,9 @@ test('the system chooses only the first theme and the circular control toggles i
     browser.media.matches = false;
     assert.equal(browser.root.dataset.theme, 'dark');
 
-    browser.window.PymeTheme.toggleTheme();
+    browser.window.PymeTheme.saveTheme('light');
     assert.equal(browser.root.dataset.theme, 'light');
     assert.equal(browser.values.get('pyme_erp_lite_theme'), 'light');
-    assert.equal(browser.button.attributes.title, 'Activar tema oscuro');
 });
 
 test('a legacy system value is converted into a concrete saved theme', () => {
@@ -113,20 +95,19 @@ test('a legacy system value is converted into a concrete saved theme', () => {
     assert.equal(browser.values.get('pyme_erp_lite_theme'), 'light');
 });
 
-test('theme controller remains a local presentation concern', () => {
+test('theme controller remains an account appearance concern', () => {
     assert.match(head, /pyme_erp_lite_theme/);
     assert.match(head, /document\.documentElement/);
     assert.match(head, /prefers-color-scheme:\s*dark/);
     assert.match(styles, /html\[data-theme="light"\]/);
     assert.match(styles, /html\[data-theme="dark"\]/);
     assert.match(styles, /color-scheme:\s*only light/);
-    assert.match(styles, /\.theme-toggle-icon-sun/);
-    assert.match(styles, /\.theme-toggle-icon-moon/);
-    assert.match(styles, /@media \(forced-colors:\s*active\)/);
     assert.doesNotMatch(script, /allowedPreferences[^\n]*system/);
     assert.doesNotMatch(script, /addEventListener\?\.\('change'/);
     assert.doesNotMatch(styles, /forced-color-adjust:\s*none/);
-    assert.doesNotMatch(script, /fetch\(|XMLHttpRequest|window\.Vue|business_id|user_id/);
+    assert.doesNotMatch(script, /theme-preference-endpoint|data-theme-toggle|fetch\(/);
+    assert.doesNotMatch(styles, /theme-switcher|theme-toggle-icon|auth-theme-control/);
+    assert.doesNotMatch(script, /XMLHttpRequest|window\.Vue|business_id|user_id/);
 
     const openBraces = (styles.match(/{/g) || []).length;
     const closeBraces = (styles.match(/}/g) || []).length;

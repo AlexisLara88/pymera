@@ -48,7 +48,7 @@ $auditLabels = [
             <p>Cuentas, negocios y accesos globales. Este panel no abre información operativa de las PyMEs.</p>
         </div>
         <div class="platform-actions">
-            <?= view('layouts/theme_selector') ?>
+            <a class="button button-secondary" href="<?= esc(site_url('account/preferences'), 'attr') ?>">Mi cuenta</a>
             <form action="<?= esc(site_url('logout'), 'attr') ?>" method="post">
                 <?= csrf_field() ?>
                 <button class="button button-secondary" type="submit">Cerrar sesión</button>

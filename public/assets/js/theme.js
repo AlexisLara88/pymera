@@ -18,21 +18,6 @@
         }
     };
 
-    const updateControl = (theme) => {
-        const button = document.querySelector('[data-theme-toggle]');
-
-        if (! button) {
-            return;
-        }
-
-        const darkIsActive = theme === 'dark';
-        const actionLabel = darkIsActive ? 'Activar tema claro' : 'Activar tema oscuro';
-
-        button.setAttribute('aria-pressed', darkIsActive ? 'true' : 'false');
-        button.setAttribute('aria-label', actionLabel);
-        button.setAttribute('title', actionLabel);
-    };
-
     const applyTheme = (theme) => {
         const safeTheme = allowedPreferences.has(theme)
             ? theme
@@ -41,7 +26,6 @@
         root.dataset.themePreference = safeTheme;
         root.dataset.theme = safeTheme;
         root.style.colorScheme = safeTheme === 'light' ? 'only light' : 'only dark';
-        updateControl(safeTheme);
 
         return safeTheme;
     };
@@ -59,16 +43,6 @@
 
         return applyTheme(safeTheme);
     };
-
-    const toggleTheme = () => saveTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
-
-    document.addEventListener('click', (event) => {
-        const toggle = event.target.closest('[data-theme-toggle]');
-
-        if (toggle) {
-            toggleTheme();
-        }
-    });
 
     window.addEventListener('storage', (event) => {
         if (event.key === storageKey) {
@@ -91,6 +65,5 @@
         applyTheme,
         readPreference,
         saveTheme,
-        toggleTheme,
     };
 })();

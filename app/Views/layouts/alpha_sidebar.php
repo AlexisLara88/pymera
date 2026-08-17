@@ -71,6 +71,14 @@ $navigation = $isOnboarding
             <span class="demo-chip"><?= $isOnboarding ? 'Inicio' : 'Perfil' ?></span>
         </a>
 
+        <a
+            class="account-preferences-link"
+            href="<?= site_url('account/preferences') ?>"
+        >
+            <span aria-hidden="true">⚙</span>
+            <span><strong>Mi cuenta</strong><small>Preferencias personales</small></span>
+        </a>
+
         <form class="sidebar-session" action="<?= site_url('logout') ?>" method="post">
             <?= csrf_field() ?>
             <span>Sesión protegida</span>

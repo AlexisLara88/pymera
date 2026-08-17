@@ -17,9 +17,6 @@ $hasError = session('error') !== null || session('errors') !== null;
     <?= view('layouts/theme_head') ?>
 </head>
 <body class="auth-body">
-<div class="auth-theme-control">
-    <?= view('layouts/theme_selector') ?>
-</div>
 <main class="auth-shell">
     <section class="auth-intro">
         <div class="auth-brand" aria-label="PyMERA">
