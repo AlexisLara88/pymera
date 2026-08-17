@@ -39,6 +39,7 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
     <?= view('layouts/alpha_frontend_head', ['styles' => [
         'business/profile.css',
         'alpha-shell.css',
+        'contextual-help.css',
     ]]) ?>
 </head>
 <body class="business-module-body">
@@ -59,7 +60,19 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
         <header class="module-header">
             <div>
                 <span class="step-pill"><?= $isOnboarding ? 'Primer paso' : 'Información de la empresa' ?></span>
-                <h2><?= $isOnboarding ? 'Primero, configuremos tu negocio' : 'Así se presenta tu negocio' ?></h2>
+                <div class="context-help-heading">
+                    <h2><?= $isOnboarding ? 'Primero, configuremos tu negocio' : 'Así se presenta tu negocio' ?></h2>
+                    <?= view('components/contextual_help', [
+                        'id'    => 'business-help-purpose',
+                        'title' => '¿Por qué necesito completar esta información?',
+                        'items' => [
+                            'Define qué hace el negocio y a quién atiende.',
+                            'Resume los productos o servicios que ofrece.',
+                            'Registra los objetivos que persigue en esta etapa.',
+                            'Aporta el contexto utilizado por los demás módulos de PyMERA.',
+                        ],
+                    ]) ?>
+                </div>
                 <p><?= $isOnboarding
                     ? 'Completá las cuatro respuestas mínimas para iniciar el recorrido operativo.'
                     : 'Este perfil aporta contexto a tus objetivos, prioridades, finanzas y capacidades futuras.' ?></p>
@@ -69,7 +82,17 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                     <span><?= esc((string) $profileCompletion) ?>%</span>
                 </div>
                 <div>
-                    <strong>Perfil del negocio</strong>
+                    <div class="context-help-completion-title">
+                        <strong>Perfil del negocio</strong>
+                        <?= view('components/contextual_help', [
+                            'id'    => 'business-help-completion',
+                            'title' => '¿Cuándo está listo mi perfil?',
+                            'paragraphs' => [
+                                'Las cuatro respuestas de “Cómo funciona el negocio” completan el mínimo necesario para comenzar a trabajar.',
+                                'Las cinco preguntas del diagnóstico son complementarias. Al completar las nueve respuestas, el indicador llega al 100 %.',
+                            ],
+                        ]) ?>
+                    </div>
                     <small>Información persistente</small>
                 </div>
             </div>
@@ -187,7 +210,18 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                     <span class="section-number">01</span>
                     <div>
                         <p class="eyebrow">Identidad operativa</p>
-                        <h2 id="identityTitle">Datos generales</h2>
+                        <div class="context-help-heading">
+                            <h2 id="identityTitle">Datos generales</h2>
+                            <?= view('components/contextual_help', [
+                                'id'    => 'business-help-general-data',
+                                'title' => '¿Para qué se utilizan la moneda y la zona horaria?',
+                                'items' => [
+                                    'La moneda define cómo se presentan los importes del negocio.',
+                                    'La zona horaria determina sus fechas operativas y cierres.',
+                                    'Los eventos técnicos internos continúan registrándose en UTC.',
+                                ],
+                            ]) ?>
+                        </div>
                         <p>Estos valores acompañarán registros, fechas e indicadores.</p>
                     </div>
                 </div>
@@ -312,7 +346,19 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                     <span class="section-number">03</span>
                     <div>
                         <p class="eyebrow">Profundización gradual</p>
-                        <h2 id="diagnosisTitle">Diagnóstico guiado</h2>
+                        <div class="context-help-heading">
+                            <h2 id="diagnosisTitle">Diagnóstico guiado</h2>
+                            <?= view('components/contextual_help', [
+                                'id'    => 'business-help-diagnosis',
+                                'title' => '¿Para qué se utiliza este diagnóstico?',
+                                'items' => [
+                                    'Profundiza la descripción del negocio.',
+                                    'Registra por qué compran los clientes y por qué canales llegan.',
+                                    'Aporta contexto a los objetivos y a decisiones posteriores.',
+                                    'No obliga a convertir cada respuesta inmediatamente en una tarea.',
+                                ],
+                            ]) ?>
+                        </div>
                         <p>Podés completar estas respuestas ahora o profundizarlas con el cliente más adelante.</p>
                     </div>
                 </div>
@@ -329,7 +375,22 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                     ?>
                     <?php foreach ($diagnosisQuestions as $field => $label): ?>
                         <div class="field-group">
-                            <label for="<?= esc($field) ?>"><?= esc($label) ?></label>
+                            <?php if ($field === 'differentiator'): ?>
+                                <div class="context-help-label">
+                                    <label for="<?= esc($field) ?>"><?= esc($label) ?></label>
+                                    <?= view('components/contextual_help', [
+                                        'id'    => 'business-help-differentiation',
+                                        'title' => '¿Qué diferencia hay entre el diferenciador y cómo se entrega?',
+                                        'items' => [
+                                            'El diferenciador describe qué hace especial a la propuesta.',
+                                            'La forma de entrega explica cómo el negocio produce, demuestra o entrega esa diferencia.',
+                                        ],
+                                        'example' => '“Pasteles personalizados” es el diferenciador; “entrevista previa, muestra de sabores y validación del diseño” describe cómo se entrega.',
+                                    ]) ?>
+                                </div>
+                            <?php else: ?>
+                                <label for="<?= esc($field) ?>"><?= esc($label) ?></label>
+                            <?php endif ?>
                             <textarea
                                 class="form-control"
                                 id="<?= esc($field) ?>"
@@ -378,6 +439,7 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
 </div>
 
 <?= view('layouts/alpha_frontend_scripts') ?>
+<script src="<?= base_url('assets/js/contextual-help.js?v=' . filemtime(FCPATH . 'assets/js/contextual-help.js')) ?>" defer></script>
 <script src="<?= base_url('assets/js/business/profile.js?v=' . filemtime(FCPATH . 'assets/js/business/profile.js')) ?>" defer></script>
 <script src="<?= base_url('assets/js/alpha-shell.js?v=' . filemtime(FCPATH . 'assets/js/alpha-shell.js')) ?>" defer></script>
 </body>
