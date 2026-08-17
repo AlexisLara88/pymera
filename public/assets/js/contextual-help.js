@@ -42,13 +42,6 @@ const setHelpPosition = (help, left, top) => {
     help.style.setProperty('--context-help-top', `${Math.round(top)}px`);
 };
 
-const rectangleContainsPoint = (rectangle, x, y) => (
-    x >= rectangle.left
-    && x <= rectangle.right
-    && y >= rectangle.top
-    && y <= rectangle.bottom
-);
-
 const rectanglesOverlap = (first, second, gap = 0) => !(
     first.right + gap <= second.left
     || first.left >= second.right + gap
@@ -87,16 +80,11 @@ const positionHelp = (help) => {
     );
     const candidates = [
         ...adjacentCandidates,
-        { left: focusAlignedLeft, top: focusRect.top - cardRect.height - viewportGap },
-        { left: focusAlignedLeft, top: focusRect.bottom + viewportGap },
         { left: focusRect.right + viewportGap, top: sideTop },
         { left: focusRect.left - cardRect.width - viewportGap, top: sideTop },
+        { left: focusAlignedLeft, top: focusRect.bottom + viewportGap },
+        { left: focusAlignedLeft, top: focusRect.top - cardRect.height - viewportGap },
     ];
-    const triggerIsInsideFocus = rectangleContainsPoint(
-        focusRect,
-        triggerRect.left + (triggerRect.width / 2),
-        triggerRect.top + (triggerRect.height / 2),
-    );
     const candidateFits = (candidate) => (
         candidate.left >= bounds.minimumLeft
         && candidate.left <= bounds.maximumLeft
@@ -111,7 +99,7 @@ const positionHelp = (help) => {
     });
     const candidate = candidates.find((position) => (
         candidateFits(position)
-        && (triggerIsInsideFocus || !rectanglesOverlap(candidateRectangle(position), focusRect, viewportGap))
+        && !rectanglesOverlap(candidateRectangle(position), focusRect, viewportGap)
     )) ?? candidates.find(candidateFits) ?? candidates[0];
 
     setHelpPosition(

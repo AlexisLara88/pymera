@@ -76,9 +76,15 @@ test('the interaction builds a focused backdrop without affecting business state
     assert.match(script, /closest\('\[data-context-help-focus-target\]'\)/);
     assert.match(script, /moduleMain\?\.getBoundingClientRect/);
     assert.match(script, /activeFocusTarget\?\.getBoundingClientRect/);
-    assert.match(script, /rectangleContainsPoint/);
     assert.match(script, /rectanglesOverlap/);
     assert.match(script, /triggerRect\.right \+ viewportGap/);
+    assert.match(script, /!rectanglesOverlap\(candidateRectangle\(position\), focusRect, viewportGap\)/);
+    assert.doesNotMatch(script, /triggerIsInsideFocus/);
+    assert.ok(
+        script.indexOf('focusRect.left - cardRect.width - viewportGap')
+            < script.indexOf('focusRect.bottom + viewportGap'),
+        'side placement must be preferred before placing a help card below its focused block',
+    );
     assert.match(script, /help\.dataset\.contextHelpTarget/);
     assert.match(script, /document\.getElementById\(explicitTargetId\)/);
     assert.match(script, /is-positioned/);
