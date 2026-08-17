@@ -1,5 +1,4 @@
 .context-help-heading,
-.context-help-label,
 .context-help-completion-title {
     display: flex;
     gap: 0.55rem;
@@ -7,7 +6,6 @@
 }
 
 .context-help-heading h2,
-.context-help-label label,
 .context-help-completion-title strong {
     margin-bottom: 0;
 }

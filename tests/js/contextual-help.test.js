@@ -40,11 +40,11 @@ test('contextual help is server-rendered, escaped and progressively enhanced', (
     assert.doesNotMatch(component, /\{!{2}|innerHTML/);
 });
 
-test('Mi negocio owns six concise contextual explanations', () => {
+test('Mi negocio owns five concise contextual explanations', () => {
     const instances = profile.match(/\$contextualHelp\(\[/g) || [];
     const focusedForms = profile.match(/<section class="form-card"[^>]*data-context-help-focus-target/g) || [];
 
-    assert.equal(instances.length, 6);
+    assert.equal(instances.length, 5);
     assert.match(profile, /\['saveData' => false\]/);
     assert.match(component, /\$contextualHelp\['targetId'\] \?\? null/);
     assert.equal(focusedForms.length, 3);
@@ -55,7 +55,7 @@ test('Mi negocio owns six concise contextual explanations', () => {
     assert.match(profile, /business-help-general-data/);
     assert.match(profile, /business-help-minimum-profile/);
     assert.match(profile, /business-help-diagnosis/);
-    assert.match(profile, /business-help-differentiation/);
+    assert.doesNotMatch(profile, /business-help-differentiation/);
     assert.match(profile, /data-context-help-focus-target/);
     assert.match(profile, /'contextual-help\.css'/);
     assert.match(profile, /assets\/js\/contextual-help\.js/);

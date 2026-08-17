@@ -380,22 +380,8 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                     ];
                     ?>
                     <?php foreach ($diagnosisQuestions as $field => $label): ?>
-                        <div class="field-group" <?= $field === 'differentiator' ? 'data-context-help-focus-target' : '' ?>>
-                            <?php if ($field === 'differentiator'): ?>
-                                <div class="context-help-label">
-                                    <label for="<?= esc($field) ?>"><?= esc($label) ?></label>
-                                    <?= $contextualHelp([
-                                        'id'    => 'business-help-differentiation',
-                                        'title' => '¿Qué diferencia hay entre el diferenciador y cómo se entrega?',
-                                        'paragraphs' => [
-                                            'El diferenciador dice qué te hace especial. La entrega explica cómo lo hacés realidad.',
-                                        ],
-                                        'example' => 'Personalización / entrevista y muestra de sabores.',
-                                    ]) ?>
-                                </div>
-                            <?php else: ?>
-                                <label for="<?= esc($field) ?>"><?= esc($label) ?></label>
-                            <?php endif ?>
+                        <div class="field-group">
+                            <label for="<?= esc($field) ?>"><?= esc($label) ?></label>
                             <textarea
                                 class="form-control"
                                 id="<?= esc($field) ?>"
