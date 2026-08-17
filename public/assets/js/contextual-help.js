@@ -1,7 +1,18 @@
 'use strict';
 
 const contextualHelps = [...document.querySelectorAll('[data-context-help]')];
+const moduleMain = document.querySelector('.module-main');
+const backdrop = document.createElement('div');
+const closeTransitionDuration = 220;
 let openContextualHelp = null;
+let activeFocusTarget = null;
+
+backdrop.className = 'context-help-backdrop';
+backdrop.setAttribute('aria-hidden', 'true');
+
+if (contextualHelps.length > 0) {
+    document.body.append(backdrop);
+}
 
 const helpTrigger = (help) => help.querySelector('.context-help-trigger');
 const helpCard = (help) => help.querySelector('.context-help-card');
@@ -18,12 +29,18 @@ const positionHelp = (help) => {
         return;
     }
 
-    const viewportGap = 10;
+    const viewportGap = 12;
     const triggerRect = trigger.getBoundingClientRect();
     const cardRect = card.getBoundingClientRect();
+    const mainRect = moduleMain?.getBoundingClientRect();
+    const minimumLeft = Math.max(viewportGap, (mainRect?.left ?? 0) + viewportGap);
+    const rightBoundary = Math.min(
+        window.innerWidth - viewportGap,
+        (mainRect?.right ?? window.innerWidth) - viewportGap,
+    );
     const centeredLeft = triggerRect.left + (triggerRect.width / 2) - (cardRect.width / 2);
-    const maximumLeft = Math.max(viewportGap, window.innerWidth - cardRect.width - viewportGap);
-    const left = Math.min(Math.max(centeredLeft, viewportGap), maximumLeft);
+    const maximumLeft = Math.max(minimumLeft, rightBoundary - cardRect.width);
+    const left = Math.min(Math.max(centeredLeft, minimumLeft), maximumLeft);
     const below = triggerRect.bottom + viewportGap;
     const above = triggerRect.top - cardRect.height - viewportGap;
     const maximumTop = Math.max(viewportGap, window.innerHeight - cardRect.height - viewportGap);
@@ -33,28 +50,59 @@ const positionHelp = (help) => {
 
     help.style.setProperty('--context-help-left', `${Math.round(left)}px`);
     help.style.setProperty('--context-help-top', `${Math.round(top)}px`);
+
+    window.requestAnimationFrame(() => {
+        if (help.open) {
+            help.classList.add('is-positioned');
+        }
+    });
 };
 
-const closeHelp = (help, restoreFocus = false) => {
+const clearFocusTarget = () => {
+    activeFocusTarget?.classList.remove('is-context-help-focus');
+    activeFocusTarget = null;
+};
+
+const closeHelp = (help, restoreFocus = false, immediately = false) => {
     if (!help) {
         return;
     }
 
-    help.open = false;
+    help.classList.remove('is-positioned');
     setExpanded(help, false);
 
     if (openContextualHelp === help) {
         openContextualHelp = null;
+        document.body.classList.remove('context-help-is-open');
+        clearFocusTarget();
     }
 
-    if (restoreFocus) {
-        helpTrigger(help)?.focus();
+    const finishClosing = () => {
+        help.open = false;
+
+        if (restoreFocus) {
+            helpTrigger(help)?.focus();
+        }
+    };
+
+    if (immediately || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        finishClosing();
+        return;
     }
+
+    window.setTimeout(finishClosing, closeTransitionDuration);
 };
 
 contextualHelps.forEach((help) => {
     help.classList.add('is-enhanced');
     setExpanded(help, help.open);
+
+    helpTrigger(help)?.addEventListener('click', (event) => {
+        if (help.open) {
+            event.preventDefault();
+            closeHelp(help, true);
+        }
+    });
 
     help.addEventListener('toggle', () => {
         setExpanded(help, help.open);
@@ -68,11 +116,14 @@ contextualHelps.forEach((help) => {
         }
 
         if (openContextualHelp && openContextualHelp !== help) {
-            closeHelp(openContextualHelp);
+            closeHelp(openContextualHelp, false, true);
         }
 
         openContextualHelp = help;
-        window.requestAnimationFrame(() => positionHelp(help));
+        activeFocusTarget = help.closest('[data-context-help-focus-target]');
+        activeFocusTarget?.classList.add('is-context-help-focus');
+        document.body.classList.add('context-help-is-open');
+        positionHelp(help);
     });
 
     help.querySelector('[data-context-help-close]')?.addEventListener('click', () => {

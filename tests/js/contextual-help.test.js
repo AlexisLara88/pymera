@@ -27,7 +27,8 @@ test('contextual help is server-rendered, escaped and progressively enhanced', (
     assert.match(component, /<details class="context-help" data-context-help>/);
     assert.match(component, /<summary[\s\S]*aria-controls=/);
     assert.match(component, /aria-expanded="false"/);
-    assert.match(component, /role="region"/);
+    assert.match(component, /aria-haspopup="dialog"/);
+    assert.match(component, /role="dialog"/);
     assert.match(component, /aria-labelledby=/);
     assert.match(component, /data-context-help-close/);
     assert.match(component, /esc\(\$title/);
@@ -37,23 +38,32 @@ test('contextual help is server-rendered, escaped and progressively enhanced', (
     assert.doesNotMatch(component, /\{!{2}|innerHTML/);
 });
 
-test('Mi negocio owns five independent contextual explanations', () => {
+test('Mi negocio owns six concise contextual explanations', () => {
     const instances = profile.match(/view\('components\/contextual_help'/g) || [];
 
-    assert.equal(instances.length, 5);
+    assert.equal(instances.length, 6);
     assert.match(profile, /business-help-purpose/);
     assert.match(profile, /business-help-completion/);
     assert.match(profile, /business-help-general-data/);
+    assert.match(profile, /business-help-minimum-profile/);
     assert.match(profile, /business-help-diagnosis/);
     assert.match(profile, /business-help-differentiation/);
+    assert.match(profile, /data-context-help-focus-target/);
     assert.match(profile, /'contextual-help\.css'/);
     assert.match(profile, /assets\/js\/contextual-help\.js/);
 });
 
-test('the interaction keeps one help open and supports keyboard, outside click and viewport changes', () => {
+test('the interaction builds a focused backdrop without affecting business state', () => {
     assert.match(script, /openContextualHelp/);
     assert.match(script, /openContextualHelp !== help/);
-    assert.match(script, /closeHelp\(openContextualHelp\)/);
+    assert.match(script, /closeHelp\(openContextualHelp/);
+    assert.match(script, /document\.createElement\('div'\)/);
+    assert.match(script, /context-help-backdrop/);
+    assert.match(script, /context-help-is-open/);
+    assert.match(script, /is-context-help-focus/);
+    assert.match(script, /closest\('\[data-context-help-focus-target\]'\)/);
+    assert.match(script, /moduleMain\?\.getBoundingClientRect/);
+    assert.match(script, /is-positioned/);
     assert.match(script, /event\.key === 'Escape'/);
     assert.match(script, /addEventListener\('pointerdown'/);
     assert.match(script, /addEventListener\('resize'/);
@@ -64,10 +74,15 @@ test('the interaction keeps one help open and supports keyboard, outside click a
     assert.doesNotMatch(script, /window\.Vue|fetch\(|XMLHttpRequest|localStorage|sessionStorage|innerHTML/);
 });
 
-test('the visual component is anchored, responsive and respects reduced motion', () => {
+test('the visual component spotlights its target without altering the sidebar', () => {
     assert.match(styles, /\.context-help-card\s*\{[\s\S]*?position:\s*absolute/);
     assert.match(styles, /\.context-help\.is-enhanced \.context-help-card\s*\{[\s\S]*?position:\s*fixed/);
-    assert.match(styles, /max-height:\s*min\(28rem, calc\(100vh - 2rem\)\)/);
+    assert.match(styles, /\.context-help-backdrop\s*\{[\s\S]*?backdrop-filter:\s*blur\(9px\)/);
+    assert.match(styles, /body\.context-help-is-open \.module-sidebar\s*\{[\s\S]*?z-index:\s*140/);
+    assert.match(styles, /\.is-context-help-focus\s*\{[\s\S]*?z-index:\s*90/);
+    assert.match(styles, /\.context-help\.is-enhanced \.context-help-card\s*\{[\s\S]*?visibility:\s*hidden/);
+    assert.match(styles, /\.context-help\.is-enhanced\.is-positioned \.context-help-card/);
+    assert.match(styles, /max-height:\s*min\(24rem, calc\(100vh - 2rem\)\)/);
     assert.match(styles, /overflow:\s*auto/);
     assert.match(styles, /\.context-help-trigger:focus-visible/);
     assert.match(styles, /@media \(max-width:\s*680px\)/);

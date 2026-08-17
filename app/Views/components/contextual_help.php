@@ -22,20 +22,18 @@ $contentId  = $id . '-content';
         aria-label="Abrir ayuda: <?= esc($title, 'attr') ?>"
         aria-controls="<?= esc($contentId, 'attr') ?>"
         aria-expanded="false"
+        aria-haspopup="dialog"
     >
         <span aria-hidden="true">?</span>
     </summary>
     <div
         class="context-help-card"
         id="<?= esc($contentId, 'attr') ?>"
-        role="region"
+        role="dialog"
         aria-labelledby="<?= esc($titleId, 'attr') ?>"
     >
         <header class="context-help-card-header">
-            <div>
-                <span>Ayuda de esta sección</span>
-                <strong id="<?= esc($titleId, 'attr') ?>"><?= esc($title) ?></strong>
-            </div>
+            <strong id="<?= esc($titleId, 'attr') ?>"><?= esc($title) ?></strong>
             <button class="context-help-close" type="button" aria-label="Cerrar ayuda" data-context-help-close>
                 <span aria-hidden="true">×</span>
             </button>
