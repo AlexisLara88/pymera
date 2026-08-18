@@ -171,42 +171,105 @@ $initial = function_exists('mb_substr')
             <form action="<?= esc(site_url('account/password'), 'attr') ?>" method="post" data-password-form>
                 <?= csrf_field() ?>
                 <div class="security-fields">
-                    <label for="currentPassword">
-                        <span>Contraseña actual</span>
-                        <input
-                            id="currentPassword"
-                            name="current_password"
-                            type="password"
-                            autocomplete="current-password"
-                            maxlength="72"
-                            required
-                        >
-                    </label>
-                    <label for="newPassword">
-                        <span>Nueva contraseña</span>
-                        <input
-                            id="newPassword"
-                            name="new_password"
-                            type="password"
-                            autocomplete="new-password"
-                            minlength="8"
-                            maxlength="72"
-                            aria-describedby="passwordRequirements"
-                            required
-                        >
-                    </label>
-                    <label for="newPasswordConfirmation">
-                        <span>Confirmar nueva contraseña</span>
-                        <input
-                            id="newPasswordConfirmation"
-                            name="new_password_confirmation"
-                            type="password"
-                            autocomplete="new-password"
-                            minlength="8"
-                            maxlength="72"
-                            required
-                        >
-                    </label>
+                    <div class="security-field">
+                        <label for="currentPassword">Contraseña actual</label>
+                        <div class="password-control">
+                            <input
+                                id="currentPassword"
+                                name="current_password"
+                                type="password"
+                                autocomplete="current-password"
+                                maxlength="72"
+                                required
+                            >
+                            <button
+                                class="password-visibility"
+                                type="button"
+                                data-password-toggle="currentPassword"
+                                aria-controls="currentPassword"
+                                aria-label="Mostrar contraseña actual"
+                                aria-pressed="false"
+                                title="Mostrar contraseña actual"
+                            >
+                                <svg class="password-eye-show" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path>
+                                    <circle cx="12" cy="12" r="2.6"></circle>
+                                </svg>
+                                <svg class="password-eye-hide" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M3 3l18 18"></path>
+                                    <path d="M10.7 6.1A10.8 10.8 0 0 1 12 6c6 0 9.5 6 9.5 6a15.8 15.8 0 0 1-3.1 3.7M6.1 6.2C3.8 8 2.5 12 2.5 12s3.5 6 9.5 6a9.8 9.8 0 0 0 3-.5M9.9 9.8A3 3 0 0 0 14.2 14"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="security-field">
+                        <label for="newPassword">Nueva contraseña</label>
+                        <div class="password-control">
+                            <input
+                                id="newPassword"
+                                name="new_password"
+                                type="password"
+                                autocomplete="new-password"
+                                minlength="8"
+                                maxlength="72"
+                                aria-describedby="passwordRequirements newPasswordFeedback"
+                                required
+                            >
+                            <button
+                                class="password-visibility"
+                                type="button"
+                                data-password-toggle="newPassword"
+                                aria-controls="newPassword"
+                                aria-label="Mostrar nueva contraseña"
+                                aria-pressed="false"
+                                title="Mostrar nueva contraseña"
+                            >
+                                <svg class="password-eye-show" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path>
+                                    <circle cx="12" cy="12" r="2.6"></circle>
+                                </svg>
+                                <svg class="password-eye-hide" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M3 3l18 18"></path>
+                                    <path d="M10.7 6.1A10.8 10.8 0 0 1 12 6c6 0 9.5 6 9.5 6a15.8 15.8 0 0 1-3.1 3.7M6.1 6.2C3.8 8 2.5 12 2.5 12s3.5 6 9.5 6a9.8 9.8 0 0 0 3-.5M9.9 9.8A3 3 0 0 0 14.2 14"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <small class="password-feedback" id="newPasswordFeedback" aria-live="polite"></small>
+                    </div>
+                    <div class="security-field">
+                        <label for="newPasswordConfirmation">Confirmar nueva contraseña</label>
+                        <div class="password-control">
+                            <input
+                                id="newPasswordConfirmation"
+                                name="new_password_confirmation"
+                                type="password"
+                                autocomplete="new-password"
+                                minlength="8"
+                                maxlength="72"
+                                aria-describedby="newPasswordConfirmationFeedback"
+                                required
+                            >
+                            <button
+                                class="password-visibility"
+                                type="button"
+                                data-password-toggle="newPasswordConfirmation"
+                                aria-controls="newPasswordConfirmation"
+                                aria-label="Mostrar confirmación de contraseña"
+                                aria-pressed="false"
+                                title="Mostrar confirmación de contraseña"
+                            >
+                                <svg class="password-eye-show" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path>
+                                    <circle cx="12" cy="12" r="2.6"></circle>
+                                </svg>
+                                <svg class="password-eye-hide" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M3 3l18 18"></path>
+                                    <path d="M10.7 6.1A10.8 10.8 0 0 1 12 6c6 0 9.5 6 9.5 6a15.8 15.8 0 0 1-3.1 3.7M6.1 6.2C3.8 8 2.5 12 2.5 12s3.5 6 9.5 6a9.8 9.8 0 0 0 3-.5M9.9 9.8A3 3 0 0 0 14.2 14"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <small class="password-feedback" id="newPasswordConfirmationFeedback" aria-live="polite"></small>
+                    </div>
                 </div>
 
                 <p class="security-requirements" id="passwordRequirements">

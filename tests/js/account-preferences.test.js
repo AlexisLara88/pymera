@@ -37,7 +37,26 @@ test('account security uses an independent native password form', () => {
     assert.match(view, /autocomplete="current-password"/);
     assert.match(view, /autocomplete="new-password"/);
     assert.match(view, /data-password-form/);
-    assert.doesNotMatch(script, /current_password|new_password/);
+    assert.match(view, /data-password-toggle="currentPassword"/);
+    assert.match(view, /data-password-toggle="newPassword"/);
+    assert.match(view, /data-password-toggle="newPasswordConfirmation"/);
+    assert.match(view, /aria-pressed="false"/);
+    assert.match(view, /newPasswordFeedback/);
+    assert.match(view, /newPasswordConfirmationFeedback/);
+});
+
+test('password enhancement validates while typing and preserves server authority', () => {
+    assert.match(script, /initializePasswordForm/);
+    assert.match(script, /addEventListener\('input', validatePair\)/);
+    assert.match(script, /addEventListener\('blur', validatePair\)/);
+    assert.match(script, /setCustomValidity/);
+    assert.match(script, /Array\.from\(value\)\.length/);
+    assert.match(script, /characterCount < minimumLength/);
+    assert.match(script, /value !== newPassword\.value/);
+    assert.match(script, /value === currentPassword\.value/);
+    assert.match(script, /target\.type = willShow \? 'text' : 'password'/);
+    assert.match(script, /aria-pressed/);
+    assert.doesNotMatch(script, /fetch\(|window\.Vue|business_id|user_id/);
 });
 
 test('business accounts can choose one persistent CRM composition', () => {
@@ -66,6 +85,10 @@ test('preference styles support selection, keyboard focus and both visual previe
     assert.match(styles, /\.crm-layout-preview\.is-tabs/);
     assert.match(styles, /\.preferences-security/);
     assert.match(styles, /\.security-fields input:focus-visible/);
+    assert.match(styles, /\.security-fields input\.is-valid/);
+    assert.match(styles, /\.security-fields input\.is-invalid/);
+    assert.match(styles, /\.password-visibility\[aria-pressed="true"\]/);
+    assert.match(styles, /\.password-feedback\.is-invalid/);
 
     const openBraces = (styles.match(/{/g) || []).length;
     const closeBraces = (styles.match(/}/g) || []).length;

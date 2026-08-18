@@ -60,6 +60,9 @@ final class AccountPasswordTest extends CIUnitTestCase
             'action="' . site_url('account/password') . '"',
             $response->getBody(),
         );
+        $this->assertSame(3, substr_count($response->getBody(), 'data-password-toggle='));
+        $response->assertSee('newPasswordFeedback');
+        $response->assertSee('newPasswordConfirmationFeedback');
     }
 
     public function testPlatformAdministratorCanUseTheSamePersonalSecurityForm(): void

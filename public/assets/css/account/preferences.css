@@ -366,21 +366,28 @@
     margin-top: 25px;
 }
 
-.security-fields label {
+.security-field {
     display: grid;
     gap: 8px;
+}
+
+.security-field > label {
     color: var(--ink);
     font-weight: 750;
 }
 
-.security-fields label:first-child {
+.security-field:first-child {
     grid-column: 1 / -1;
+}
+
+.password-control {
+    position: relative;
 }
 
 .security-fields input {
     width: 100%;
     min-height: 48px;
-    padding: 11px 14px;
+    padding: 11px 52px 11px 14px;
     border: 1px solid var(--line);
     border-radius: 13px;
     outline: none;
@@ -399,6 +406,83 @@
     border-color: var(--brand-2);
     background: var(--surface);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-2) 17%, transparent);
+}
+
+.security-fields input.is-valid {
+    border-color: color-mix(in srgb, var(--green) 72%, var(--line));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--green) 13%, transparent);
+}
+
+.security-fields input.is-invalid {
+    border-color: color-mix(in srgb, var(--red) 78%, var(--line));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--red) 12%, transparent);
+}
+
+.password-visibility {
+    position: absolute;
+    top: 50%;
+    right: 9px;
+    display: grid;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    place-items: center;
+    border: 0;
+    border-radius: 10px;
+    color: var(--muted);
+    background: transparent;
+    cursor: pointer;
+    transform: translateY(-50%);
+    transition: color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.password-visibility:hover {
+    color: var(--brand-2);
+    background: color-mix(in srgb, var(--brand-2) 11%, transparent);
+}
+
+.password-visibility:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--brand-2) 34%, transparent);
+    outline-offset: 2px;
+}
+
+.password-visibility:active {
+    transform: translateY(-50%) scale(.94);
+}
+
+.password-visibility svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.password-eye-hide,
+.password-visibility[aria-pressed="true"] .password-eye-show {
+    display: none;
+}
+
+.password-visibility[aria-pressed="true"] .password-eye-hide {
+    display: block;
+}
+
+.password-feedback {
+    min-height: 19px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.45;
+}
+
+.password-feedback.is-valid {
+    color: color-mix(in srgb, var(--green) 82%, var(--ink));
+}
+
+.password-feedback.is-invalid {
+    color: color-mix(in srgb, var(--red) 84%, var(--ink));
 }
 
 .security-requirements {
