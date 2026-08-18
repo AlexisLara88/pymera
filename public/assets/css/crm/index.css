@@ -899,6 +899,46 @@
     width: min(620px, 100%);
 }
 
+.crm-sale-note-modal {
+    width: min(540px, 100%);
+}
+
+.crm-sale-note-modal > form {
+    padding: 24px 26px 26px;
+}
+
+.crm-sale-note-customer {
+    display: grid;
+    gap: 3px;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--surface-soft);
+}
+
+.crm-sale-note-customer span,
+.crm-sale-note-field small {
+    color: var(--muted);
+    font-size: .75rem;
+}
+
+.crm-sale-note-customer strong {
+    font-size: 1rem;
+}
+
+.crm-sale-note-field {
+    display: grid;
+    gap: 7px;
+    margin-top: 16px;
+    color: var(--ink);
+    font-size: .8rem;
+    font-weight: 800;
+}
+
+.crm-sale-note-field small {
+    font-weight: 500;
+}
+
 .crm-status-modal > form {
     padding: 24px 26px 26px;
 }

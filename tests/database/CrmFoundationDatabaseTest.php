@@ -34,6 +34,7 @@ final class CrmFoundationDatabaseTest extends CIUnitTestCase
 
         $this->assertContains('lifecycle_stage', $contactFields);
         $this->assertContains('acquisition_channel', $contactFields);
+        $this->assertContains('identity_document', $contactFields);
         $this->assertContains('contact_id', $opportunityFields);
         $this->assertContains('estimated_value', $opportunityFields);
         $this->assertContains('next_follow_up_date', $opportunityFields);
@@ -51,6 +52,7 @@ final class CrmFoundationDatabaseTest extends CIUnitTestCase
             'acquisition_channel' => 'referral',
             'email'               => 'maria@example.test',
             'phone'               => '+593 99 000 0000',
+            'identity_document'   => 'CI-1712345678',
             'notes'               => 'Busca un pastel de boda.',
         ], true);
 
@@ -61,6 +63,7 @@ final class CrmFoundationDatabaseTest extends CIUnitTestCase
         $this->assertSame('María Pérez', $contact['display_name']);
         $this->assertSame('prospect', $contact['lifecycle_stage']);
         $this->assertSame('referral', $contact['acquisition_channel']);
+        $this->assertSame('CI-1712345678', $contact['identity_document']);
 
         $this->assertTrue($model->delete($contactId));
         $this->assertNull($model->find($contactId));
@@ -79,6 +82,7 @@ final class CrmFoundationDatabaseTest extends CIUnitTestCase
             'lifecycle_stage'     => 'subscriber',
             'acquisition_channel' => 'telepathy',
             'email'               => 'not-an-email',
+            'identity_document'   => str_repeat('1', 41),
         ]);
 
         $this->assertFalse($result);
@@ -86,6 +90,7 @@ final class CrmFoundationDatabaseTest extends CIUnitTestCase
         $this->assertArrayHasKey('lifecycle_stage', $model->errors());
         $this->assertArrayHasKey('acquisition_channel', $model->errors());
         $this->assertArrayHasKey('email', $model->errors());
+        $this->assertArrayHasKey('identity_document', $model->errors());
     }
 
     public function testOpportunityModelPersistsAndSoftDeletesAValidOpportunity(): void

@@ -66,7 +66,7 @@ final class CrmUseCasesTest extends CIUnitTestCase
             static fn (string $route): bool => str_starts_with($route, 'app/clientes'),
         ));
 
-        $this->assertCount(10, $crmRoutes);
+        $this->assertCount(11, $crmRoutes);
         $this->assertContains('app/clientes', $crmRoutes);
         $this->assertContains('app/clientes/contactos', $crmRoutes);
         $this->assertContains('app/clientes/oportunidades', $crmRoutes);
@@ -74,6 +74,9 @@ final class CrmUseCasesTest extends CIUnitTestCase
         $this->assertContains('app/clientes/oportunidades/([0-9]+)/nota-venta', $crmRoutes);
         $this->get('/app/clientes')->assertRedirectTo('/login');
         $this->get('/app/clientes/oportunidades/1/nota-venta')->assertRedirectTo('/login');
+        $this->post('/app/clientes/oportunidades/1/nota-venta', [
+            csrf_token() => csrf_hash(),
+        ])->assertRedirectTo('/login');
     }
 
     public function testOwnerCanReadTheFunctionalCrmWithRealAndEscapedData(): void
@@ -180,6 +183,7 @@ final class CrmUseCasesTest extends CIUnitTestCase
                 'lifecycle_stage'     => 'subscriber',
                 'acquisition_channel' => 'telepathy',
                 'email'               => 'invalid',
+                'identity_document'   => str_repeat('1', 41),
             ]);
             $this->fail('Invalid CRM contact data should be rejected.');
         } catch (CrmValidationException $exception) {
@@ -190,6 +194,7 @@ final class CrmUseCasesTest extends CIUnitTestCase
                     'lifecycle_stage',
                     'acquisition_channel',
                     'email',
+                    'identity_document',
                 ],
                 array_keys($exception->errors()),
             );
@@ -452,6 +457,7 @@ final class CrmUseCasesTest extends CIUnitTestCase
         $this->assertTrue((new ContactModel())->update($contactId, [
             'email' => 'maria@example.test',
             'phone' => '+593 99 000 0000',
+            'identity_document' => 'CI-1712345678',
         ]));
         $this->createMembership($user, $businessId);
         $this->actingAs($user);
@@ -472,6 +478,7 @@ final class CrmUseCasesTest extends CIUnitTestCase
         $this->assertSame('María Pérez', $saleNote['customer_name']);
         $this->assertSame('165.50', $saleNote['amount']);
         $this->assertSame('2026-08-14', $saleNote['sale_date']);
+        $this->assertSame('CI-1712345678', $saleNote['customer_identity_document']);
         $this->assertArrayNotHasKey('number', $saleNote);
         $this->assertArrayNotHasKey('tax_id', $saleNote);
         $this->assertArrayNotHasKey('tax', $saleNote);
@@ -497,6 +504,111 @@ final class CrmUseCasesTest extends CIUnitTestCase
         // The feature-test response parser wraps binary bodies as HTML. The
         // renderer assertion above verifies the raw PDF signature separately.
         $this->assertStringContainsString('%PDF-', $result->getBody());
+    }
+
+    public function testMissingIdentityIsRequestedPersistedAndAuditedBeforePdfDownload(): void
+    {
+        $user       = $this->createUser('sale-note-identity');
+        $businessId = $this->createBusiness('Negocio autorizado');
+        $this->createCompleteProfile($businessId);
+        $contactId = $this->createContact($businessId, 'Cliente sin documento', 'client');
+        $this->createMembership($user, $businessId);
+        $this->actingAs($user);
+        $opportunityId = (new OpportunityService())->create([
+            ...$this->opportunityPayload($contactId),
+            'need' => 'Pedido confirmado',
+        ]);
+        (new OpportunityStatusService())->change($opportunityId, [
+            'status'         => 'won',
+            'finance_action' => 'record',
+            'sale_amount'    => '125.00',
+            'sale_date'      => '2026-08-18',
+        ]);
+
+        $missingIdentity = $this
+            ->withSession($_SESSION)
+            ->get('/app/clientes/oportunidades/' . $opportunityId . '/nota-venta');
+        $missingIdentity->assertRedirectTo(
+            '/app/clientes?view=tabs&section=opportunities',
+        );
+
+        try {
+            (new SaleNoteService())->forOpportunity($opportunityId);
+            $this->fail('A sale note without DNI/CI must not be generated.');
+        } catch (SaleNoteUnavailableException $exception) {
+            $this->assertStringContainsString('DNI/CI', $exception->getMessage());
+        }
+
+        $result = $this
+            ->withSession($_SESSION)
+            ->post('/app/clientes/oportunidades/' . $opportunityId . '/nota-venta', [
+                'identity_document' => '  CI-0912345678  ',
+                csrf_token()        => csrf_hash(),
+            ]);
+
+        $result->assertOK();
+        $result->assertHeader('Content-Type', 'application/pdf');
+        $this->assertStringContainsString('%PDF-', $result->getBody());
+        $this->seeInDatabase('contacts', [
+            'id'                => $contactId,
+            'business_id'       => $businessId,
+            'identity_document' => 'CI-0912345678',
+        ]);
+        $this->seeInDatabase('audit_events', [
+            'business_id' => $businessId,
+            'user_id'     => $user->id,
+            'entity_type' => 'contact',
+            'entity_id'   => $contactId,
+            'action'      => 'updated',
+        ]);
+    }
+
+    public function testSaleNoteIdentityCompletionRejectsInvalidAndForeignData(): void
+    {
+        $user             = $this->createUser('sale-note-identity-guard');
+        $businessId       = $this->createBusiness('Negocio autorizado');
+        $otherBusinessId  = $this->createBusiness('Negocio ajeno');
+        $this->createCompleteProfile($businessId);
+        $ownContactId     = $this->createContact($businessId, 'Cliente propio', 'client');
+        $foreignContactId = $this->createContact($otherBusinessId, 'Cliente ajeno', 'client');
+        $this->createMembership($user, $businessId);
+        $this->actingAs($user);
+        $ownOpportunityId = $this->createOpportunity(
+            $businessId,
+            $ownContactId,
+            'Venta propia',
+            'won',
+        );
+        $foreignOpportunityId = $this->createOpportunity(
+            $otherBusinessId,
+            $foreignContactId,
+            'Venta ajena',
+            'won',
+        );
+        (new OpportunityStatusService())->change($ownOpportunityId, [
+            'status'         => 'won',
+            'finance_action' => 'record',
+            'sale_amount'    => '100.00',
+            'sale_date'      => '2026-08-18',
+        ]);
+
+        $invalid = $this
+            ->withSession($_SESSION)
+            ->post('/app/clientes/oportunidades/' . $ownOpportunityId . '/nota-venta', [
+                'identity_document' => '',
+                csrf_token()        => csrf_hash(),
+            ]);
+        $invalid->assertRedirectTo('/app/clientes?view=tabs&section=opportunities');
+        $this->assertNull((new ContactModel())->find($ownContactId)['identity_document']);
+
+        $foreign = $this
+            ->withSession($_SESSION)
+            ->post('/app/clientes/oportunidades/' . $foreignOpportunityId . '/nota-venta', [
+                'identity_document' => 'CI-EXTERNA',
+                csrf_token()        => csrf_hash(),
+            ]);
+        $foreign->assertStatus(403);
+        $this->assertNull((new ContactModel())->find($foreignContactId)['identity_document']);
     }
 
     public function testSaleNoteRequiresARecordedSaleAndRejectsAnotherBusiness(): void

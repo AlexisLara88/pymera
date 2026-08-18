@@ -326,6 +326,7 @@ const emptyContact = () => ({
     acquisition_channel: '',
     email: '',
     phone: '',
+    identity_document: '',
     notes: '',
 });
 
@@ -360,6 +361,7 @@ const contactPayload = (payload = {}) => ({
     acquisition_channel: String(payload.acquisition_channel || ''),
     email: String(payload.email || ''),
     phone: String(payload.phone || ''),
+    identity_document: String(payload.identity_document || ''),
     notes: String(payload.notes || ''),
 });
 
@@ -656,6 +658,180 @@ if (!editorApp && editorRoot) {
             ...initialEditor.payload,
         });
     }
+}
+
+const saleNoteRoot = document.getElementById('crmSaleNoteApp');
+let saleNoteApp = null;
+
+const saleNotePayload = (payload = {}) => ({
+    opportunity_id: Number(payload.opportunity_id) || 0,
+    contact_name: String(payload.contact_name || 'Contacto'),
+    identity_document: String(payload.identity_document || ''),
+});
+
+const rememberSaleNoteIdentity = (opportunityId, identityDocument) => {
+    document.querySelectorAll('[data-crm-sale-note]').forEach((trigger) => {
+        const payload = saleNotePayload(parsePayload(trigger.dataset.saleNote));
+
+        if (payload.opportunity_id !== Number(opportunityId)) {
+            return;
+        }
+
+        payload.identity_document = String(identityDocument || '').trim();
+        trigger.dataset.saleNote = JSON.stringify(payload);
+    });
+};
+
+if (saleNoteRoot && window.Vue) {
+    try {
+        const saleNoteBaseUrl = saleNoteRoot.dataset.saleNoteBaseUrl || '';
+
+        saleNoteApp = window.Vue.createApp({
+            data() {
+                return {
+                    open: false,
+                    opportunityId: 0,
+                    contactName: 'Contacto',
+                    identityDocument: '',
+                    returnFocusTo: null,
+                };
+            },
+            computed: {
+                action() {
+                    return this.opportunityId
+                        ? `${saleNoteBaseUrl}/${this.opportunityId}/nota-venta`
+                        : saleNoteBaseUrl;
+                },
+            },
+            methods: {
+                show(payload, trigger = null) {
+                    const normalized = saleNotePayload(payload);
+
+                    this.opportunityId = normalized.opportunity_id;
+                    this.contactName = normalized.contact_name;
+                    this.identityDocument = normalized.identity_document;
+                    this.returnFocusTo = trigger;
+                    this.open = true;
+                    document.body.classList.add('crm-modal-is-open');
+                    document.querySelector('.business-shell')?.setAttribute('inert', '');
+                    this.$nextTick(() => {
+                        this.$refs.form.action = this.action;
+                        this.$refs.identityDocument?.focus();
+                    });
+                },
+                close() {
+                    this.open = false;
+                    document.body.classList.remove('crm-modal-is-open');
+                    document.querySelector('.business-shell')?.removeAttribute('inert');
+                    this.$nextTick(() => {
+                        this.returnFocusTo?.focus();
+                        this.returnFocusTo = null;
+                    });
+                },
+                handleSubmit() {
+                    rememberSaleNoteIdentity(this.opportunityId, this.identityDocument);
+                    window.setTimeout(() => this.close(), 300);
+                },
+                handleKeydown(event) {
+                    if (event.key === 'Escape') {
+                        event.preventDefault();
+                        this.close();
+
+                        return;
+                    }
+
+                    if (event.key !== 'Tab') {
+                        return;
+                    }
+
+                    const focusable = focusableElements(this.$refs.dialog);
+
+                    if (focusable.length === 0) {
+                        event.preventDefault();
+                        this.$refs.dialog?.focus();
+
+                        return;
+                    }
+
+                    const first = focusable[0];
+                    const last = focusable[focusable.length - 1];
+
+                    if (event.shiftKey && document.activeElement === first) {
+                        event.preventDefault();
+                        last.focus();
+                    } else if (!event.shiftKey && document.activeElement === last) {
+                        event.preventDefault();
+                        first.focus();
+                    }
+                },
+            },
+        }).mount(saleNoteRoot);
+    } catch (error) {
+        saleNoteApp = null;
+    }
+}
+
+const showSaleNoteFallback = (payload) => {
+    const normalized = saleNotePayload(payload);
+    const layer = saleNoteRoot?.querySelector('.crm-sale-note-modal-layer');
+    const form = saleNoteRoot?.querySelector('form');
+    const contactName = saleNoteRoot?.querySelector('.crm-sale-note-customer strong');
+    const identityDocument = form?.elements.namedItem('identity_document');
+
+    if (!layer || !form || !identityDocument || normalized.opportunity_id < 1) {
+        return;
+    }
+
+    form.action = `${saleNoteRoot.dataset.saleNoteBaseUrl}/${normalized.opportunity_id}/nota-venta`;
+    form.dataset.opportunityId = String(normalized.opportunity_id);
+    contactName.textContent = normalized.contact_name;
+    identityDocument.value = normalized.identity_document;
+    layer.classList.add('is-open');
+    layer.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('crm-modal-is-open');
+    document.querySelector('.business-shell')?.setAttribute('inert', '');
+    identityDocument.focus();
+};
+
+document.querySelectorAll('[data-crm-sale-note]').forEach((trigger) => {
+    trigger.addEventListener('click', (event) => {
+        const payload = saleNotePayload(parsePayload(trigger.dataset.saleNote));
+
+        if (payload.identity_document.trim() !== '') {
+            return;
+        }
+
+        event.preventDefault();
+
+        if (saleNoteApp) {
+            saleNoteApp.show(payload, trigger);
+
+            return;
+        }
+
+        showSaleNoteFallback(payload);
+    });
+});
+
+if (!saleNoteApp && saleNoteRoot) {
+    const closeFallback = () => {
+        saleNoteRoot.querySelector('.crm-sale-note-modal-layer')?.classList.remove('is-open');
+        document.body.classList.remove('crm-modal-is-open');
+        document.querySelector('.business-shell')?.removeAttribute('inert');
+    };
+
+    saleNoteRoot.querySelectorAll('.crm-modal-close, .crm-modal-actions .button-ghost')
+        .forEach((trigger) => trigger.addEventListener('click', closeFallback));
+    saleNoteRoot.querySelector('form')?.addEventListener('submit', () => {
+        const form = saleNoteRoot.querySelector('form');
+        const identityDocument = form?.elements.namedItem('identity_document');
+
+        rememberSaleNoteIdentity(
+            Number(form?.dataset.opportunityId) || 0,
+            identityDocument?.value || '',
+        );
+        window.setTimeout(closeFallback, 300);
+    });
 }
 
 const statusRoot = document.getElementById('crmStatusApp');

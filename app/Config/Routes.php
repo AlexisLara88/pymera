@@ -80,6 +80,7 @@ if ($alphaAccess->functionalRoutesEnabled) {
             $routes->post('clientes/oportunidades/(:num)', 'OpportunityController::update/$1', ['as' => 'crm.opportunities.update']);
             $routes->post('clientes/oportunidades/(:num)/estado', 'OpportunityController::changeStatus/$1', ['as' => 'crm.opportunities.status']);
             $routes->get('clientes/oportunidades/(:num)/nota-venta', 'SaleNoteController::download/$1', ['as' => 'crm.opportunities.sale-note']);
+            $routes->post('clientes/oportunidades/(:num)/nota-venta', 'SaleNoteController::completeAndDownload/$1', ['as' => 'crm.opportunities.sale-note.complete']);
             $routes->post('clientes/oportunidades/(:num)/archivar', 'OpportunityController::archive/$1', ['as' => 'crm.opportunities.archive']);
         });
     });

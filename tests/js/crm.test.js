@@ -148,6 +148,8 @@ test('won recorded opportunities expose compact accessible action icons', () => 
     assert.match(view, /title="Descargar"/);
     assert.match(view, /title="Archivar"/);
     assert.match(view, /aria-label="Descargar nota de venta"/);
+    assert.match(view, /data-crm-sale-note/);
+    assert.match(view, /identity_document/);
     assert.match(view, /\/nota-venta/);
     assert.match(styles, /\.crm-icon-action-edit\s*\{[\s\S]*?var\(--blue-soft\)/);
     assert.match(styles, /\.crm-icon-action-download\s*\{[\s\S]*?var\(--green-soft\)/);
@@ -160,10 +162,26 @@ test('sale notes are non-fiscal PDFs generated on demand outside the project', (
     assert.match(saleNoteView, /no constituye factura/i);
     assert.match(saleNoteView, /Generado con PyMERA/);
     assert.match(saleNoteView, /pymera-symbol\.svg/);
+    assert.match(saleNoteView, /DNI\/CI/);
     assert.doesNotMatch(saleNoteView, /\bNIT\b|\bRUC\b|N[úu]mero|SUBTOTAL|\bIVA\b|Impuesto/i);
     assert.match(saleNoteRenderer, /sys_get_temp_dir\(\)/);
     assert.match(saleNoteRenderer, /Destination::STRING_RETURN/);
     assert.doesNotMatch(saleNoteRenderer, /OutputFile|Destination::FILE/);
+});
+
+test('missing DNI or CI opens a focused Vue form and preserves a native fallback', () => {
+    assert.match(editors, /id="crmSaleNoteApp"/);
+    assert.match(editors, /name="identity_document"/);
+    assert.match(editors, /Guardar y descargar/);
+    assert.match(editors, /<\?= csrf_field\(\) \?>/);
+    assert.match(script, /saleNotePayload/);
+    assert.match(script, /payload\.identity_document\.trim\(\) !== ''/);
+    assert.match(script, /saleNoteApp\.show\(payload, trigger\)/);
+    assert.match(script, /showSaleNoteFallback/);
+    assert.match(script, /rememberSaleNoteIdentity/);
+    assert.match(script, /trigger\.dataset\.saleNote = JSON\.stringify\(payload\)/);
+    assert.match(script, /crm-modal-is-open/);
+    assert.match(styles, /\.crm-sale-note-modal\s*\{[\s\S]*?width:\s*min\(540px, 100%\)/);
 });
 
 test('contact actions are visually distinct and share one responsive row', () => {

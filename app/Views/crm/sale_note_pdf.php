@@ -7,6 +7,7 @@
  *     customer_name: string,
  *     customer_email: string|null,
  *     customer_phone: string|null,
+ *     customer_identity_document: string,
  *     description: string,
  *     sale_date: string,
  *     amount: string
@@ -74,6 +75,7 @@ $amount = $saleNote['currency_code'] . ' '
         <div class="section-title">Cliente</div>
         <table class="customer">
             <tr><td class="label">Nombre</td><td><?= esc($saleNote['customer_name']) ?></td></tr>
+            <tr><td class="label">DNI/CI</td><td><?= esc($saleNote['customer_identity_document']) ?></td></tr>
             <?php if ($saleNote['customer_email'] !== null): ?>
                 <tr><td class="label">Correo</td><td><?= esc($saleNote['customer_email']) ?></td></tr>
             <?php endif ?>

@@ -21,6 +21,7 @@ class ContactModel extends Model
         'acquisition_channel',
         'email',
         'phone',
+        'identity_document',
         'notes',
     ];
     protected $validationRules = [
@@ -31,6 +32,7 @@ class ContactModel extends Model
         'acquisition_channel' => 'permit_empty|in_list[instagram,whatsapp,referral,local_search,direct,other]',
         'email'               => 'permit_empty|valid_email|max_length[254]',
         'phone'               => 'permit_empty|max_length[40]',
+        'identity_document'   => 'permit_empty|max_length[40]',
         'notes'               => 'permit_empty|max_length[2000]',
     ];
 

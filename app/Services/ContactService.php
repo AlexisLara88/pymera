@@ -95,6 +95,52 @@ final class ContactService
         });
     }
 
+    public function updateIdentityDocumentForSaleNote(
+        int $contactId,
+        mixed $identityDocument,
+    ): void {
+        $this->authorization->require(BusinessPermissionCatalog::CRM_MANAGE);
+
+        $businessId = $this->context->businessId();
+        $contact = $contactId < 1
+            ? null
+            : $this->contacts->findOwnedReference($contactId, $businessId);
+
+        if ($contact === null) {
+            throw BusinessAccessException::unauthorizedEntity();
+        }
+
+        if (! is_string($identityDocument)) {
+            throw new CrmValidationException([
+                'identity_document' => 'Ingresá un DNI/CI válido.',
+            ]);
+        }
+
+        $identityDocument = trim($identityDocument);
+
+        if ($identityDocument === '') {
+            throw new CrmValidationException([
+                'identity_document' => 'Ingresá el DNI/CI para generar la nota de venta.',
+            ]);
+        }
+
+        if (mb_strlen($identityDocument) > 40) {
+            throw new CrmValidationException([
+                'identity_document' => 'El DNI/CI no puede superar los 40 caracteres.',
+            ]);
+        }
+
+        $this->transaction(function () use ($contactId, $identityDocument): void {
+            if (! $this->contacts->update($contactId, [
+                'identity_document' => $identityDocument,
+            ])) {
+                throw new CrmOperationException('No fue posible actualizar el DNI/CI del contacto.');
+            }
+
+            $this->audit->record('contact', $contactId, 'updated');
+        });
+    }
+
     public function archive(int $contactId): void
     {
         $this->authorization->require(BusinessPermissionCatalog::CRM_MANAGE);
@@ -152,6 +198,7 @@ final class ContactService
             'acquisition_channel' => '',
             'email'               => '',
             'phone'               => '',
+            'identity_document'   => '',
             'notes'               => '',
         ];
         $source = $existing === null ? $defaults : [...$defaults, ...$existing];
@@ -203,6 +250,10 @@ final class ContactService
             $errors['phone'] = 'El teléfono no puede superar los 40 caracteres.';
         }
 
+        if (mb_strlen($data['identity_document']) > 40) {
+            $errors['identity_document'] = 'El DNI/CI no puede superar los 40 caracteres.';
+        }
+
         if (mb_strlen($data['notes']) > 2000) {
             $errors['notes'] = 'Las notas no pueden superar los 2000 caracteres.';
         }
@@ -220,6 +271,9 @@ final class ContactService
                 : $data['acquisition_channel'],
             'email' => $data['email'] === '' ? null : mb_strtolower($data['email']),
             'phone' => $data['phone'] === '' ? null : $data['phone'],
+            'identity_document' => $data['identity_document'] === ''
+                ? null
+                : $data['identity_document'],
             'notes' => $data['notes'] === '' ? null : $data['notes'],
         ];
     }

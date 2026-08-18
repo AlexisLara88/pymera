@@ -17,6 +17,7 @@ $contactFields = [
     'acquisition_channel',
     'email',
     'phone',
+    'identity_document',
     'notes',
 ];
 $opportunityFields = [
@@ -137,6 +138,11 @@ $submittedValue = static function (string $field, string $type, string $fallback
                         <span>Teléfono</span>
                         <input class="form-control" name="phone" maxlength="40" v-model="contact.phone" value="<?= $submittedValue('phone', 'contact') ?>">
                     </label>
+                    <label>
+                        <span>DNI/CI</span>
+                        <input class="form-control" name="identity_document" maxlength="40" autocomplete="off" v-model="contact.identity_document" value="<?= $submittedValue('identity_document', 'contact') ?>" aria-invalid="<?= $formError('identity_document', 'contact') !== null ? 'true' : 'false' ?>">
+                        <?php if ($formError('identity_document', 'contact') !== null): ?><small class="field-error"><?= esc($formError('identity_document', 'contact')) ?></small><?php endif ?>
+                    </label>
                     <label class="is-wide">
                         <span>Notas</span>
                         <textarea class="form-control" name="notes" rows="3" maxlength="2000" v-model="contact.notes"></textarea>
@@ -220,6 +226,48 @@ $submittedValue = static function (string $field, string $type, string $fallback
                 <footer class="crm-modal-actions">
                     <a class="button button-ghost" href="#" @click.prevent="closeOpportunity">Cancelar</a>
                     <button class="button button-primary" type="submit" ref="opportunitySubmit">Crear oportunidad</button>
+                </footer>
+            </form>
+        </section>
+    </div>
+</div>
+
+<div
+    class="crm-sale-note-app"
+    id="crmSaleNoteApp"
+    data-sale-note-base-url="<?= esc(site_url('app/clientes/oportunidades'), 'attr') ?>"
+>
+    <div
+        class="crm-modal-layer crm-sale-note-modal-layer"
+        :class="{ 'is-open': open }"
+        :aria-hidden="open ? 'false' : 'true'"
+        @click.self="close"
+        @keydown="handleKeydown"
+    >
+        <section class="crm-modal crm-sale-note-modal" role="dialog" aria-modal="true" aria-labelledby="crmSaleNoteTitle" aria-describedby="crmSaleNoteDescription" tabindex="-1" ref="dialog">
+            <header class="crm-modal-header">
+                <div>
+                    <span class="section-kicker">Nota de venta</span>
+                    <h2 id="crmSaleNoteTitle">Completá los datos del cliente</h2>
+                    <p id="crmSaleNoteDescription">Este dato se guardará en el contacto y se utilizará en la nota.</p>
+                </div>
+                <button class="crm-modal-close" type="button" aria-label="Cerrar" @click="close"><span aria-hidden="true"></span></button>
+            </header>
+
+            <form action="" method="post" ref="form" @submit="handleSubmit">
+                <?= csrf_field() ?>
+                <div class="crm-sale-note-customer">
+                    <span>Cliente</span>
+                    <strong v-text="contactName"></strong>
+                </div>
+                <label class="crm-sale-note-field">
+                    <span>DNI/CI</span>
+                    <input class="form-control" name="identity_document" maxlength="40" autocomplete="off" required v-model.trim="identityDocument" ref="identityDocument">
+                    <small>Se solicita únicamente para completar la nota de venta comercial.</small>
+                </label>
+                <footer class="crm-modal-actions">
+                    <button class="button button-ghost" type="button" @click="close">Cancelar</button>
+                    <button class="button button-primary" type="submit">Guardar y descargar</button>
                 </footer>
             </form>
         </section>

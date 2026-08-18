@@ -336,6 +336,12 @@ $jsonAttribute = static fn (array $value): string => esc(
                                                         href="<?= site_url('app/clientes/oportunidades/' . $opportunity['id'] . '/nota-venta') ?>"
                                                         title="Descargar"
                                                         aria-label="Descargar nota de venta"
+                                                        data-crm-sale-note
+                                                        data-sale-note="<?= $jsonAttribute([
+                                                            'opportunity_id' => (int) $opportunity['id'],
+                                                            'contact_name' => $contactName,
+                                                            'identity_document' => (string) ($contact['identity_document'] ?? ''),
+                                                        ]) ?>"
                                                     >
                                                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11"></path><path d="m7.5 10 4.5 4.5 4.5-4.5"></path><path d="M5 20h14"></path></svg>
                                                         <span class="visually-hidden">Descargar</span>

@@ -16,6 +16,7 @@ final class SaleNotePdfRenderer
      *     customer_name: string,
      *     customer_email: string|null,
      *     customer_phone: string|null,
+     *     customer_identity_document: string,
      *     description: string,
      *     sale_date: string,
      *     amount: string
