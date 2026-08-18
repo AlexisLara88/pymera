@@ -15,34 +15,35 @@ final class UserPreferenceModel extends Model
     protected $allowedFields = [
         'user_id',
         'appearance_theme',
+        'crm_view_mode',
     ];
     protected $validationRules = [
         'user_id'          => 'required|is_natural_no_zero',
         'appearance_theme' => 'required|in_list[light,dark]',
+        'crm_view_mode'     => 'required|in_list[combined,tabs]',
     ];
 
-    public function themeForUser(int $userId): ?string
+    /** @return array<string, mixed>|null */
+    public function preferencesForUser(int $userId): ?array
     {
-        $preference = $this->where('user_id', $userId)->first();
-
-        return $preference === null
-            ? null
-            : (string) $preference['appearance_theme'];
+        return $this->where('user_id', $userId)->first();
     }
 
-    public function saveThemeForUser(int $userId, string $theme): bool
+    public function saveForUser(int $userId, string $theme, string $crmView): bool
     {
-        $preference = $this->where('user_id', $userId)->first();
+        $preference = $this->preferencesForUser($userId);
+        $values = [
+            'appearance_theme' => $theme,
+            'crm_view_mode'    => $crmView,
+        ];
 
         if ($preference === null) {
             return $this->insert([
-                'user_id'          => $userId,
-                'appearance_theme' => $theme,
+                'user_id'  => $userId,
+                ...$values,
             ], false) !== false;
         }
 
-        return $this->update((int) $preference['id'], [
-            'appearance_theme' => $theme,
-        ]);
+        return $this->update((int) $preference['id'], $values);
     }
 }

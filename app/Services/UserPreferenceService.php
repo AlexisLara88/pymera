@@ -14,10 +14,13 @@ use RuntimeException;
  */
 final class UserPreferenceService
 {
-    public const SESSION_LOADED = 'pymera_preferences_loaded';
-    public const SESSION_THEME  = 'pymera_appearance_theme';
+    public const SESSION_LOADED   = 'pymera_preferences_loaded';
+    public const SESSION_THEME    = 'pymera_appearance_theme';
+    public const SESSION_CRM_VIEW = 'pymera_crm_view_mode';
 
-    private const THEMES = ['light', 'dark'];
+    private const THEMES           = ['light', 'dark'];
+    private const CRM_VIEWS        = ['combined', 'tabs'];
+    private const DEFAULT_CRM_VIEW = 'combined';
 
     public function __construct(
         private ?UserPreferenceModel $preferences = null,
@@ -33,9 +36,16 @@ final class UserPreferenceService
             return $this->sessionTheme();
         }
 
-        $theme = $this->preferences->themeForUser($this->authenticatedUserId());
+        $preference = $this->preferences->preferencesForUser($this->authenticatedUserId());
+        $theme = $preference === null ? null : (string) $preference['appearance_theme'];
+        $crmView = $preference === null
+            ? self::DEFAULT_CRM_VIEW
+            : $this->normalizeCrmView($preference['crm_view_mode'] ?? null);
 
-        $this->session->set(self::SESSION_LOADED, true);
+        $this->session->set([
+            self::SESSION_LOADED   => true,
+            self::SESSION_CRM_VIEW => $crmView,
+        ]);
 
         if ($theme === null) {
             $this->session->remove(self::SESSION_THEME);
@@ -51,7 +61,15 @@ final class UserPreferenceService
         return $this->hydrateSession();
     }
 
-    public function updateTheme(mixed $theme): string
+    public function currentCrmView(): string
+    {
+        $this->hydrateSession();
+
+        return $this->normalizeCrmView($this->session->get(self::SESSION_CRM_VIEW));
+    }
+
+    /** @return array{theme: string, crm_view: string} */
+    public function updatePreferences(mixed $theme, mixed $crmView): array
     {
         if (! is_string($theme) || ! in_array($theme, self::THEMES, true)) {
             throw new UserPreferenceValidationException(
@@ -59,16 +77,30 @@ final class UserPreferenceService
             );
         }
 
-        if (! $this->preferences->saveThemeForUser($this->authenticatedUserId(), $theme)) {
-            throw new RuntimeException('No fue posible guardar la preferencia de apariencia.');
+        if (! is_string($crmView) || ! in_array($crmView, self::CRM_VIEWS, true)) {
+            throw new UserPreferenceValidationException(
+                'Seleccioná la vista conjunta o la vista por pestañas.',
+            );
+        }
+
+        if (! $this->preferences->saveForUser(
+            $this->authenticatedUserId(),
+            $theme,
+            $crmView,
+        )) {
+            throw new RuntimeException('No fue posible guardar las preferencias personales.');
         }
 
         $this->session->set([
-            self::SESSION_LOADED => true,
-            self::SESSION_THEME  => $theme,
+            self::SESSION_LOADED   => true,
+            self::SESSION_THEME    => $theme,
+            self::SESSION_CRM_VIEW => $crmView,
         ]);
 
-        return $theme;
+        return [
+            'theme'    => $theme,
+            'crm_view' => $crmView,
+        ];
     }
 
     private function sessionTheme(): ?string
@@ -78,6 +110,13 @@ final class UserPreferenceService
         return is_string($theme) && in_array($theme, self::THEMES, true)
             ? $theme
             : null;
+    }
+
+    private function normalizeCrmView(mixed $crmView): string
+    {
+        return is_string($crmView) && in_array($crmView, self::CRM_VIEWS, true)
+            ? $crmView
+            : self::DEFAULT_CRM_VIEW;
     }
 
     private function authenticatedUserId(): int

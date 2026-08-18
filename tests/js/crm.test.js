@@ -58,23 +58,23 @@ test('CRM is published as a functional MVP module with clear empty states', () =
     assert.match(styles, /\.crm-stage-prospect\s*\{\s*color:\s*var\(--blue\);\s*background:\s*var\(--blue-soft\);\s*\}/);
 });
 
-test('CRM keeps the combined layout and offers a persistent accessible tabbed alternative', () => {
-    assert.match(view, /data-crm-view-switcher data-crm-view="combined"/);
-    assert.match(view, /data-crm-view-option="combined"/);
-    assert.match(view, /data-crm-view-option="tabs"/);
-    assert.match(view, /Vista conjunta/);
-    assert.match(view, /Vista por pestañas/);
+test('CRM consumes the personal composition and keeps accessible tabs', () => {
+    assert.match(view, /data-crm-view-switcher data-crm-view="<\?= esc\(\$crmView, 'attr'\) \?>"/);
+    assert.doesNotMatch(view, /data-crm-view-option/);
+    assert.doesNotMatch(view, /Organización de la pantalla|Vista conjunta|Vista por pestañas/);
     assert.match(view, /role="tablist"/);
     assert.match(view, /data-crm-section-tab="contacts"/);
     assert.match(view, /data-crm-section-tab="opportunities"/);
     assert.match(view, /data-crm-section-panel="contacts"/);
     assert.match(view, /data-crm-section-panel="opportunities"/);
-    assert.match(script, /searchParams\.get\('view'\) === 'tabs'/);
+    assert.match(script, /viewSwitcher\.dataset\.crmView === 'tabs'/);
     assert.match(script, /searchParams\.get\('section'\)/);
-    assert.match(script, /selectView\(requestedView\)/);
+    assert.match(script, /selectView\(preferredView\)/);
+    assert.match(script, /searchParams\.delete\('view'\)/);
     assert.match(script, /history\.replaceState/);
     assert.match(script, /syncCrmReturnContext/);
-    assert.match(script, /name = name/);
+    assert.match(script, /return_section/);
+    assert.doesNotMatch(script, /return_view/);
     assert.match(view, /data-crm-return-context/);
     assert.match(editors, /data-crm-return-context/);
     assert.match(script, /panel\.hidden = false/);

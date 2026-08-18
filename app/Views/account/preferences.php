@@ -4,6 +4,8 @@
  * @var string      $username
  * @var string      $email
  * @var string|null $theme
+ * @var string      $crmView
+ * @var bool        $canConfigureCrm
  * @var string      $returnUrl
  * @var string|null $success
  * @var string|null $error
@@ -62,7 +64,7 @@ $initial = function_exists('mb_substr')
             <span class="section-kicker">Perfil</span>
             <h2><?= esc($username) ?></h2>
             <p><?= esc($email) ?></p>
-            <small>La apariencia pertenece a esta cuenta, aunque accedas a otro negocio en el futuro.</small>
+            <small>Tus preferencias pertenecen a esta cuenta, aunque accedas a otro negocio en el futuro.</small>
         </aside>
 
         <section class="preferences-panel" aria-labelledby="appearanceTitle">
@@ -103,6 +105,46 @@ $initial = function_exists('mb_substr')
                         <span><strong>Oscuro</strong><small>Fondos profundos para reducir el brillo.</small></span>
                     </label>
                 </fieldset>
+
+                <?php if ($canConfigureCrm): ?>
+                    <section class="preferences-subsection" aria-labelledby="crmViewTitle">
+                        <header>
+                            <span class="section-kicker">Clientes y ventas</span>
+                            <h2 id="crmViewTitle">Elegí cómo organizar el CRM</h2>
+                            <p>Esta será la vista que encontrarás cada vez que ingreses al módulo.</p>
+                        </header>
+
+                        <fieldset class="crm-layout-options">
+                            <legend class="visually-hidden">Visualización del CRM</legend>
+                            <label class="appearance-option crm-layout-option">
+                                <input
+                                    type="radio"
+                                    name="crm_view_mode"
+                                    value="combined"
+                                    <?= $crmView === 'combined' ? 'checked' : '' ?>
+                                    required
+                                >
+                                <span class="crm-layout-preview is-combined" aria-hidden="true">
+                                    <i></i><i></i><i></i>
+                                </span>
+                                <span><strong>Vista conjunta</strong><small>Contactos y oportunidades en una misma pantalla.</small></span>
+                            </label>
+                            <label class="appearance-option crm-layout-option">
+                                <input
+                                    type="radio"
+                                    name="crm_view_mode"
+                                    value="tabs"
+                                    <?= $crmView === 'tabs' ? 'checked' : '' ?>
+                                    required
+                                >
+                                <span class="crm-layout-preview is-tabs" aria-hidden="true">
+                                    <b></b><b></b><i></i>
+                                </span>
+                                <span><strong>Vista por pestañas</strong><small>Contactos y oportunidades en espacios separados.</small></span>
+                            </label>
+                        </fieldset>
+                    </section>
+                <?php endif ?>
 
                 <div class="preferences-actions">
                     <button class="button button-primary" type="submit">Guardar preferencias</button>

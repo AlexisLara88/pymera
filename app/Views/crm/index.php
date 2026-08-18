@@ -12,9 +12,11 @@
  * @var array<string, mixed>       $crmSubmitted
  * @var string|null                $crmFormKey
  * @var string                     $today
+ * @var string                     $crmView
  */
 
 $currency = (string) ($business['currency_code'] ?? 'USD');
+$crmView = $crmView === 'tabs' ? 'tabs' : 'combined';
 $money = static fn (int $cents): string => $currency . ' '
     . number_format($cents / 100, 2, ',', '.');
 $date = static function (?string $value): string {
@@ -122,22 +124,7 @@ $jsonAttribute = static fn (array $value): string => esc(
                 <a class="button button-primary" href="#crmContactEditor" data-open-contact-editor>Crear primer contacto</a>
             </section>
         <?php else: ?>
-            <section class="crm-view-switcher" data-crm-view-switcher data-crm-view="combined" aria-label="Opciones de visualización del CRM">
-                <header class="crm-view-switcher-heading">
-                    <div>
-                        <span class="section-kicker">Organización de la pantalla</span>
-                        <strong>Elegí cómo revisar la información comercial</strong>
-                    </div>
-                    <div class="crm-view-options" role="group" aria-label="Tipo de vista">
-                        <button class="crm-view-option is-active" type="button" data-crm-view-option="combined" aria-pressed="true">
-                            Vista conjunta
-                        </button>
-                        <button class="crm-view-option" type="button" data-crm-view-option="tabs" aria-pressed="false">
-                            Vista por pestañas
-                        </button>
-                    </div>
-                </header>
-
+            <section class="crm-view-switcher" data-crm-view-switcher data-crm-view="<?= esc($crmView, 'attr') ?>" aria-label="Información comercial">
                 <div class="crm-section-tabs" role="tablist" aria-label="Secciones de clientes y ventas" data-crm-section-tabs hidden>
                     <button
                         class="crm-section-tab is-active"

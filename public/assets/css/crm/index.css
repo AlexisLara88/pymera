@@ -116,28 +116,6 @@
     gap: 15px;
 }
 
-.crm-view-switcher-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 18px;
-    padding: 14px 16px;
-    border: 1px solid var(--line);
-    border-radius: 17px;
-    background: var(--surface);
-    box-shadow: var(--shadow-small);
-}
-
-.crm-view-switcher-heading > div:first-child {
-    display: grid;
-    gap: 3px;
-}
-
-.crm-view-switcher-heading strong {
-    font-size: .92rem;
-}
-
-.crm-view-options,
 .crm-section-tabs {
     display: inline-flex;
     width: max-content;
@@ -149,7 +127,6 @@
     background: var(--surface-soft);
 }
 
-.crm-view-option,
 .crm-section-tab {
     display: inline-flex;
     min-height: 38px;
@@ -168,19 +145,16 @@
     transition: color .18s ease, background-color .18s ease, box-shadow .18s ease;
 }
 
-.crm-view-option:hover,
 .crm-section-tab:hover {
     color: var(--ink);
     background: color-mix(in srgb, var(--brand-2) 8%, var(--surface));
 }
 
-.crm-view-option:focus-visible,
 .crm-section-tab:focus-visible {
     outline: 3px solid color-mix(in srgb, var(--brand-2) 28%, transparent);
     outline-offset: 2px;
 }
 
-.crm-view-option.is-active,
 .crm-section-tab.is-active {
     color: #fff;
     background: var(--brand-2);
@@ -1100,17 +1074,10 @@ body.crm-modal-is-open .business-shell {
 }
 
 @media (max-width: 720px) {
-    .crm-view-switcher-heading {
-        align-items: stretch;
-        flex-direction: column;
-    }
-
-    .crm-view-options,
     .crm-section-tabs {
         width: 100%;
     }
 
-    .crm-view-option,
     .crm-section-tab {
         flex: 1 1 0;
     }

@@ -29,6 +29,16 @@ test('account preferences offer only concrete light and dark choices', () => {
     assert.match(view, /no modifican la configuración del negocio/);
 });
 
+test('business accounts can choose one persistent CRM composition', () => {
+    assert.match(view, /name="crm_view_mode"/);
+    assert.match(view, /value="combined"/);
+    assert.match(view, /value="tabs"/);
+    assert.match(view, /Vista conjunta/);
+    assert.match(view, /Vista por pestañas/);
+    assert.match(view, /if \(\$canConfigureCrm\)/);
+    assert.doesNotMatch(script, /crm_view_mode|localStorage/);
+});
+
 test('the small enhancement previews and commits through the shared theme controller', () => {
     assert.match(script, /PymeTheme\?\.readPreference/);
     assert.match(script, /PymeTheme\?\.applyTheme/);
@@ -41,6 +51,8 @@ test('preference styles support selection, keyboard focus and both visual previe
     assert.match(styles, /\.appearance-option:has\(input:focus-visible\)/);
     assert.match(styles, /\.appearance-preview\.is-light/);
     assert.match(styles, /\.appearance-preview\.is-dark/);
+    assert.match(styles, /\.crm-layout-preview\.is-combined/);
+    assert.match(styles, /\.crm-layout-preview\.is-tabs/);
 
     const openBraces = (styles.match(/{/g) || []).length;
     const closeBraces = (styles.match(/}/g) || []).length;

@@ -17,6 +17,7 @@ use App\Models\ContactModel;
 use App\Models\CrmFinancialPostingModel;
 use App\Models\FinancialDailyEntryModel;
 use App\Models\OpportunityModel;
+use App\Models\UserPreferenceModel;
 use App\Services\ContactService;
 use App\Services\CrmOverviewService;
 use App\Services\OpportunityService;
@@ -529,7 +530,7 @@ final class CrmUseCasesTest extends CIUnitTestCase
             ->withSession($_SESSION)
             ->get('/app/clientes/oportunidades/' . $opportunityId . '/nota-venta');
         $missingIdentity->assertRedirectTo(
-            '/app/clientes?view=tabs&section=opportunities',
+            '/app/clientes?section=opportunities',
         );
 
         try {
@@ -598,7 +599,7 @@ final class CrmUseCasesTest extends CIUnitTestCase
                 'identity_document' => '',
                 csrf_token()        => csrf_hash(),
             ]);
-        $invalid->assertRedirectTo('/app/clientes?view=tabs&section=opportunities');
+        $invalid->assertRedirectTo('/app/clientes?section=opportunities');
         $this->assertNull((new ContactModel())->find($ownContactId)['identity_document']);
 
         $foreign = $this
@@ -638,7 +639,7 @@ final class CrmUseCasesTest extends CIUnitTestCase
             ->withSession($_SESSION)
             ->get('/app/clientes/oportunidades/' . $ownOpportunityId . '/nota-venta');
         $missingPosting->assertRedirectTo(
-            '/app/clientes?view=tabs&section=opportunities',
+            '/app/clientes?section=opportunities',
         );
 
         try {
@@ -817,16 +818,55 @@ final class CrmUseCasesTest extends CIUnitTestCase
             ->withSession($_SESSION)
             ->post('/app/clientes/contactos', [
                 ...$this->contactPayload(),
-                'return_view'    => 'tabs',
                 'return_section' => 'contacts',
                 csrf_token()     => csrf_hash(),
             ]);
 
-        $result->assertRedirectTo('/app/clientes?view=tabs&section=contacts');
+        $result->assertRedirectTo('/app/clientes?section=contacts');
         $this->seeInDatabase('contacts', [
             'business_id'  => $businessId,
             'display_name' => 'María Pérez',
         ]);
+    }
+
+    public function testCrmUsesThePersistedPersonalViewInsteadOfTheLegacyQuery(): void
+    {
+        $user       = $this->createUser('controller-personal-crm-view');
+        $businessId = $this->createBusiness('Negocio autorizado');
+        $this->createCompleteProfile($businessId);
+        $this->createMembership($user, $businessId);
+        $this->createContact($businessId, 'Contacto propio');
+        $this->assertTrue((new UserPreferenceModel())->saveForUser(
+            (int) $user->id,
+            'light',
+            'tabs',
+        ));
+        $this->actingAs($user);
+
+        $response = $this
+            ->withSession($_SESSION)
+            ->get('/app/clientes?view=combined&section=opportunities');
+
+        $response->assertStatus(200);
+        $this->assertStringContainsString('data-crm-view="tabs"', $response->getBody());
+        $this->assertStringNotContainsString('data-crm-view-option', $response->getBody());
+    }
+
+    public function testCrmDefaultsToCombinedAndIgnoresALegacyTabbedQuery(): void
+    {
+        $user       = $this->createUser('controller-default-crm-view');
+        $businessId = $this->createBusiness('Negocio autorizado');
+        $this->createCompleteProfile($businessId);
+        $this->createMembership($user, $businessId);
+        $this->createContact($businessId, 'Contacto propio');
+        $this->actingAs($user);
+
+        $response = $this
+            ->withSession($_SESSION)
+            ->get('/app/clientes?view=tabs&section=opportunities');
+
+        $response->assertStatus(200);
+        $this->assertStringContainsString('data-crm-view="combined"', $response->getBody());
     }
 
     public function testCrmReturnLocationRejectsUnknownNavigationValues(): void
@@ -834,14 +874,12 @@ final class CrmUseCasesTest extends CIUnitTestCase
         $this->assertSame(
             site_url('app/clientes'),
             CrmReturnLocation::fromInput([
-                'return_view'    => 'tabs',
                 'return_section' => 'https://example.test',
             ]),
         );
         $this->assertSame(
-            site_url('app/clientes'),
+            site_url('app/clientes') . '?section=opportunities',
             CrmReturnLocation::fromInput([
-                'return_view'    => 'unknown',
                 'return_section' => 'opportunities',
             ]),
         );
@@ -901,12 +939,11 @@ final class CrmUseCasesTest extends CIUnitTestCase
             ->post('/app/clientes/oportunidades/' . $opportunityId . '/estado', [
                 'status'         => 'contacted',
                 'finance_action' => 'none',
-                'return_view'    => 'tabs',
                 'return_section' => 'opportunities',
                 csrf_token()     => csrf_hash(),
             ]);
 
-        $success->assertRedirectTo('/app/clientes?view=tabs&section=opportunities');
+        $success->assertRedirectTo('/app/clientes?section=opportunities');
         $this->assertSame('contacted', (new OpportunityModel())->find($opportunityId)['status']);
 
         $denied = $this

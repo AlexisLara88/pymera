@@ -6,16 +6,22 @@ namespace App\Controllers;
 
 use App\Exceptions\BusinessAccessException;
 use App\Services\CrmOverviewService;
+use App\Services\UserPreferenceService;
 use CodeIgniter\HTTP\ResponseInterface;
 use Throwable;
 
 final class CrmController extends BaseController
 {
     private CrmOverviewService $crm;
+    private UserPreferenceService $preferences;
 
-    public function __construct()
+    public function __construct(
+        ?CrmOverviewService $crm = null,
+        ?UserPreferenceService $preferences = null,
+    )
     {
-        $this->crm = new CrmOverviewService();
+        $this->crm         = $crm ?? new CrmOverviewService();
+        $this->preferences = $preferences ?? new UserPreferenceService();
     }
 
     public function index(): ResponseInterface
@@ -28,6 +34,7 @@ final class CrmController extends BaseController
                 'crmErrors'      => session()->getFlashdata('crmErrors') ?? [],
                 'crmSubmitted'   => session()->getFlashdata('crmSubmitted') ?? [],
                 'crmFormKey'     => session()->getFlashdata('crmFormKey'),
+                'crmView'        => $this->preferences->currentCrmView(),
             ]));
         } catch (BusinessAccessException) {
             return $this->response

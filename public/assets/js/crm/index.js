@@ -13,8 +13,7 @@ const crmReturnForms = [...document.querySelectorAll('[data-crm-return-context]'
 const syncCrmReturnContext = (view, section) => {
     crmReturnForms.forEach((form) => {
         const values = {
-            return_view: view,
-            return_section: section,
+            return_section: view === 'tabs' ? section : '',
         };
 
         Object.entries(values).forEach(([name, value]) => {
@@ -35,11 +34,11 @@ const syncCrmReturnContext = (view, section) => {
 const persistCrmLocation = (view, section) => {
     const url = new URL(window.location.href);
 
+    url.searchParams.delete('view');
+
     if (view === 'tabs') {
-        url.searchParams.set('view', 'tabs');
         url.searchParams.set('section', section);
     } else {
-        url.searchParams.delete('view');
         url.searchParams.delete('section');
     }
 
@@ -52,12 +51,11 @@ const persistCrmLocation = (view, section) => {
 };
 
 if (viewSwitcher) {
-    const viewOptions = [...viewSwitcher.querySelectorAll('[data-crm-view-option]')];
     const sectionTabs = [...viewSwitcher.querySelectorAll('[data-crm-section-tab]')];
     const sectionPanels = [...viewSwitcher.querySelectorAll('[data-crm-section-panel]')];
     const sectionTabList = viewSwitcher.querySelector('[data-crm-section-tabs]');
     const requestedLocation = new URL(window.location.href);
-    const requestedView = requestedLocation.searchParams.get('view') === 'tabs'
+    const preferredView = viewSwitcher.dataset.crmView === 'tabs'
         ? 'tabs'
         : 'combined';
     const requestedSection = requestedLocation.searchParams.get('section');
@@ -95,12 +93,6 @@ if (viewSwitcher) {
         const usesTabs = view === 'tabs';
 
         viewSwitcher.dataset.crmView = usesTabs ? 'tabs' : 'combined';
-        viewOptions.forEach((option) => {
-            const isActive = option.dataset.crmViewOption === viewSwitcher.dataset.crmView;
-
-            option.classList.toggle('is-active', isActive);
-            option.setAttribute('aria-pressed', String(isActive));
-        });
 
         if (sectionTabList) {
             sectionTabList.hidden = !usesTabs;
@@ -115,12 +107,6 @@ if (viewSwitcher) {
             persistCrmLocation('combined', activeSection);
         }
     };
-
-    viewOptions.forEach((option) => {
-        option.addEventListener('click', () => {
-            selectView(option.dataset.crmViewOption || 'combined');
-        });
-    });
 
     sectionTabs.forEach((tab, index) => {
         tab.addEventListener('click', () => {
@@ -151,7 +137,7 @@ if (viewSwitcher) {
         });
     });
 
-    selectView(requestedView);
+    selectView(preferredView);
 } else {
     syncCrmReturnContext('combined', 'contacts');
 }

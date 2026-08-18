@@ -46,6 +46,9 @@ final class AccountPreferencesTest extends CIUnitTestCase
         $response->assertSee('Preferencias personales');
         $response->assertSee('owner@example.test');
         $response->assertSee('appearance_theme');
+        $response->assertSee('crm_view_mode');
+        $response->assertSee('Vista conjunta');
+        $response->assertSee('Vista por pestañas');
         $response->assertDontSee('data-theme-toggle');
         $response->assertSee('csrf_test_name');
     }
@@ -58,6 +61,7 @@ final class AccountPreferencesTest extends CIUnitTestCase
 
         $response = $this->withSession($_SESSION)->post('/account/preferences', [
             'appearance_theme' => 'dark',
+            'crm_view_mode'    => 'tabs',
             csrf_token()       => csrf_hash(),
         ]);
 
@@ -65,6 +69,7 @@ final class AccountPreferencesTest extends CIUnitTestCase
         $this->seeInDatabase('user_preferences', [
             'user_id'          => $owner->id,
             'appearance_theme' => 'dark',
+            'crm_view_mode'    => 'tabs',
         ]);
         $this->dontSeeInDatabase('user_preferences', ['user_id' => $other->id]);
     }
@@ -76,12 +81,57 @@ final class AccountPreferencesTest extends CIUnitTestCase
 
         $response = $this->withSession($_SESSION)->post('/account/preferences', [
             'appearance_theme' => 'system',
+            'crm_view_mode'    => 'combined',
             csrf_token()       => csrf_hash(),
         ]);
 
         $response->assertRedirectTo('/account/preferences');
         $response->assertSessionHas('error', 'Seleccioná el modo claro o el modo oscuro.');
         $this->dontSeeInDatabase('user_preferences', ['user_id' => $user->id]);
+    }
+
+    public function testInvalidCrmViewIsRejectedWithoutPersistence(): void
+    {
+        $user = $this->createAccount('owner', 'owner@example.test', 'alpha');
+        $this->actingAs($user);
+
+        $response = $this->withSession($_SESSION)->post('/account/preferences', [
+            'appearance_theme' => 'light',
+            'crm_view_mode'    => 'external-url',
+            csrf_token()       => csrf_hash(),
+        ]);
+
+        $response->assertRedirectTo('/account/preferences');
+        $response->assertSessionHas(
+            'error',
+            'Seleccioná la vista conjunta o la vista por pestañas.',
+        );
+        $this->dontSeeInDatabase('user_preferences', ['user_id' => $user->id]);
+    }
+
+    public function testPlatformAdministratorDoesNotReceiveAnIrrelevantCrmPreference(): void
+    {
+        $admin = $this->createAccount('admin', 'admin@example.test', 'platform_admin');
+        $this->actingAs($admin);
+
+        $response = $this->withSession($_SESSION)->get('/account/preferences');
+
+        $response->assertStatus(200);
+        $response->assertSee('appearance_theme');
+        $response->assertDontSee('crm_view_mode');
+        $response->assertDontSee('Elegí cómo organizar el CRM');
+
+        $updated = $this->withSession($_SESSION)->post('/account/preferences', [
+            'appearance_theme' => 'dark',
+            csrf_token()       => csrf_hash(),
+        ]);
+
+        $updated->assertRedirectTo('/account/preferences');
+        $this->seeInDatabase('user_preferences', [
+            'user_id'          => $admin->id,
+            'appearance_theme' => 'dark',
+            'crm_view_mode'    => 'combined',
+        ]);
     }
 
     public function testPreferenceMutationRequiresCsrf(): void
@@ -91,6 +141,7 @@ final class AccountPreferencesTest extends CIUnitTestCase
 
         $this->withSession($_SESSION)->post('/account/preferences', [
             'appearance_theme' => 'dark',
+            'crm_view_mode'    => 'tabs',
         ]);
     }
 

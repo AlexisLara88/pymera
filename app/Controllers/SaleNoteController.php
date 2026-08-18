@@ -32,7 +32,7 @@ final class SaleNoteController extends BaseController
             );
         } catch (SaleNoteUnavailableException $exception) {
             return redirect()
-                ->to(site_url('app/clientes') . '?view=tabs&section=opportunities')
+                ->to(site_url('app/clientes') . '?section=opportunities')
                 ->with('operationError', $exception->getMessage());
         } catch (BusinessAccessException) {
             return $this->response
@@ -62,7 +62,7 @@ final class SaleNoteController extends BaseController
             );
         } catch (CrmValidationException $exception) {
             return redirect()
-                ->to(site_url('app/clientes') . '?view=tabs&section=opportunities')
+                ->to(site_url('app/clientes') . '?section=opportunities')
                 ->with(
                     'operationError',
                     $exception->errors()['identity_document']
@@ -70,7 +70,7 @@ final class SaleNoteController extends BaseController
                 );
         } catch (SaleNoteUnavailableException $exception) {
             return redirect()
-                ->to(site_url('app/clientes') . '?view=tabs&section=opportunities')
+                ->to(site_url('app/clientes') . '?section=opportunities')
                 ->with('operationError', $exception->getMessage());
         } catch (BusinessAccessException) {
             return $this->response
