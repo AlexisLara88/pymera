@@ -1,9 +1,84 @@
 'use strict';
 
 document.addEventListener('DOMContentLoaded', () => {
+    initializeSettingsTabs();
     initializeThemePreferences();
     initializePasswordForm();
 });
+
+function initializeSettingsTabs() {
+    const settings = document.querySelector('[data-account-settings]');
+
+    if (! settings) {
+        return;
+    }
+
+    const tabs = Array.from(settings.querySelectorAll('[data-settings-tab]'));
+    const panels = Array.from(settings.querySelectorAll('[data-settings-panel]'));
+
+    if (tabs.length === 0 || panels.length === 0) {
+        return;
+    }
+
+    const availableTabs = tabs.map((tab) => tab.dataset.settingsTab);
+    const requestedTab = settings.dataset.initialTab;
+    const initialTab = availableTabs.includes(requestedTab)
+        ? requestedTab
+        : availableTabs[0];
+
+    const activateTab = (tabName, moveFocus = false) => {
+        if (! availableTabs.includes(tabName)) {
+            return;
+        }
+
+        tabs.forEach((tab) => {
+            const isActive = tab.dataset.settingsTab === tabName;
+
+            tab.setAttribute('aria-selected', String(isActive));
+            tab.tabIndex = isActive ? 0 : -1;
+
+            if (isActive && moveFocus) {
+                tab.focus({ preventScroll: true });
+            }
+        });
+
+        panels.forEach((panel) => {
+            panel.hidden = panel.dataset.settingsPanel !== tabName;
+        });
+
+        settings.dataset.activeTab = tabName;
+    };
+
+    settings.classList.add('is-enhanced');
+    activateTab(initialTab);
+
+    tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => {
+            activateTab(tab.dataset.settingsTab);
+        });
+
+        tab.addEventListener('keydown', (event) => {
+            let nextIndex = null;
+
+            if (event.key === 'ArrowRight') {
+                nextIndex = (index + 1) % tabs.length;
+            } else if (event.key === 'ArrowLeft') {
+                nextIndex = (index - 1 + tabs.length) % tabs.length;
+            } else if (event.key === 'Home') {
+                nextIndex = 0;
+            } else if (event.key === 'End') {
+                nextIndex = tabs.length - 1;
+            }
+
+            if (nextIndex === null) {
+                return;
+            }
+
+            event.preventDefault();
+            activateTab(tabs[nextIndex].dataset.settingsTab, true);
+        });
+    });
+}
 
 function initializeThemePreferences() {
     const form = document.querySelector('[data-preferences-form]');

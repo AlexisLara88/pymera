@@ -157,8 +157,70 @@
     padding: 28px;
 }
 
-.preferences-security {
-    grid-column: 2;
+.preferences-settings {
+    min-width: 0;
+}
+
+.preferences-tabs {
+    display: flex;
+    max-width: 100%;
+    gap: 5px;
+    padding: 5px;
+    border: 1px solid var(--line);
+    border-radius: 15px;
+    background: var(--surface-soft);
+    overflow-x: auto;
+    scrollbar-width: thin;
+}
+
+.preferences-tab {
+    min-height: 42px;
+    flex: 0 0 auto;
+    padding: 9px 18px;
+    border: 0;
+    border-radius: 11px;
+    color: var(--muted);
+    background: transparent;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+    transition: color 170ms ease, background 170ms ease, box-shadow 170ms ease;
+}
+
+.preferences-tab:hover {
+    color: var(--ink);
+    background: color-mix(in srgb, var(--brand-2) 8%, transparent);
+}
+
+.preferences-tab[aria-selected="true"] {
+    color: #fff;
+    background: var(--brand-2);
+    box-shadow: 0 7px 16px color-mix(in srgb, var(--brand-2) 22%, transparent);
+}
+
+.preferences-tab:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--brand-2) 35%, transparent);
+    outline-offset: 2px;
+}
+
+.preferences-tab-panel {
+    padding-top: 26px;
+}
+
+.preferences-settings.is-enhanced .preferences-tab-panel:not([hidden]) {
+    animation: preferences-panel-enter 190ms ease both;
+}
+
+@keyframes preferences-panel-enter {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .preferences-panel h2 {
@@ -500,6 +562,12 @@ html[data-theme="dark"] .preferences-alert.is-error {
     color: #f2a09d;
 }
 
+@media (prefers-reduced-motion: reduce) {
+    .preferences-settings.is-enhanced .preferences-tab-panel:not([hidden]) {
+        animation-duration: 0.01ms;
+    }
+}
+
 @media (max-width: 760px) {
     .preferences-shell {
         width: min(100% - 24px, 1180px);
@@ -515,10 +583,6 @@ html[data-theme="dark"] .preferences-alert.is-error {
     .crm-layout-options,
     .security-fields {
         grid-template-columns: 1fr;
-    }
-
-    .preferences-security {
-        grid-column: auto;
     }
 
     .preferences-profile {

@@ -52,6 +52,12 @@ final class AccountPreferencesTest extends CIUnitTestCase
         $response->assertDontSee('data-theme-toggle');
         $response->assertSee('csrf_test_name');
         $response->assertSee('Cambiá tu contraseña');
+        $this->assertStringContainsString('role="tablist"', $response->getBody());
+        $this->assertStringContainsString('data-settings-tab="appearance"', $response->getBody());
+        $this->assertStringContainsString('data-settings-tab="security"', $response->getBody());
+        $this->assertStringContainsString('data-settings-panel="appearance"', $response->getBody());
+        $this->assertStringContainsString('data-settings-panel="security"', $response->getBody());
+        $this->assertStringContainsString('data-initial-tab="appearance"', $response->getBody());
     }
 
     public function testThemeIsPersistedOnlyForTheAuthenticatedAccount(): void

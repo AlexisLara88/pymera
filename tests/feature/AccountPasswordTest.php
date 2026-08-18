@@ -76,6 +76,22 @@ final class AccountPasswordTest extends CIUnitTestCase
         $response->assertSee('current_password');
     }
 
+    public function testPasswordFeedbackOpensTheSecurityTab(): void
+    {
+        $this->actingAs($this->createAccount('owner', 'owner@example.test', 'alpha'));
+        session()->setFlashdata('password_error', 'Revisá los datos ingresados.');
+
+        $response = $this->withSession($_SESSION)->get('/account/preferences');
+
+        $response->assertStatus(200);
+        $response->assertSee('Revisá los datos ingresados.');
+        $this->assertStringContainsString('data-initial-tab="security"', $response->getBody());
+        $this->assertMatchesRegularExpression(
+            '/id="securityTab".*?aria-selected="true"/s',
+            $response->getBody(),
+        );
+    }
+
     public function testAuthenticatedAccountCanChangeOnlyItsOwnPassword(): void
     {
         $owner = $this->createAccount('owner', 'owner@example.test', 'alpha');

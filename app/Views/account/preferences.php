@@ -16,6 +16,9 @@
 $initial = function_exists('mb_substr')
     ? mb_strtoupper(mb_substr($username, 0, 1))
     : strtoupper(substr($username, 0, 1));
+$initialSettingsTab = $passwordSuccess !== null || $passwordError !== null
+    ? 'security'
+    : 'appearance';
 ?>
 <!doctype html>
 <html lang="es">
@@ -69,7 +72,46 @@ $initial = function_exists('mb_substr')
             <small>Tus preferencias pertenecen a esta cuenta, aunque accedas a otro negocio en el futuro.</small>
         </aside>
 
-        <section class="preferences-panel" aria-labelledby="appearanceTitle">
+        <section
+            class="preferences-panel preferences-settings"
+            aria-label="Configuración personal"
+            data-account-settings
+            data-initial-tab="<?= esc($initialSettingsTab, 'attr') ?>"
+        >
+            <div class="preferences-tabs" role="tablist" aria-label="Secciones de configuración">
+                <button
+                    class="preferences-tab"
+                    id="appearanceTab"
+                    type="button"
+                    role="tab"
+                    aria-controls="appearancePanel"
+                    aria-selected="<?= $initialSettingsTab === 'appearance' ? 'true' : 'false' ?>"
+                    tabindex="<?= $initialSettingsTab === 'appearance' ? '0' : '-1' ?>"
+                    data-settings-tab="appearance"
+                >
+                    Apariencia
+                </button>
+                <button
+                    class="preferences-tab"
+                    id="securityTab"
+                    type="button"
+                    role="tab"
+                    aria-controls="securityPanel"
+                    aria-selected="<?= $initialSettingsTab === 'security' ? 'true' : 'false' ?>"
+                    tabindex="<?= $initialSettingsTab === 'security' ? '0' : '-1' ?>"
+                    data-settings-tab="security"
+                >
+                    Seguridad
+                </button>
+            </div>
+
+            <section
+                class="preferences-tab-panel"
+                id="appearancePanel"
+                role="tabpanel"
+                aria-labelledby="appearanceTab"
+                data-settings-panel="appearance"
+            >
             <header>
                 <span class="section-kicker">Apariencia</span>
                 <h2 id="appearanceTitle">Elegí cómo visualizar PyMERA</h2>
@@ -152,9 +194,15 @@ $initial = function_exists('mb_substr')
                     <button class="button button-primary" type="submit">Guardar preferencias</button>
                 </div>
             </form>
-        </section>
+            </section>
 
-        <section class="preferences-panel preferences-security" aria-labelledby="securityTitle">
+            <section
+                class="preferences-tab-panel preferences-security"
+                id="securityPanel"
+                role="tabpanel"
+                aria-labelledby="securityTab"
+                data-settings-panel="security"
+            >
             <header>
                 <span class="section-kicker">Seguridad</span>
                 <h2 id="securityTitle">Cambiá tu contraseña</h2>
@@ -280,6 +328,7 @@ $initial = function_exists('mb_substr')
                     <button class="button button-primary" type="submit">Cambiar contraseña</button>
                 </div>
             </form>
+            </section>
         </section>
     </div>
 </main>

@@ -45,6 +45,23 @@ test('account security uses an independent native password form', () => {
     assert.match(view, /newPasswordConfirmationFeedback/);
 });
 
+test('account settings use one accessible horizontal tab container', () => {
+    assert.match(view, /data-account-settings/);
+    assert.match(view, /role="tablist"/);
+    assert.match(view, /data-settings-tab="appearance"/);
+    assert.match(view, /data-settings-tab="security"/);
+    assert.match(view, /data-settings-panel="appearance"/);
+    assert.match(view, /data-settings-panel="security"/);
+    assert.match(view, /\$passwordSuccess !== null \|\| \$passwordError !== null/);
+    assert.match(script, /initializeSettingsTabs/);
+    assert.match(script, /panel\.hidden = panel\.dataset\.settingsPanel !== tabName/);
+    assert.match(script, /aria-selected/);
+    assert.match(script, /ArrowRight/);
+    assert.match(script, /ArrowLeft/);
+    assert.match(script, /event\.key === 'Home'/);
+    assert.match(script, /event\.key === 'End'/);
+});
+
 test('password enhancement validates while typing and preserves server authority', () => {
     assert.match(script, /initializePasswordForm/);
     assert.match(script, /addEventListener\('input', validatePair\)/);
@@ -89,6 +106,9 @@ test('preference styles support selection, keyboard focus and both visual previe
     assert.match(styles, /\.security-fields input\.is-invalid/);
     assert.match(styles, /\.password-visibility\[aria-pressed="true"\]/);
     assert.match(styles, /\.password-feedback\.is-invalid/);
+    assert.match(styles, /\.preferences-tabs/);
+    assert.match(styles, /\.preferences-tab\[aria-selected="true"\]/);
+    assert.match(styles, /\.preferences-tab-panel/);
 
     const openBraces = (styles.match(/{/g) || []).length;
     const closeBraces = (styles.match(/}/g) || []).length;
