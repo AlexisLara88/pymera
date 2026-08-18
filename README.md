@@ -105,6 +105,7 @@ validación local controlada.
 - CodeIgniter Shield `1.4.x` y CodeIgniter Settings están instalados.
 - La autenticación admite únicamente sesiones y correo electrónico.
 - Registro público, enlaces mágicos, recuperación automática y “recordarme” están desactivados.
+- Toda cuenta autenticada puede cambiar su propia contraseña desde `Mi cuenta → Seguridad`; la operación exige la credencial actual, validación de Shield, CSRF y limitación de intentos.
 - `alpha` habilita el producto mediante el permiso global `app.access`.
 - `platform_admin` administra cuentas y negocios mediante permisos globales literales, sin entrar automáticamente a los datos internos de una PyME.
 - `/demolite` es la entrada estable a la alfa funcional publicada.
@@ -116,6 +117,7 @@ validación local controlada.
 - Ambas asociaciones utilizan el rol contextual `owner`; `coach` y `collaborator` están reconocidos pero permanecen sin permisos operativos hasta confirmar su alcance.
 - La cuenta piloto inicia por el onboarding; no queda sin negocio ni recibe el rechazo reservado para asociaciones inválidas.
 - No existe vencimiento o rotación automática de estas contraseñas de validación.
+- El cambio personal no crea archivos ni tablas adicionales: Shield actualiza la identidad de contraseña existente y la sesión actual se regenera.
 - `/entry` dirige una cuenta del producto a `/app` y un administrador a `/admin`.
 - `/admin` permite crear cuentas propietarias con negocio, crear administradores, activar o desactivar cuentas y accesos y consultar auditoría administrativa.
 - La primera cuenta personal de administración debe crearse fuera del código con el comando interactivo correspondiente.
@@ -206,6 +208,7 @@ Las contraseñas se solicitan interactivamente y no se almacenan en código ni d
 - La demo no puede cargar el seeder automáticamente.
 - La interfaz del negocio no muestra rótulos técnicos o experimentales; las limitaciones del MVP se conservan en la documentación.
 - La publicación temporal opera por HTTP; HTTPS, cookies `Secure`, recuperación y respaldos formales quedan para la etapa de producto.
+- Mientras continúe HTTP, el cambio de contraseña queda limitado operativamente a cuentas controladas de validación; las credenciales personales requieren la etapa HTTPS.
 - La asociación usuario-negocio, el aislamiento de lectura y la atribución mínima ya están implementados y probados.
 - La excepción HTTP y su retorno están documentados en `info/arquitectura/decision-publicacion-alfa-http-demolite.md`.
 

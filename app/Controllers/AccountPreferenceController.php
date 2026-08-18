@@ -37,6 +37,8 @@ final class AccountPreferenceController extends BaseController
                 'returnUrl'       => $user->inGroup('platform_admin') ? site_url('admin') : site_url('app'),
                 'success'         => session()->getFlashdata('success'),
                 'error'           => session()->getFlashdata('error'),
+                'passwordSuccess' => session()->getFlashdata('password_success'),
+                'passwordError'   => session()->getFlashdata('password_error'),
             ]));
         } catch (Throwable $exception) {
             $this->logFailure($exception);

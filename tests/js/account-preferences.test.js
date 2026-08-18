@@ -25,8 +25,19 @@ test('account preferences offer only concrete light and dark choices', () => {
     assert.match(view, /value="dark"/);
     assert.doesNotMatch(view, /value="system"/);
     assert.match(view, /csrf_field\(\)/);
-    assert.match(view, /Estas opciones acompañan a tu cuenta/);
-    assert.match(view, /no modifican la configuración del negocio/);
+    assert.match(view, /Administrá tus preferencias personales/);
+    assert.match(view, /la seguridad de tu acceso/);
+});
+
+test('account security uses an independent native password form', () => {
+    assert.match(view, /action="<\?= esc\(site_url\('account\/password'\)/);
+    assert.match(view, /name="current_password"/);
+    assert.match(view, /name="new_password"/);
+    assert.match(view, /name="new_password_confirmation"/);
+    assert.match(view, /autocomplete="current-password"/);
+    assert.match(view, /autocomplete="new-password"/);
+    assert.match(view, /data-password-form/);
+    assert.doesNotMatch(script, /current_password|new_password/);
 });
 
 test('business accounts can choose one persistent CRM composition', () => {
@@ -53,6 +64,8 @@ test('preference styles support selection, keyboard focus and both visual previe
     assert.match(styles, /\.appearance-preview\.is-dark/);
     assert.match(styles, /\.crm-layout-preview\.is-combined/);
     assert.match(styles, /\.crm-layout-preview\.is-tabs/);
+    assert.match(styles, /\.preferences-security/);
+    assert.match(styles, /\.security-fields input:focus-visible/);
 
     const openBraces = (styles.match(/{/g) || []).length;
     const closeBraces = (styles.match(/}/g) || []).length;

@@ -76,7 +76,7 @@ $navigation = $isOnboarding
             href="<?= site_url('account/preferences') ?>"
         >
             <span aria-hidden="true">⚙</span>
-            <span><strong>Mi cuenta</strong><small>Preferencias personales</small></span>
+            <span><strong>Mi cuenta</strong><small>Preferencias y seguridad</small></span>
         </a>
 
         <form class="sidebar-session" action="<?= site_url('logout') ?>" method="post">

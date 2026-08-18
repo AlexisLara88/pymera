@@ -25,6 +25,11 @@ if ($alphaAccess->functionalRoutesEnabled) {
     $routes->group('account', ['filter' => ['session', 'user-preferences']], static function (RouteCollection $routes): void {
         $routes->get('preferences', 'AccountPreferenceController::index', ['as' => 'account.preferences']);
         $routes->post('preferences', 'AccountPreferenceController::update', ['as' => 'account.preferences.update']);
+        $routes->post(
+            'password',
+            'AccountPasswordController::update',
+            ['as' => 'account.password.update', 'filter' => 'auth-rates'],
+        );
     });
 
     $routes->group('admin', ['filter' => ['session', 'permission:platform.access', 'user-preferences']], static function (RouteCollection $routes): void {

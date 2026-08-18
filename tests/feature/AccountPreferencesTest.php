@@ -43,7 +43,7 @@ final class AccountPreferencesTest extends CIUnitTestCase
         $response = $this->withSession($_SESSION)->get('/account/preferences');
 
         $response->assertStatus(200);
-        $response->assertSee('Preferencias personales');
+        $response->assertSee('Configuración de la cuenta');
         $response->assertSee('owner@example.test');
         $response->assertSee('appearance_theme');
         $response->assertSee('crm_view_mode');
@@ -51,6 +51,7 @@ final class AccountPreferencesTest extends CIUnitTestCase
         $response->assertSee('Vista por pestañas');
         $response->assertDontSee('data-theme-toggle');
         $response->assertSee('csrf_test_name');
+        $response->assertSee('Cambiá tu contraseña');
     }
 
     public function testThemeIsPersistedOnlyForTheAuthenticatedAccount(): void

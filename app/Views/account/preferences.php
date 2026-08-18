@@ -9,6 +9,8 @@
  * @var string      $returnUrl
  * @var string|null $success
  * @var string|null $error
+ * @var string|null $passwordSuccess
+ * @var string|null $passwordError
  */
 
 $initial = function_exists('mb_substr')
@@ -47,8 +49,8 @@ $initial = function_exists('mb_substr')
         <div class="preferences-avatar" aria-hidden="true"><?= esc($initial) ?></div>
         <div>
             <p class="eyebrow">Mi cuenta</p>
-            <h1>Preferencias personales</h1>
-            <p>Estas opciones acompañan a tu cuenta y no modifican la configuración del negocio.</p>
+            <h1>Configuración de la cuenta</h1>
+            <p>Administrá tus preferencias personales y la seguridad de tu acceso.</p>
         </div>
     </section>
 
@@ -148,6 +150,71 @@ $initial = function_exists('mb_substr')
 
                 <div class="preferences-actions">
                     <button class="button button-primary" type="submit">Guardar preferencias</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="preferences-panel preferences-security" aria-labelledby="securityTitle">
+            <header>
+                <span class="section-kicker">Seguridad</span>
+                <h2 id="securityTitle">Cambiá tu contraseña</h2>
+                <p>Para proteger tu cuenta, primero confirmá la contraseña que utilizás actualmente.</p>
+            </header>
+
+            <?php if ($passwordSuccess !== null): ?>
+                <div class="preferences-alert is-success" role="status"><?= esc($passwordSuccess) ?></div>
+            <?php endif ?>
+            <?php if ($passwordError !== null): ?>
+                <div class="preferences-alert is-error" role="alert"><?= esc($passwordError) ?></div>
+            <?php endif ?>
+
+            <form action="<?= esc(site_url('account/password'), 'attr') ?>" method="post" data-password-form>
+                <?= csrf_field() ?>
+                <div class="security-fields">
+                    <label for="currentPassword">
+                        <span>Contraseña actual</span>
+                        <input
+                            id="currentPassword"
+                            name="current_password"
+                            type="password"
+                            autocomplete="current-password"
+                            maxlength="72"
+                            required
+                        >
+                    </label>
+                    <label for="newPassword">
+                        <span>Nueva contraseña</span>
+                        <input
+                            id="newPassword"
+                            name="new_password"
+                            type="password"
+                            autocomplete="new-password"
+                            minlength="8"
+                            maxlength="72"
+                            aria-describedby="passwordRequirements"
+                            required
+                        >
+                    </label>
+                    <label for="newPasswordConfirmation">
+                        <span>Confirmar nueva contraseña</span>
+                        <input
+                            id="newPasswordConfirmation"
+                            name="new_password_confirmation"
+                            type="password"
+                            autocomplete="new-password"
+                            minlength="8"
+                            maxlength="72"
+                            required
+                        >
+                    </label>
+                </div>
+
+                <p class="security-requirements" id="passwordRequirements">
+                    Usá al menos 8 caracteres y evitá contraseñas comunes o basadas en tu correo o usuario.
+                </p>
+
+                <div class="preferences-actions">
+                    <button class="button button-primary" type="submit">Cambiar contraseña</button>
                 </div>
             </form>
         </section>
