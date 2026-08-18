@@ -59,7 +59,7 @@ $amount = $saleNote['currency_code'] . ' '
         <tr>
             <td class="brand">
                 <div>
-                    <img class="product-logo" src="<?= esc(FCPATH . 'assets/brand/pymera-symbol.svg', 'attr') ?>" alt="">
+                    <img class="product-logo" src="<?= esc(FCPATH . 'assets/brand/pymera-symbol.svg') ?>" alt="">
                     <span class="brand-mark">PyMERA</span>
                 </div>
                 <div class="business-name"><?= esc($saleNote['business_name']) ?></div>

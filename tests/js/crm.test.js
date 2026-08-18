@@ -162,6 +162,8 @@ test('sale notes are non-fiscal PDFs generated on demand outside the project', (
     assert.match(saleNoteView, /no constituye factura/i);
     assert.match(saleNoteView, /Generado con PyMERA/);
     assert.match(saleNoteView, /pymera-symbol\.svg/);
+    assert.match(saleNoteView, /esc\(FCPATH \. 'assets\/brand\/pymera-symbol\.svg'\)/);
+    assert.doesNotMatch(saleNoteView, /pymera-symbol\.svg', 'attr'/);
     assert.match(saleNoteView, /DNI\/CI/);
     assert.doesNotMatch(saleNoteView, /\bNIT\b|\bRUC\b|N[úu]mero|SUBTOTAL|\bIVA\b|Impuesto/i);
     assert.match(saleNoteRenderer, /sys_get_temp_dir\(\)/);
