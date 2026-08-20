@@ -400,9 +400,17 @@ html[data-theme="dark"] .auth-field label {
 }
 
 html[data-theme="dark"] .auth-field input {
-    border-color: var(--line);
-    color: var(--ink);
-    background: #181c1d;
+    border-color: #31527c;
+    color: #fff;
+    background: var(--color-night-indigo, #1A365D);
+    caret-color: #fff;
+    -webkit-text-fill-color: #fff;
+}
+
+html[data-theme="dark"] .auth-field input::placeholder {
+    color: rgb(255 255 255 / 66%);
+    opacity: 1;
+    -webkit-text-fill-color: rgb(255 255 255 / 66%);
 }
 
 html[data-theme="dark"] .auth-submit {
