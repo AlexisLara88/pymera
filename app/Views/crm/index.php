@@ -156,10 +156,12 @@ $jsonAttribute = static fn (array $value): string => esc(
                     <header class="crm-panel-heading">
                         <div>
                             <span class="section-kicker">Ventas posibles</span>
-                            <h3>Oportunidades</h3>
+                            <div class="crm-panel-title-row">
+                                <h3>Oportunidades</h3>
+                                <span class="crm-count"><?= count($opportunities) ?> registradas</span>
+                            </div>
                         </div>
                         <div class="crm-panel-heading-actions">
-                            <span class="crm-count"><?= count($opportunities) ?> registradas</span>
                             <a
                                 class="button button-primary crm-panel-action"
                                 href="#crmOpportunityEditor"
@@ -372,10 +374,12 @@ $jsonAttribute = static fn (array $value): string => esc(
                     <header class="crm-panel-heading">
                         <div>
                             <span class="section-kicker">Directorio</span>
-                            <h3 id="crmContactsTitle">Contactos</h3>
+                            <div class="crm-panel-title-row">
+                                <h3 id="crmContactsTitle">Contactos</h3>
+                                <span class="crm-count"><?= count($contacts) ?></span>
+                            </div>
                         </div>
                         <div class="crm-panel-heading-actions">
-                            <span class="crm-count"><?= count($contacts) ?></span>
                             <a
                                 class="button button-secondary crm-panel-action"
                                 href="#crmContactEditor"

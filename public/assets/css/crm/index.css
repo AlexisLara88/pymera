@@ -199,6 +199,12 @@
     font-size: 1.45rem;
 }
 
+.crm-panel-title-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+
 .crm-panel-heading-actions {
     display: flex;
     flex: 0 0 auto;
@@ -1104,7 +1110,7 @@ body.crm-modal-is-open .business-shell {
     }
 
     .crm-panel-heading-actions {
-        justify-content: space-between;
+        justify-content: flex-start;
     }
 
     .crm-filters,

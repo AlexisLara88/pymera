@@ -98,7 +98,10 @@ test('CRM creation actions belong to their contextual panels in both composition
     assert.doesNotMatch(opportunitiesPanel, /data-open-contact-editor/);
     assert.match(contactsPanel, /data-open-contact-editor/);
     assert.doesNotMatch(contactsPanel, /data-open-opportunity-editor/);
+    assert.match(opportunitiesPanel, /crm-panel-title-row[\s\S]*?Oportunidades[\s\S]*?crm-count/);
+    assert.match(contactsPanel, /crm-panel-title-row[\s\S]*?Contactos[\s\S]*?crm-count/);
     assert.match(styles, /\.crm-panel-heading-actions/);
+    assert.match(styles, /\.crm-panel-title-row/);
     assert.match(styles, /\.crm-panel-action/);
 });
 
