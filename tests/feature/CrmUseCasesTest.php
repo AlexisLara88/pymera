@@ -135,7 +135,7 @@ final class CrmUseCasesTest extends CIUnitTestCase
         $result->assertOK();
         $result->assertSee('Empezá por tu primer contacto');
         $result->assertSee('Crear primer contacto');
-        $result->assertSee('Primero creá un contacto');
+        $result->assertDontSee('+ Nueva oportunidad');
     }
 
     public function testContactCreationUsesSessionBusinessAndCreatesAuditEvent(): void

@@ -84,6 +84,24 @@ test('CRM consumes the personal composition and keeps accessible tabs', () => {
     assert.doesNotMatch(script, /localStorage|sessionStorage/);
 });
 
+test('CRM creation actions belong to their contextual panels in both compositions', () => {
+    const moduleHeader = view.match(/<header class="module-header[\s\S]*?<\/header>/)?.[0] || '';
+    const opportunitiesStart = view.indexOf('data-crm-section-panel="opportunities"');
+    const contactsStart = view.indexOf('data-crm-section-panel="contacts"');
+    const contactsEnd = view.indexOf('</aside>', contactsStart);
+    const opportunitiesPanel = view.slice(opportunitiesStart, contactsStart);
+    const contactsPanel = view.slice(contactsStart, contactsEnd);
+
+    assert.ok(opportunitiesStart > -1 && contactsStart > opportunitiesStart && contactsEnd > contactsStart);
+    assert.doesNotMatch(moduleHeader, /data-open-contact-editor|data-open-opportunity-editor/);
+    assert.match(opportunitiesPanel, /data-open-opportunity-editor/);
+    assert.doesNotMatch(opportunitiesPanel, /data-open-contact-editor/);
+    assert.match(contactsPanel, /data-open-contact-editor/);
+    assert.doesNotMatch(contactsPanel, /data-open-opportunity-editor/);
+    assert.match(styles, /\.crm-panel-heading-actions/);
+    assert.match(styles, /\.crm-panel-action/);
+});
+
 test('Vue enhances only the CRM filter, editor and status islands', () => {
     assert.match(view, /data-crm-filter-app/);
     assert.match(editors, /id="crmEditorApp"/);

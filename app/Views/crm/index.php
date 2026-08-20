@@ -68,14 +68,6 @@ $jsonAttribute = static fn (array $value): string => esc(
                 <h2>Convertí cada consulta en una oportunidad atendida</h2>
                 <p>Organizá contactos, próximos seguimientos y ventas posibles desde un mismo lugar.</p>
             </div>
-            <div class="module-header-actions crm-header-actions">
-                <a class="button button-secondary" href="#crmContactEditor" data-open-contact-editor>+ Nuevo contacto</a>
-                <?php if ($contacts !== []): ?>
-                    <a class="button button-primary" href="#crmOpportunityEditor" data-open-opportunity-editor>+ Nueva oportunidad</a>
-                <?php else: ?>
-                    <span class="button button-primary is-disabled" aria-disabled="true" title="Primero creá un contacto">+ Nueva oportunidad</span>
-                <?php endif ?>
-            </div>
         </header>
 
         <?php if ($success !== null): ?>
@@ -166,7 +158,14 @@ $jsonAttribute = static fn (array $value): string => esc(
                             <span class="section-kicker">Ventas posibles</span>
                             <h3>Oportunidades</h3>
                         </div>
-                        <span class="crm-count"><?= count($opportunities) ?> registradas</span>
+                        <div class="crm-panel-heading-actions">
+                            <span class="crm-count"><?= count($opportunities) ?> registradas</span>
+                            <a
+                                class="button button-primary crm-panel-action"
+                                href="#crmOpportunityEditor"
+                                data-open-opportunity-editor
+                            >+ Nueva oportunidad</a>
+                        </div>
                     </header>
 
                     <div class="crm-filters" aria-label="Filtros de oportunidades">
@@ -216,7 +215,6 @@ $jsonAttribute = static fn (array $value): string => esc(
                         <div class="crm-table-empty">
                             <strong>Todavía no hay oportunidades</strong>
                             <p>Creá una oportunidad para registrar qué necesita el contacto y cuándo retomarlo.</p>
-                            <a class="button button-primary" href="#crmOpportunityEditor" data-open-opportunity-editor>Crear primera oportunidad</a>
                         </div>
                     <?php else: ?>
                         <div class="crm-table-wrap">
@@ -376,7 +374,14 @@ $jsonAttribute = static fn (array $value): string => esc(
                             <span class="section-kicker">Directorio</span>
                             <h3 id="crmContactsTitle">Contactos</h3>
                         </div>
-                        <span class="crm-count"><?= count($contacts) ?></span>
+                        <div class="crm-panel-heading-actions">
+                            <span class="crm-count"><?= count($contacts) ?></span>
+                            <a
+                                class="button button-secondary crm-panel-action"
+                                href="#crmContactEditor"
+                                data-open-contact-editor
+                            >+ Nuevo contacto</a>
+                        </div>
                     </header>
                     <div class="crm-contact-search">
                         <span class="crm-contact-search-icon" aria-hidden="true">
