@@ -11,7 +11,6 @@
     --danger-soft: #fbe9e7;
     --success: #176b4d;
     --success-soft: #e4f5ed;
-    --color-night-indigo: #1A365D;
 }
 
 * {
@@ -165,31 +164,16 @@ body.auth-body {
     width: 100%;
     min-height: 3.2rem;
     padding: 0.8rem 0.9rem;
-    border: 1px solid #31527c;
+    border: 1px solid var(--line);
     border-radius: 0.85rem;
-    color: #fff;
-    background: var(--color-night-indigo);
-    caret-color: #fff;
+    color: var(--ink);
+    background: #fff;
     font: inherit;
 }
 
-.auth-field input::placeholder {
-    color: rgb(255 255 255 / 66%);
-    opacity: 1;
-}
-
 .auth-field input:focus {
-    border-color: #6eb8c0;
-    outline: 3px solid rgb(26 54 93 / 20%);
-}
-
-.auth-field input:-webkit-autofill,
-.auth-field input:-webkit-autofill:hover,
-.auth-field input:-webkit-autofill:focus {
-    caret-color: #fff;
-    -webkit-text-fill-color: #fff;
-    box-shadow: 0 0 0 1000px var(--color-night-indigo) inset;
-    transition: background-color 9999s ease-out 0s;
+    border-color: var(--teal);
+    outline: 3px solid rgb(15 111 104 / 12%);
 }
 
 .auth-submit {

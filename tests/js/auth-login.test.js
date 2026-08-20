@@ -14,10 +14,6 @@ const css = fs.readFileSync(
     path.join(projectRoot, 'public/assets/css/auth/login.css'),
     'utf8',
 );
-const themeCss = fs.readFileSync(
-    path.join(projectRoot, 'public/assets/css/theme.css'),
-    'utf8',
-);
 
 test('custom login remains closed, Spanish and CSRF protected', () => {
     assert.match(view, /lang="es"/);
@@ -46,13 +42,4 @@ test('custom login has responsive and reduced-motion rules', () => {
     assert.match(css, /@media \(max-width: 820px\)/);
     assert.match(css, /@media \(max-width: 560px\)/);
     assert.match(css, /prefers-reduced-motion/);
-});
-
-test('login credentials use the approved night indigo in both themes and autofill', () => {
-    assert.match(css, /--color-night-indigo:\s*#1A365D/);
-    assert.match(css, /\.auth-field input\s*\{[\s\S]*?background:\s*var\(--color-night-indigo\)/);
-    assert.match(css, /\.auth-field input::placeholder/);
-    assert.match(css, /\.auth-field input:-webkit-autofill/);
-    assert.match(css, /box-shadow:\s*0 0 0 1000px var\(--color-night-indigo\) inset/);
-    assert.match(themeCss, /html\[data-theme="dark"\] \.auth-field input\s*\{[\s\S]*?background:\s*var\(--color-night-indigo, #1A365D\)/);
 });
