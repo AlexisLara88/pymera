@@ -34,8 +34,12 @@ test('account security uses an independent native password form', () => {
     assert.match(view, /name="current_password"/);
     assert.match(view, /name="new_password"/);
     assert.match(view, /name="new_password_confirmation"/);
-    assert.match(view, /autocomplete="current-password"/);
-    assert.match(view, /autocomplete="new-password"/);
+    assert.match(view, /data-password-form[\s\S]*autocomplete="off"|autocomplete="off"[\s\S]*data-password-form/);
+    assert.doesNotMatch(view, /autocomplete="current-password"/);
+    assert.doesNotMatch(view, /autocomplete="new-password"/);
+    assert.match(view, /data-1p-ignore/);
+    assert.match(view, /data-lpignore="true"/);
+    assert.match(view, /data-bwignore="true"/);
     assert.match(view, /data-password-form/);
     assert.match(view, /data-password-toggle="currentPassword"/);
     assert.match(view, /data-password-toggle="newPassword"/);

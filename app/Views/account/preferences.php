@@ -216,7 +216,15 @@ $initialSettingsTab = $passwordSuccess !== null || $passwordError !== null
                 <div class="preferences-alert is-error" role="alert"><?= esc($passwordError) ?></div>
             <?php endif ?>
 
-            <form action="<?= esc(site_url('account/password'), 'attr') ?>" method="post" data-password-form>
+            <form
+                action="<?= esc(site_url('account/password'), 'attr') ?>"
+                method="post"
+                autocomplete="off"
+                data-password-form
+                data-1p-ignore
+                data-lpignore="true"
+                data-bwignore="true"
+            >
                 <?= csrf_field() ?>
                 <div class="security-fields">
                     <div class="security-field">
@@ -226,7 +234,10 @@ $initialSettingsTab = $passwordSuccess !== null || $passwordError !== null
                                 id="currentPassword"
                                 name="current_password"
                                 type="password"
-                                autocomplete="current-password"
+                                autocomplete="off"
+                                data-1p-ignore
+                                data-lpignore="true"
+                                data-bwignore="true"
                                 maxlength="72"
                                 required
                             >
@@ -257,7 +268,10 @@ $initialSettingsTab = $passwordSuccess !== null || $passwordError !== null
                                 id="newPassword"
                                 name="new_password"
                                 type="password"
-                                autocomplete="new-password"
+                                autocomplete="off"
+                                data-1p-ignore
+                                data-lpignore="true"
+                                data-bwignore="true"
                                 minlength="8"
                                 maxlength="72"
                                 aria-describedby="passwordRequirements newPasswordFeedback"
@@ -291,7 +305,10 @@ $initialSettingsTab = $passwordSuccess !== null || $passwordError !== null
                                 id="newPasswordConfirmation"
                                 name="new_password_confirmation"
                                 type="password"
-                                autocomplete="new-password"
+                                autocomplete="off"
+                                data-1p-ignore
+                                data-lpignore="true"
+                                data-bwignore="true"
                                 minlength="8"
                                 maxlength="72"
                                 aria-describedby="newPasswordConfirmationFeedback"

@@ -51,6 +51,11 @@ test('owner passwords have visibility controls and live matching feedback', () =
     assert.match(view, /aria-pressed="false"/);
     assert.match(view, /ownerPasswordFeedback/);
     assert.match(view, /ownerPasswordConfirmationFeedback/);
+    assert.match(view, /data-owner-creation-form[\s\S]*autocomplete="off"|autocomplete="off"[\s\S]*data-owner-creation-form/);
+    assert.doesNotMatch(view, /autocomplete="new-password"/);
+    assert.match(view, /data-1p-ignore/);
+    assert.match(view, /data-lpignore="true"/);
+    assert.match(view, /data-bwignore="true"/);
     assert.match(script, /addEventListener\('input', validatePair\)/);
     assert.match(script, /addEventListener\('blur', validatePair\)/);
     assert.match(script, /setCustomValidity/);

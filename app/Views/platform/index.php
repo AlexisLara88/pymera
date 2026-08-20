@@ -135,7 +135,11 @@ $auditLabels = [
                 class="platform-form"
                 action="<?= esc(site_url('admin/accounts/owner'), 'attr') ?>"
                 method="post"
+                autocomplete="off"
                 data-owner-creation-form
+                data-1p-ignore
+                data-lpignore="true"
+                data-bwignore="true"
             >
                 <?= csrf_field() ?>
                 <label>Correo<input name="email" type="email" required autocomplete="off"></label>
@@ -154,7 +158,10 @@ $auditLabels = [
                             required
                             minlength="8"
                             maxlength="72"
-                            autocomplete="new-password"
+                            autocomplete="off"
+                            data-1p-ignore
+                            data-lpignore="true"
+                            data-bwignore="true"
                             aria-describedby="ownerPasswordFeedback"
                         >
                         <button
@@ -189,7 +196,10 @@ $auditLabels = [
                             required
                             minlength="8"
                             maxlength="72"
-                            autocomplete="new-password"
+                            autocomplete="off"
+                            data-1p-ignore
+                            data-lpignore="true"
+                            data-bwignore="true"
                             aria-describedby="ownerPasswordConfirmationFeedback"
                         >
                         <button

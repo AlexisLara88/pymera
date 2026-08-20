@@ -54,8 +54,9 @@ final class AccountPasswordTest extends CIUnitTestCase
         $response->assertSee('current_password');
         $response->assertSee('new_password');
         $response->assertSee('new_password_confirmation');
-        $this->assertStringContainsString('autocomplete="current-password"', $response->getBody());
-        $this->assertStringContainsString('autocomplete="new-password"', $response->getBody());
+        $this->assertStringContainsString('autocomplete="off"', $response->getBody());
+        $this->assertStringNotContainsString('autocomplete="current-password"', $response->getBody());
+        $this->assertStringNotContainsString('autocomplete="new-password"', $response->getBody());
         $this->assertStringContainsString(
             'action="' . site_url('account/password') . '"',
             $response->getBody(),
