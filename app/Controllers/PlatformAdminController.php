@@ -25,8 +25,9 @@ final class PlatformAdminController extends BaseController
         try {
             return view('platform/index', [
                 ...$this->administration->overview(),
-                'success' => session()->getFlashdata('success'),
-                'error'   => session()->getFlashdata('error'),
+                'success'       => session()->getFlashdata('success'),
+                'error'         => session()->getFlashdata('error'),
+                'initialDialog' => session()->getFlashdata('platformDialog'),
             ]);
         } catch (PlatformAccessException) {
             return $this->response->setStatusCode(403)->setBody(view('business/access_denied'));
@@ -42,7 +43,7 @@ final class PlatformAdminController extends BaseController
         $input = $this->request->getPost();
 
         if (($input['password'] ?? null) !== ($input['password_confirmation'] ?? null)) {
-            return $this->backWithError('Las contraseñas no coinciden.');
+            return $this->backWithError('Las contraseñas no coinciden.', 'owner');
         }
 
         try {
@@ -55,24 +56,18 @@ final class PlatformAdminController extends BaseController
         } catch (PlatformAccessException|RuntimeException $exception) {
             $this->logFailure($exception);
 
-            return $this->backWithError($exception->getMessage());
+            return $this->backWithError($exception->getMessage(), 'owner');
         } catch (Throwable $exception) {
             $this->logFailure($exception);
 
-            return $this->backWithUnexpectedError();
+            return $this->backWithUnexpectedError('owner');
         }
     }
 
     public function createAdministrator(): RedirectResponse
     {
-        $input = $this->request->getPost();
-
-        if (($input['password'] ?? null) !== ($input['password_confirmation'] ?? null)) {
-            return $this->backWithError('Las contraseñas no coinciden.');
-        }
-
         try {
-            $this->administration->createAdministrator($input);
+            $this->administration->createAdministrator($this->request->getPost());
 
             return redirect()->to(site_url('admin'))->with(
                 'success',
@@ -129,15 +124,22 @@ final class PlatformAdminController extends BaseController
         }
     }
 
-    private function backWithError(string $message): RedirectResponse
+    private function backWithError(string $message, ?string $dialog = null): RedirectResponse
     {
-        return redirect()->to(site_url('admin'))->with('error', $message);
+        $response = redirect()->to(site_url('admin'))->with('error', $message);
+
+        if ($dialog !== null) {
+            $response->with('platformDialog', $dialog);
+        }
+
+        return $response;
     }
 
-    private function backWithUnexpectedError(): RedirectResponse
+    private function backWithUnexpectedError(?string $dialog = null): RedirectResponse
     {
         return $this->backWithError(
             'No fue posible completar la operación administrativa. Intentá nuevamente.',
+            $dialog,
         );
     }
 

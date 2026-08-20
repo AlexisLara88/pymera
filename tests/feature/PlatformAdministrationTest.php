@@ -41,9 +41,13 @@ final class PlatformAdministrationTest extends CIUnitTestCase
         $response->assertSee('Administración de plataforma');
         $response->assertSee('Este panel no abre información operativa de las PyMEs.');
         $response->assertSee('admin@example.test');
-        $response->assertSee('platform-create-disclosure');
+        $response->assertSee('data-platform-dialog');
+        $response->assertSee('data-owner-creation-form');
         $response->assertSee('Nuevo propietario y negocio');
         $response->assertSee('Nuevo administrador');
+        $response->assertSee('Funcionalidad deshabilitada');
+        $response->assertSee('data-platform-disabled-feature');
+        $response->assertSee('assets/js/platform/index.js');
         $response->assertSee('platform-account-action is-protected');
         $response->assertSee('disabled');
         $response->assertSee('csrf_test_name');
@@ -78,25 +82,55 @@ final class PlatformAdministrationTest extends CIUnitTestCase
         ]);
     }
 
-    public function testAdministratorCreationDoesNotGrantBusinessMembership(): void
+    public function testWebAdministratorCreationIsTemporarilyDisabledInBackend(): void
     {
         $admin = $this->createAdministrator();
         $this->actingAs($admin);
 
-        $this->withSession($_SESSION)->post('/admin/accounts/platform-admin', [
+        $response = $this->withSession($_SESSION)->post('/admin/accounts/platform-admin', [
             'email'                 => 'second-admin@example.test',
             'username'              => 'second-admin',
             'password'              => 'Safe-Test-Password-42!',
             'password_confirmation' => 'Safe-Test-Password-42!',
             csrf_token()            => csrf_hash(),
-        ])->assertRedirectTo('/admin');
+        ]);
 
+        $response->assertRedirectTo('/admin');
+        $response->assertSessionHas(
+            'error',
+            'La creación de nuevos administradores está temporalmente deshabilitada.',
+        );
         $created = auth()->getProvider()->findByCredentials([
             'email' => 'second-admin@example.test',
         ]);
-        $this->assertInstanceOf(User::class, $created);
-        $this->assertTrue($created->inGroup('platform_admin'));
-        $this->dontSeeInDatabase('business_users', ['user_id' => $created->id]);
+        $this->assertNull($created);
+        $this->dontSeeInDatabase('platform_audit_events', [
+            'actor_user_id' => $admin->id,
+            'subject_type'  => 'user',
+            'action'        => 'created',
+        ]);
+    }
+
+    public function testOwnerPasswordMismatchReturnsToTheOwnerDialog(): void
+    {
+        $admin = $this->createAdministrator();
+        $this->actingAs($admin);
+
+        $response = $this->withSession($_SESSION)->post('/admin/accounts/owner', [
+            'email'                 => 'new-owner@example.test',
+            'username'              => 'new-owner',
+            'business_name'         => 'Negocio nuevo',
+            'currency_code'         => 'USD',
+            'timezone'              => 'America/Guayaquil',
+            'password'              => 'Safe-Test-Password-42!',
+            'password_confirmation' => 'Different-Test-Password-42!',
+            csrf_token()            => csrf_hash(),
+        ]);
+
+        $response->assertRedirectTo('/admin');
+        $response->assertSessionHas('error', 'Las contraseñas no coinciden.');
+        $response->assertSessionHas('platformDialog', 'owner');
+        $this->dontSeeInDatabase('businesses', ['name' => 'Negocio nuevo']);
     }
 
     public function testAdministratorCannotDeactivateItsOwnAccount(): void

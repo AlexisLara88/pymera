@@ -22,4 +22,9 @@ final class PlatformAccessException extends RuntimeException
     {
         return new self('Las cuentas administradoras de plataforma no pueden desactivarse desde este panel.');
     }
+
+    public static function administratorCreationDisabled(): self
+    {
+        return new self('La creación de nuevos administradores está temporalmente deshabilitada.');
+    }
 }

@@ -87,86 +87,147 @@
 
 .platform-grid .platform-panel { margin-bottom: 0; }
 
-.platform-create-disclosure {
-    align-self: start;
-    padding: 0;
-    overflow: hidden;
-}
-
-.platform-create-disclosure summary {
+.platform-create-card {
     display: flex;
-    min-height: 78px;
-    align-items: center;
+    min-height: 178px;
+    align-items: flex-end;
     justify-content: space-between;
-    gap: 20px;
-    padding: 22px 26px;
-    list-style: none;
-    cursor: pointer;
-    user-select: none;
+    gap: 26px;
 }
 
-.platform-create-disclosure summary::-webkit-details-marker { display: none; }
-
-.platform-create-disclosure summary:hover,
-.platform-create-disclosure summary:focus-visible {
-    background: color-mix(in srgb, var(--accent, #f28b30) 7%, var(--surface, #fff));
-    outline: none;
+.platform-create-card > div {
+    max-width: 580px;
 }
 
-.platform-create-disclosure summary:focus-visible {
-    box-shadow: inset 0 0 0 3px color-mix(in srgb, var(--accent, #f28b30) 45%, transparent);
-}
-
-.platform-create-disclosure summary h2 {
-    margin: 0;
+.platform-create-card h2 {
     font-size: 1.2rem;
 }
 
-.platform-disclosure-icon {
-    position: relative;
+.platform-create-card p {
+    margin: 0;
+    color: var(--muted, #64748b);
+    line-height: 1.55;
+}
+
+.platform-create-card > .button {
+    flex: 0 0 auto;
+}
+
+.platform-create-card.is-disabled {
+    background: color-mix(in srgb, var(--surface-soft, #f8fafb) 78%, var(--surface, #fff));
+}
+
+.platform-disabled-action,
+.platform-disabled-action:hover,
+.platform-disabled-action:focus-visible {
+    color: #7b878c;
+    border: 1px solid #d5dcdf;
+    background: #e9edef;
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+html[data-theme="dark"] .platform-disabled-action,
+html[data-theme="dark"] .platform-disabled-action:hover,
+html[data-theme="dark"] .platform-disabled-action:focus-visible {
+    color: #9ca8ab;
+    border-color: #3f4b4e;
+    background: #2b3436;
+}
+
+.platform-feature-notice {
+    position: fixed;
+    right: 28px;
+    bottom: 28px;
+    z-index: 1200;
+    max-width: min(380px, calc(100vw - 32px));
+    padding: 14px 18px;
+    color: var(--ink, #1f2937);
+    background: var(--surface, #fff);
+    border: 1px solid var(--line, #dde3ea);
+    border-left: 4px solid var(--accent, #f28b30);
+    border-radius: 14px;
+    box-shadow: 0 18px 52px rgb(15 23 42 / 20%);
+    font-weight: 750;
+}
+
+.platform-feature-notice:not([hidden]) {
+    animation: platform-notice-in 180ms ease-out;
+}
+
+.platform-dialog {
+    width: min(760px, calc(100% - 32px));
+    max-height: min(90vh, 860px);
+    padding: 0;
+    color: var(--ink, #1f2937);
+    background: transparent;
+    border: 0;
+    overflow: visible;
+}
+
+.platform-dialog::backdrop {
+    background: rgb(8 20 24 / 72%);
+    backdrop-filter: blur(7px);
+}
+
+.platform-dialog-card {
+    max-height: min(90vh, 860px);
+    padding: 28px;
+    background: var(--surface, #fff);
+    border: 1px solid var(--line, #dde3ea);
+    border-radius: 24px;
+    box-shadow: 0 30px 90px rgb(4 15 18 / 32%);
+    overflow: auto;
+}
+
+.platform-dialog-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.platform-dialog-header h2 {
+    margin: 4px 0 0;
+}
+
+.platform-dialog-card > p {
+    margin: 14px 0 0;
+    color: var(--muted, #64748b);
+    line-height: 1.55;
+}
+
+.platform-dialog-close {
     display: grid;
     flex: 0 0 auto;
-    width: 34px;
-    height: 34px;
+    width: 38px;
+    height: 38px;
+    padding: 0;
     place-items: center;
-    border-radius: 50%;
-    color: var(--brand, #123e45);
-    background: var(--surface-soft, #f8fafb);
-    font-size: 0;
-    transition: transform .2s ease, background .2s ease;
-}
-
-.platform-disclosure-icon::before,
-.platform-disclosure-icon::after {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 14px;
-    height: 2px;
-    border-radius: 999px;
-    background: currentColor;
-    content: "";
-    transform: translate(-50%, -50%);
-}
-
-.platform-disclosure-icon::after {
-    transform: translate(-50%, -50%) rotate(90deg);
-}
-
-.platform-create-disclosure[open] .platform-disclosure-icon {
-    color: #fff;
-    background: var(--brand, #123e45);
-    transform: rotate(45deg);
-}
-
-.platform-disclosure-content {
-    padding: 0 26px 26px;
-    border-top: 1px solid var(--line, #dde3ea);
-}
-
-.platform-disclosure-content > p {
-    margin: 20px 0 0;
     color: var(--muted, #64748b);
+    background: var(--surface-soft, #f8fafb);
+    border: 1px solid var(--line, #dde3ea);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.platform-dialog-close span {
+    display: block;
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1;
+    transform: translateY(-1px);
+    transition: transform 240ms ease;
+}
+
+.platform-dialog-close:hover span {
+    transform: translateY(-1px) rotate(180deg);
+}
+
+.platform-dialog-close:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--brand-2, #1f6f78) 34%, transparent);
+    outline-offset: 2px;
 }
 
 .platform-form {
@@ -176,14 +237,21 @@
     margin-top: 22px;
 }
 
-.platform-form label {
+.platform-form label,
+.platform-form-field {
     display: grid;
     gap: 7px;
+}
+
+.platform-form label,
+.platform-form-field > label {
     font-weight: 700;
     color: var(--muted, #64748b);
 }
 
-.platform-form input {
+.platform-form input,
+.platform-password-field input {
+    width: 100%;
     min-width: 0;
     padding: 11px 13px;
     color: var(--ink, #1f2937);
@@ -193,6 +261,98 @@
 }
 
 .platform-form .is-wide { grid-column: 1 / -1; }
+
+.platform-password-field {
+    position: relative;
+}
+
+.platform-password-field input {
+    padding-right: 50px;
+}
+
+.platform-password-field input.is-valid {
+    border-color: color-mix(in srgb, var(--green, #2f8a68) 72%, var(--line, #dde3ea));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--green, #2f8a68) 13%, transparent);
+}
+
+.platform-password-field input.is-invalid {
+    border-color: color-mix(in srgb, var(--red, #b94b47) 78%, var(--line, #dde3ea));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--red, #b94b47) 12%, transparent);
+}
+
+.platform-password-visibility {
+    position: absolute;
+    top: 50%;
+    right: 9px;
+    display: grid;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    place-items: center;
+    color: var(--muted, #64748b);
+    background: transparent;
+    border: 0;
+    border-radius: 10px;
+    cursor: pointer;
+    transform: translateY(-50%);
+}
+
+.platform-password-visibility:hover {
+    color: var(--brand-2, #1f6f78);
+    background: color-mix(in srgb, var(--brand-2, #1f6f78) 11%, transparent);
+}
+
+.platform-password-visibility:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--brand-2, #1f6f78) 34%, transparent);
+    outline-offset: 2px;
+}
+
+.platform-password-visibility svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.platform-password-visibility .password-eye-hide,
+.platform-password-visibility[aria-pressed="true"] .password-eye-show {
+    display: none;
+}
+
+.platform-password-visibility[aria-pressed="true"] .password-eye-hide {
+    display: block;
+}
+
+.platform-password-feedback {
+    min-height: 19px;
+    color: var(--muted, #64748b);
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.45;
+}
+
+.platform-password-feedback.is-valid {
+    color: color-mix(in srgb, var(--green, #2f8a68) 82%, var(--ink, #1f2937));
+}
+
+.platform-password-feedback.is-invalid {
+    color: color-mix(in srgb, var(--red, #b94b47) 84%, var(--ink, #1f2937));
+}
+
+.platform-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 4px;
+}
+
+@keyframes platform-notice-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
 .platform-account-list { display: grid; gap: 12px; margin-top: 20px; }
 
@@ -287,4 +447,19 @@ html[data-theme="dark"] .platform-account-action.is-protected:focus-visible {
     .platform-summary { display: grid; }
     .platform-form .is-wide { grid-column: auto; }
     .platform-account { display: grid; }
+    .platform-create-card {
+        min-height: 0;
+        align-items: stretch;
+        flex-direction: column;
+    }
+    .platform-create-card > .button { width: 100%; }
+    .platform-dialog-card { padding: 22px; }
+    .platform-dialog-actions { align-items: stretch; flex-direction: column-reverse; }
+    .platform-dialog-actions .button { width: 100%; }
+    .platform-feature-notice { right: 16px; bottom: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .platform-feature-notice:not([hidden]) { animation-duration: .01ms; }
+    .platform-dialog-close span { transition-duration: .01ms; }
 }

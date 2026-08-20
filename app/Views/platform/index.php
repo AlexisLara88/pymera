@@ -4,8 +4,10 @@
  * @var list<array<string, mixed>> $accounts
  * @var list<array<string, mixed>> $businesses
  * @var list<array<string, mixed>> $audit_events
+ * @var bool                       $administrator_creation_enabled
  * @var string|null                $success
  * @var string|null                $error
+ * @var string|null                $initialDialog
  */
 
 $groupLabels = [
@@ -69,46 +71,156 @@ $auditLabels = [
         <article><span>Eventos recientes</span><strong><?= count($audit_events) ?></strong></article>
     </section>
 
-    <section class="platform-grid">
-        <details class="platform-panel platform-create-disclosure" name="platform-account-create">
-            <summary>
+    <section class="platform-grid platform-create-grid" aria-label="Creación de cuentas">
+        <article class="platform-panel platform-create-card">
+            <div>
+                <span class="eyebrow">Cuenta de producto</span>
                 <h2>Nuevo propietario y negocio</h2>
-                <span class="platform-disclosure-icon" aria-hidden="true">+</span>
-            </summary>
-            <div class="platform-disclosure-content">
-                <p>Crea identidad, negocio y rol Propietario dentro de una sola transacción.</p>
-                <form class="platform-form" action="<?= esc(site_url('admin/accounts/owner'), 'attr') ?>" method="post">
-                    <?= csrf_field() ?>
-                    <label>Correo<input name="email" type="email" required autocomplete="off"></label>
-                    <label>Usuario<input name="username" type="text" required minlength="3" maxlength="30" autocomplete="off"></label>
-                    <label class="is-wide">Negocio<input name="business_name" type="text" required maxlength="120"></label>
-                    <label>Moneda<input name="currency_code" type="text" value="USD" required minlength="3" maxlength="3"></label>
-                    <label>Zona horaria<input name="timezone" type="text" value="America/Guayaquil" required></label>
-                    <label>Contraseña<input name="password" type="password" required minlength="8" autocomplete="new-password"></label>
-                    <label>Confirmación<input name="password_confirmation" type="password" required minlength="8" autocomplete="new-password"></label>
-                    <button class="button button-primary is-wide" type="submit">Crear propietario y negocio</button>
-                </form>
+                <p>Crea la identidad, el negocio y su acceso como Propietario dentro de una sola operación.</p>
             </div>
-        </details>
+            <button class="button button-primary" type="button" data-platform-dialog-open="ownerCreationDialog">
+                Abrir formulario
+            </button>
+        </article>
 
-        <details class="platform-panel platform-create-disclosure" name="platform-account-create">
-            <summary>
+        <article class="platform-panel platform-create-card is-disabled" aria-disabled="true">
+            <div>
+                <span class="eyebrow">Cuenta de plataforma</span>
                 <h2>Nuevo administrador</h2>
-                <span class="platform-disclosure-icon" aria-hidden="true">+</span>
-            </summary>
-            <div class="platform-disclosure-content">
-                <p>Crea una cuenta administrativa sin asociarla con ningún negocio.</p>
-                <form class="platform-form" action="<?= esc(site_url('admin/accounts/platform-admin'), 'attr') ?>" method="post">
-                    <?= csrf_field() ?>
-                    <label class="is-wide">Correo<input name="email" type="email" required autocomplete="off"></label>
-                    <label class="is-wide">Usuario<input name="username" type="text" required minlength="3" maxlength="30" autocomplete="off"></label>
-                    <label>Contraseña<input name="password" type="password" required minlength="8" autocomplete="new-password"></label>
-                    <label>Confirmación<input name="password_confirmation" type="password" required minlength="8" autocomplete="new-password"></label>
-                    <button class="button button-primary is-wide" type="submit">Crear administrador</button>
-                </form>
+                <p>La capacidad permanece visible, pero no admite nuevas altas desde el panel en este momento.</p>
             </div>
-        </details>
+            <button
+                class="button platform-disabled-action"
+                type="button"
+                aria-disabled="<?= $administrator_creation_enabled ? 'false' : 'true' ?>"
+                data-platform-disabled-feature
+            >
+                Funcionalidad deshabilitada
+            </button>
+        </article>
     </section>
+
+    <div class="platform-feature-notice" role="status" aria-live="polite" data-platform-feature-notice hidden>
+        La creación de nuevos administradores está temporalmente deshabilitada.
+    </div>
+
+    <dialog
+        class="platform-dialog"
+        id="ownerCreationDialog"
+        aria-labelledby="ownerCreationTitle"
+        aria-describedby="ownerCreationDescription"
+        data-platform-dialog
+        data-auto-open="<?= $initialDialog === 'owner' ? 'true' : 'false' ?>"
+    >
+        <div class="platform-dialog-card">
+            <header class="platform-dialog-header">
+                <div>
+                    <span class="eyebrow">Cuenta de producto</span>
+                    <h2 id="ownerCreationTitle">Nuevo propietario y negocio</h2>
+                </div>
+                <button
+                    class="platform-dialog-close"
+                    type="button"
+                    aria-label="Cerrar formulario"
+                    title="Cerrar formulario"
+                    data-platform-dialog-close
+                ><span aria-hidden="true">×</span></button>
+            </header>
+
+            <p id="ownerCreationDescription">
+                La cuenta, el negocio y el acceso Propietario se crearán juntos al confirmar el formulario.
+            </p>
+
+            <form
+                class="platform-form"
+                action="<?= esc(site_url('admin/accounts/owner'), 'attr') ?>"
+                method="post"
+                data-owner-creation-form
+            >
+                <?= csrf_field() ?>
+                <label>Correo<input name="email" type="email" required autocomplete="off"></label>
+                <label>Usuario<input name="username" type="text" required minlength="3" maxlength="30" autocomplete="off"></label>
+                <label class="is-wide">Negocio<input name="business_name" type="text" required maxlength="120"></label>
+                <label>Moneda<input name="currency_code" type="text" value="USD" required minlength="3" maxlength="3"></label>
+                <label>Zona horaria<input name="timezone" type="text" value="America/Guayaquil" required></label>
+
+                <div class="platform-form-field">
+                    <label for="ownerPassword">Contraseña</label>
+                    <div class="platform-password-field">
+                        <input
+                            id="ownerPassword"
+                            name="password"
+                            type="password"
+                            required
+                            minlength="8"
+                            maxlength="72"
+                            autocomplete="new-password"
+                            aria-describedby="ownerPasswordFeedback"
+                        >
+                        <button
+                            class="platform-password-visibility"
+                            type="button"
+                            data-password-toggle="ownerPassword"
+                            aria-controls="ownerPassword"
+                            aria-label="Mostrar contraseña"
+                            aria-pressed="false"
+                            title="Mostrar contraseña"
+                        >
+                            <svg class="password-eye-show" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path>
+                                <circle cx="12" cy="12" r="2.6"></circle>
+                            </svg>
+                            <svg class="password-eye-hide" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M3 3l18 18"></path>
+                                <path d="M10.7 6.1A10.8 10.8 0 0 1 12 6c6 0 9.5 6 9.5 6a15.8 15.8 0 0 1-3.1 3.7M6.1 6.2C3.8 8 2.5 12 2.5 12s3.5 6 9.5 6a9.8 9.8 0 0 0 3-.5M9.9 9.8A3 3 0 0 0 14.2 14"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <small class="platform-password-feedback" id="ownerPasswordFeedback" aria-live="polite"></small>
+                </div>
+
+                <div class="platform-form-field">
+                    <label for="ownerPasswordConfirmation">Confirmación</label>
+                    <div class="platform-password-field">
+                        <input
+                            id="ownerPasswordConfirmation"
+                            name="password_confirmation"
+                            type="password"
+                            required
+                            minlength="8"
+                            maxlength="72"
+                            autocomplete="new-password"
+                            aria-describedby="ownerPasswordConfirmationFeedback"
+                        >
+                        <button
+                            class="platform-password-visibility"
+                            type="button"
+                            data-password-toggle="ownerPasswordConfirmation"
+                            aria-controls="ownerPasswordConfirmation"
+                            aria-label="Mostrar confirmación de contraseña"
+                            aria-pressed="false"
+                            title="Mostrar confirmación de contraseña"
+                        >
+                            <svg class="password-eye-show" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"></path>
+                                <circle cx="12" cy="12" r="2.6"></circle>
+                            </svg>
+                            <svg class="password-eye-hide" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M3 3l18 18"></path>
+                                <path d="M10.7 6.1A10.8 10.8 0 0 1 12 6c6 0 9.5 6 9.5 6a15.8 15.8 0 0 1-3.1 3.7M6.1 6.2C3.8 8 2.5 12 2.5 12s3.5 6 9.5 6a9.8 9.8 0 0 0 3-.5M9.9 9.8A3 3 0 0 0 14.2 14"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <small class="platform-password-feedback" id="ownerPasswordConfirmationFeedback" aria-live="polite"></small>
+                </div>
+
+                <footer class="platform-dialog-actions is-wide">
+                    <button class="button button-secondary" type="button" data-platform-dialog-close>Cancelar</button>
+                    <button class="button button-primary" type="submit">Crear propietario y negocio</button>
+                </footer>
+            </form>
+        </div>
+    </dialog>
 
     <section class="platform-panel">
         <header>
@@ -208,5 +320,6 @@ $auditLabels = [
         </article>
     </section>
 </main>
+<script src="<?= esc(base_url('assets/js/platform/index.js?v=' . filemtime(FCPATH . 'assets/js/platform/index.js')), 'attr') ?>" defer></script>
 </body>
 </html>

@@ -13,6 +13,8 @@ use CodeIgniter\Shield\Entities\User;
 
 final class PlatformAdministrationService
 {
+    private const WEB_ADMINISTRATOR_CREATION_ENABLED = false;
+
     public function __construct(
         private ?BaseConnection $database = null,
         private ?AccountProvisioningService $provisioning = null,
@@ -31,7 +33,8 @@ final class PlatformAdministrationService
      * @return array{
      *   accounts: list<array<string, mixed>>,
      *   businesses: list<array<string, mixed>>,
-     *   audit_events: list<array<string, mixed>>
+     *   audit_events: list<array<string, mixed>>,
+     *   administrator_creation_enabled: bool
      * }
      */
     public function overview(): array
@@ -73,6 +76,7 @@ final class PlatformAdministrationService
             'accounts'     => $accounts,
             'businesses'   => $this->businesses->administrativeOverview(),
             'audit_events' => $this->auditEvents->recentWithActor(),
+            'administrator_creation_enabled' => self::WEB_ADMINISTRATOR_CREATION_ENABLED,
         ];
     }
 
@@ -97,6 +101,10 @@ final class PlatformAdministrationService
     /** @param array<string, mixed> $input */
     public function createAdministrator(array $input): int
     {
+        if (! self::WEB_ADMINISTRATOR_CREATION_ENABLED) {
+            throw PlatformAccessException::administratorCreationDisabled();
+        }
+
         $actorId = $this->require('platform.accounts.create');
 
         return $this->provisioning->createPlatformAdministrator(
