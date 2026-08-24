@@ -72,8 +72,8 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                         'title' => '¿Para qué sirve este perfil?',
                         'targetId' => 'businessDiagnosisPanel',
                         'anchor' => 'target',
-                        'placement' => 'inside-right',
-                        'align' => 'start',
+                        'placement' => 'top',
+                        'align' => 'center',
                         'paragraphs' => [
                             'Describe tu negocio una vez y aporta contexto a tus objetivos, prioridades y finanzas.',
                         ],
@@ -220,8 +220,8 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                                 'title' => '¿Para qué se utilizan la moneda y la zona horaria?',
                                 'targetId' => 'businessGeneralDataFormCard',
                                 'anchor' => 'target',
-                                'placement' => 'inside-right',
-                                'align' => 'start',
+                                'placement' => 'top',
+                                'align' => 'center',
                                 'paragraphs' => [
                                     'La moneda presenta los importes. La zona horaria organiza las fechas y los cierres del negocio.',
                                 ],
@@ -308,8 +308,8 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                                 'title' => '¿Qué información necesito completar?',
                                 'targetId' => 'businessMinimumProfileFormCard',
                                 'anchor' => 'target',
-                                'placement' => 'inside-right',
-                                'align' => 'start',
+                                'placement' => 'top',
+                                'align' => 'center',
                                 'paragraphs' => [
                                     'Indicá qué hace el negocio, a quién atiende, qué ofrece y qué busca lograr. Estas cuatro respuestas son necesarias para comenzar.',
                                 ],
@@ -428,8 +428,8 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                                 'title' => '¿Para qué se utiliza este diagnóstico?',
                                 'targetId' => 'businessGuidedDiagnosisFormCard',
                                 'anchor' => 'target',
-                                'placement' => 'inside-right',
-                                'align' => 'start',
+                                'placement' => 'top',
+                                'align' => 'center',
                                 'paragraphs' => [
                                     'Profundiza por qué te eligen y cómo llegan tus clientes. Podés completarlo más adelante.',
                                 ],
