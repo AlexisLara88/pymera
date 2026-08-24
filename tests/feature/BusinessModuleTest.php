@@ -88,7 +88,10 @@ final class BusinessModuleTest extends CIUnitTestCase
         $this->assertSame(5, substr_count($result->getBody(), 'class="context-help"'));
         $this->assertSame(5, substr_count($result->getBody(), 'class="context-help-trigger"'));
         $this->assertSame(5, substr_count($result->getBody(), 'data-context-help-focus-target'));
-        $this->assertSame(1, substr_count($result->getBody(), 'data-context-help-target="businessDiagnosisPanel"'));
+        $this->assertSame(5, substr_count($result->getBody(), 'data-context-help-anchor="target"'));
+        $this->assertSame(4, substr_count($result->getBody(), 'data-context-help-placement="inside-right"'));
+        $this->assertSame(1, substr_count($result->getBody(), 'data-context-help-placement="left"'));
+        $this->assertSame(5, substr_count($result->getBody(), 'data-context-help-target="'));
         $this->assertStringNotContainsString('business-help-differentiation', $result->getBody());
         $this->assertStringContainsString('&iquest;Cu&aacute;ndo est&aacute; listo mi perfil?', $result->getBody());
         $this->assertStringContainsString('&iquest;Qu&eacute; informaci&oacute;n necesito completar?', $result->getBody());

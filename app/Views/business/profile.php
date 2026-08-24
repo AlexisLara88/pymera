@@ -71,6 +71,9 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                         'id'    => 'business-help-purpose',
                         'title' => '¿Para qué sirve este perfil?',
                         'targetId' => 'businessDiagnosisPanel',
+                        'anchor' => 'target',
+                        'placement' => 'inside-right',
+                        'align' => 'start',
                         'paragraphs' => [
                             'Describe tu negocio una vez y aporta contexto a tus objetivos, prioridades y finanzas.',
                         ],
@@ -80,7 +83,7 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                     ? 'Completá las cuatro respuestas mínimas para iniciar el recorrido operativo.'
                     : 'Este perfil aporta contexto a tus objetivos, prioridades, finanzas y capacidades futuras.' ?></p>
             </div>
-            <div class="completion-card" data-context-help-focus-target>
+            <div class="completion-card" id="businessCompletionCard" data-context-help-focus-target>
                 <div class="completion-ring" style="--completion: <?= esc((string) $profileCompletion) ?>%">
                     <span><?= esc((string) $profileCompletion) ?>%</span>
                 </div>
@@ -90,6 +93,10 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                         <?= $contextualHelp([
                             'id'    => 'business-help-completion',
                             'title' => '¿Cuándo está listo mi perfil?',
+                            'targetId' => 'businessCompletionCard',
+                            'anchor' => 'target',
+                            'placement' => 'left',
+                            'align' => 'center',
                             'paragraphs' => [
                                 'Las primeras cuatro respuestas habilitan el recorrido. El diagnóstico complementario lleva el perfil al 100 %.',
                             ],
@@ -201,7 +208,7 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
         <form class="business-form" action="<?= site_url('app/mi-negocio') ?>" method="post" novalidate @submit="startSubmitting">
             <?= csrf_field() ?>
 
-            <section class="form-card" aria-labelledby="identityTitle" data-context-help-focus-target>
+            <section class="form-card" id="businessGeneralDataFormCard" aria-labelledby="identityTitle" data-context-help-focus-target>
                 <div class="form-card-heading">
                     <span class="section-number">01</span>
                     <div>
@@ -211,6 +218,10 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                             <?= $contextualHelp([
                                 'id'    => 'business-help-general-data',
                                 'title' => '¿Para qué se utilizan la moneda y la zona horaria?',
+                                'targetId' => 'businessGeneralDataFormCard',
+                                'anchor' => 'target',
+                                'placement' => 'inside-right',
+                                'align' => 'start',
                                 'paragraphs' => [
                                     'La moneda presenta los importes. La zona horaria organiza las fechas y los cierres del negocio.',
                                 ],
@@ -285,7 +296,7 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                 </div>
             </section>
 
-            <section class="form-card" aria-labelledby="profileTitle" data-context-help-focus-target>
+            <section class="form-card" id="businessMinimumProfileFormCard" aria-labelledby="profileTitle" data-context-help-focus-target>
                 <div class="form-card-heading">
                     <span class="section-number">02</span>
                     <div>
@@ -295,6 +306,10 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                             <?= $contextualHelp([
                                 'id'    => 'business-help-minimum-profile',
                                 'title' => '¿Qué información necesito completar?',
+                                'targetId' => 'businessMinimumProfileFormCard',
+                                'anchor' => 'target',
+                                'placement' => 'inside-right',
+                                'align' => 'start',
                                 'paragraphs' => [
                                     'Indicá qué hace el negocio, a quién atiende, qué ofrece y qué busca lograr. Estas cuatro respuestas son necesarias para comenzar.',
                                 ],
@@ -344,7 +359,7 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                 </div>
             </section>
 
-            <section class="form-card" aria-labelledby="diagnosisTitle" data-context-help-focus-target>
+            <section class="form-card" id="businessGuidedDiagnosisFormCard" aria-labelledby="diagnosisTitle" data-context-help-focus-target>
                 <div class="form-card-heading">
                     <span class="section-number">03</span>
                     <div>
@@ -354,6 +369,10 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                             <?= $contextualHelp([
                                 'id'    => 'business-help-diagnosis',
                                 'title' => '¿Para qué se utiliza este diagnóstico?',
+                                'targetId' => 'businessGuidedDiagnosisFormCard',
+                                'anchor' => 'target',
+                                'placement' => 'inside-right',
+                                'align' => 'start',
                                 'paragraphs' => [
                                     'Profundiza por qué te eligen y cómo llegan tus clientes. Podés completarlo más adelante.',
                                 ],

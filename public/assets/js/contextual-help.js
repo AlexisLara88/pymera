@@ -5,6 +5,7 @@ const moduleMain = document.querySelector('.module-main');
 const backdrop = document.createElement('div');
 const closeTransitionDuration = 220;
 const viewportGap = 12;
+const anchorInset = 12;
 let openContextualHelp = null;
 let activeFocusTarget = null;
 let manuallyPositionedHelp = null;
@@ -46,6 +47,56 @@ const setExpanded = (help, expanded) => {
     helpTrigger(help)?.setAttribute('aria-expanded', expanded ? 'true' : 'false');
 };
 
+const alignedCoordinate = (start, end, size, alignment, inset = 0) => {
+    if (alignment === 'start') {
+        return start + inset;
+    }
+
+    if (alignment === 'end') {
+        return end - size - inset;
+    }
+
+    return start + ((end - start - size) / 2);
+};
+
+const configuredPosition = (help, anchorRect, cardRect) => {
+    const placement = help.dataset.contextHelpPlacement ?? 'right';
+    const alignment = help.dataset.contextHelpAlign ?? 'center';
+    const alignedTop = alignedCoordinate(
+        anchorRect.top,
+        anchorRect.bottom,
+        cardRect.height,
+        alignment,
+        anchorInset,
+    );
+    const alignedLeft = alignedCoordinate(
+        anchorRect.left,
+        anchorRect.right,
+        cardRect.width,
+        alignment,
+        anchorInset,
+    );
+
+    switch (placement) {
+        case 'left':
+            return { left: anchorRect.left - cardRect.width - viewportGap, top: alignedTop };
+        case 'top':
+            return { left: alignedLeft, top: anchorRect.top - cardRect.height - viewportGap };
+        case 'bottom':
+            return { left: alignedLeft, top: anchorRect.bottom + viewportGap };
+        case 'inside-right':
+            return {
+                left: anchorRect.right - cardRect.width - anchorInset,
+                top: alignedTop,
+            };
+        case 'inside-left':
+            return { left: anchorRect.left + anchorInset, top: alignedTop };
+        case 'right':
+        default:
+            return { left: anchorRect.right + viewportGap, top: alignedTop };
+    }
+};
+
 const positionHelp = (help) => {
     const trigger = helpTrigger(help);
     const card = helpCard(help);
@@ -56,27 +107,16 @@ const positionHelp = (help) => {
 
     const triggerRect = trigger.getBoundingClientRect();
     const cardRect = card.getBoundingClientRect();
+    const anchorRect = help.dataset.contextHelpAnchor === 'target' && activeFocusTarget
+        ? activeFocusTarget.getBoundingClientRect()
+        : triggerRect;
     const bounds = positionBounds(card);
-    const sideTop = clamp(triggerRect.top - 8, bounds.minimumTop, bounds.maximumTop);
-    const centeredLeft = triggerRect.left + (triggerRect.width / 2) - (cardRect.width / 2);
-    const candidates = [
-        { left: triggerRect.right + viewportGap, top: sideTop },
-        { left: triggerRect.left - cardRect.width - viewportGap, top: sideTop },
-        { left: centeredLeft, top: triggerRect.bottom + viewportGap },
-        { left: centeredLeft, top: triggerRect.top - cardRect.height - viewportGap },
-    ];
-    const candidateFits = (candidate) => (
-        candidate.left >= bounds.minimumLeft
-        && candidate.left <= bounds.maximumLeft
-        && candidate.top >= bounds.minimumTop
-        && candidate.top <= bounds.maximumTop
-    );
-    const candidate = candidates.find(candidateFits) ?? candidates[0];
+    const position = configuredPosition(help, anchorRect, cardRect);
 
     setHelpPosition(
         help,
-        clamp(candidate.left, bounds.minimumLeft, bounds.maximumLeft),
-        clamp(candidate.top, bounds.minimumTop, bounds.maximumTop),
+        clamp(position.left, bounds.minimumLeft, bounds.maximumLeft),
+        clamp(position.top, bounds.minimumTop, bounds.maximumTop),
     );
 
     window.requestAnimationFrame(() => {

@@ -9,7 +9,10 @@
  *     paragraphs?: list<string>,
  *     items?: list<string>,
  *     example?: string|null,
- *     targetId?: string|null
+ *     targetId?: string|null,
+ *     anchor?: string|null,
+ *     placement?: string|null,
+ *     align?: string|null
  * } $contextualHelp
  */
 
@@ -19,6 +22,17 @@ $paragraphs   = $contextualHelp['paragraphs'] ?? [];
 $items        = $contextualHelp['items'] ?? [];
 $example      = $contextualHelp['example'] ?? null;
 $targetId     = $contextualHelp['targetId'] ?? null;
+$anchor       = in_array($contextualHelp['anchor'] ?? null, ['trigger', 'target'], true)
+    ? $contextualHelp['anchor']
+    : 'trigger';
+$placement    = in_array(
+    $contextualHelp['placement'] ?? null,
+    ['right', 'left', 'top', 'bottom', 'inside-right', 'inside-left'],
+    true,
+) ? $contextualHelp['placement'] : 'right';
+$align        = in_array($contextualHelp['align'] ?? null, ['start', 'center', 'end'], true)
+    ? $contextualHelp['align']
+    : 'center';
 $titleId     = $id . '-title';
 $contentId   = $id . '-content';
 ?>
@@ -26,6 +40,9 @@ $contentId   = $id . '-content';
     class="context-help"
     data-context-help
     <?= $targetId !== null ? 'data-context-help-target="' . esc($targetId, 'attr') . '"' : '' ?>
+    data-context-help-anchor="<?= esc($anchor, 'attr') ?>"
+    data-context-help-placement="<?= esc($placement, 'attr') ?>"
+    data-context-help-align="<?= esc($align, 'attr') ?>"
 >
     <summary
         class="context-help-trigger"
