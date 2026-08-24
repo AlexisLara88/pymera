@@ -43,11 +43,11 @@ test('contextual help is server-rendered, escaped and progressively enhanced', (
     assert.doesNotMatch(component, /\{!{2}|innerHTML/);
 });
 
-test('Mi negocio owns five concise contextual explanations', () => {
+test('Mi negocio owns block and question-level contextual explanations', () => {
     const instances = profile.match(/\$contextualHelp\(\[/g) || [];
     const focusedForms = profile.match(/<section class="form-card"[^>]*data-context-help-focus-target/g) || [];
 
-    assert.equal(instances.length, 5);
+    assert.equal(instances.length, 7);
     assert.match(profile, /\['saveData' => false\]/);
     assert.match(component, /\$contextualHelp\['targetId'\] \?\? null/);
     assert.equal(focusedForms.length, 3);
@@ -57,15 +57,26 @@ test('Mi negocio owns five concise contextual explanations', () => {
     assert.match(profile, /'targetId' => 'businessGeneralDataFormCard'/);
     assert.match(profile, /'targetId' => 'businessMinimumProfileFormCard'/);
     assert.match(profile, /'targetId' => 'businessGuidedDiagnosisFormCard'/);
-    assert.equal((profile.match(/'anchor' => 'target'/g) || []).length, 5);
-    assert.equal((profile.match(/'placement' => 'inside-right'/g) || []).length, 4);
+    assert.equal((profile.match(/'anchor' => 'target'/g) || []).length, 7);
+    assert.equal((profile.match(/'placement' => 'inside-right'/g) || []).length, 8);
+    assert.equal((profile.match(/'placement' => 'inside-left'/g) || []).length, 5);
     assert.equal((profile.match(/'placement' => 'left'/g) || []).length, 1);
     assert.match(profile, /id="businessDiagnosisPanel" data-context-help-focus-target/);
     assert.match(profile, /business-help-completion/);
     assert.match(profile, /business-help-general-data/);
     assert.match(profile, /business-help-minimum-profile/);
     assert.match(profile, /business-help-diagnosis/);
-    assert.doesNotMatch(profile, /business-help-differentiation/);
+    assert.match(profile, /business-help-what-it-does/);
+    assert.match(profile, /business-help-customers-served/);
+    assert.match(profile, /business-help-products-offered/);
+    assert.match(profile, /business-help-objectives-summary/);
+    assert.match(profile, /business-help-differentiator/);
+    assert.match(profile, /business-help-differentiation-delivery/);
+    assert.match(profile, /business-help-customer-outcome/);
+    assert.match(profile, /business-help-purchase-reason/);
+    assert.match(profile, /business-help-acquisition-channels/);
+    assert.match(profile, /field-question-label/);
+    assert.doesNotMatch(profile, /business-help-(?:name|currency|timezone)/);
     assert.match(profile, /data-context-help-focus-target/);
     assert.match(profile, /'contextual-help\.css'/);
     assert.match(profile, /assets\/js\/contextual-help\.js/);

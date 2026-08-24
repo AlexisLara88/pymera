@@ -322,15 +322,76 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                 <div class="form-grid">
                     <?php
                     $minimumQuestions = [
-                        'what_it_does'       => ['¿Qué hace el negocio?', 'Describí brevemente su actividad principal.'],
-                        'customers_served'   => ['¿A quién atiende?', 'Indicá los tipos de clientes que reciben la propuesta.'],
-                        'products_offered'   => ['¿Qué productos o servicios ofrece?', 'Resumí la oferta actual.'],
-                        'objectives_summary' => ['¿Qué objetivos persigue?', 'Contá qué busca conseguir en esta etapa.'],
+                        'what_it_does' => [
+                            'label' => '¿Qué hace el negocio?',
+                            'hint' => 'Describí brevemente su actividad principal.',
+                            'help' => [
+                                'id' => 'business-help-what-it-does',
+                                'title' => '¿Qué conviene describir aquí?',
+                                'targetId' => 'businessFieldWhatItDoes',
+                                'placement' => 'inside-left',
+                                'paragraph' => 'Explicá la actividad principal del negocio de forma sencilla, sin hablar todavía de aquello que lo diferencia.',
+                                'example' => 'Elaboramos pasteles y postres personalizados para celebraciones.',
+                            ],
+                        ],
+                        'customers_served' => [
+                            'label' => '¿A quién atiende?',
+                            'hint' => 'Indicá los tipos de clientes que reciben la propuesta.',
+                            'help' => [
+                                'id' => 'business-help-customers-served',
+                                'title' => '¿A quiénes conviene mencionar?',
+                                'targetId' => 'businessFieldCustomersServed',
+                                'placement' => 'inside-right',
+                                'paragraph' => 'Describí los grupos de personas o negocios que suelen comprar, sin necesidad de enumerar clientes individuales.',
+                                'example' => 'Familias, parejas y pequeños negocios que organizan celebraciones.',
+                            ],
+                        ],
+                        'products_offered' => [
+                            'label' => '¿Qué productos o servicios ofrece?',
+                            'hint' => 'Resumí la oferta actual.',
+                            'help' => [
+                                'id' => 'business-help-products-offered',
+                                'title' => '¿Qué debería incluir en la oferta?',
+                                'targetId' => 'businessFieldProductsOffered',
+                                'placement' => 'inside-left',
+                                'paragraph' => 'Mencioná los principales productos o servicios que el negocio vende actualmente.',
+                                'example' => 'Pasteles personalizados, cajas de postres y mesas dulces.',
+                            ],
+                        ],
+                        'objectives_summary' => [
+                            'label' => '¿Qué objetivos persigue?',
+                            'hint' => 'Contá qué busca conseguir en esta etapa.',
+                            'help' => [
+                                'id' => 'business-help-objectives-summary',
+                                'title' => '¿Qué tipo de objetivos van aquí?',
+                                'targetId' => 'businessFieldObjectivesSummary',
+                                'placement' => 'inside-right',
+                                'paragraph' => 'Resumí los resultados que el negocio quiere conseguir en esta etapa. Después podrán convertirse en objetivos con actividades y fechas.',
+                                'example' => 'Aumentar los pedidos y reducir los reclamos por entregas.',
+                            ],
+                        ],
                     ];
                     ?>
-                    <?php foreach ($minimumQuestions as $field => [$label, $hint]): ?>
-                        <div class="field-group">
-                            <label for="<?= esc($field) ?>"><?= esc($label) ?></label>
+                    <?php foreach ($minimumQuestions as $field => $question): ?>
+                        <?php $help = $question['help']; ?>
+                        <div
+                            class="field-group"
+                            id="<?= esc($help['targetId'], 'attr') ?>"
+                            data-context-help-focus-target
+                        >
+                            <div class="field-question-label">
+                                <label for="<?= esc($field) ?>"><?= esc($question['label']) ?></label>
+                                <?= $contextualHelp([
+                                    'id' => $help['id'],
+                                    'title' => $help['title'],
+                                    'targetId' => $help['targetId'],
+                                    'anchor' => 'target',
+                                    'placement' => $help['placement'],
+                                    'align' => 'start',
+                                    'paragraphs' => [$help['paragraph']],
+                                    'example' => $help['example'],
+                                ]) ?>
+                            </div>
                             <textarea
                                 class="form-control"
                                 id="<?= esc($field) ?>"
@@ -343,7 +404,7 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                                 required
                             ><?= $fieldValue($field) ?></textarea>
                             <div class="field-meta">
-                                <small><?= esc($hint) ?></small>
+                                <small><?= esc($question['hint']) ?></small>
                                 <small
                                     data-character-output
                                 >
@@ -385,16 +446,83 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                 <div class="form-grid">
                     <?php
                     $diagnosisQuestions = [
-                        'differentiator'            => '¿Qué hace diferente al negocio frente a otras alternativas?',
-                        'differentiation_delivery' => '¿Cómo produce o entrega esa diferencia?',
-                        'customer_outcome'         => '¿Qué resultado obtiene el cliente?',
-                        'purchase_reason'          => '¿Por qué considera que el cliente le compra?',
-                        'acquisition_channels'     => '¿Por qué canales llegan actualmente los clientes?',
+                        'differentiator' => [
+                            'label' => '¿Qué hace diferente al negocio frente a otras alternativas?',
+                            'help' => [
+                                'id' => 'business-help-differentiator',
+                                'title' => '¿Qué significa ser diferente?',
+                                'targetId' => 'businessFieldDifferentiator',
+                                'placement' => 'inside-left',
+                                'paragraph' => 'Explicá la razón concreta por la que un cliente podría reconocer o preferir este negocio frente a otras opciones.',
+                                'example' => 'Personalizamos cada pedido y acompañamos al cliente durante la elección.',
+                            ],
+                        ],
+                        'differentiation_delivery' => [
+                            'label' => '¿Cómo produce o entrega esa diferencia?',
+                            'help' => [
+                                'id' => 'business-help-differentiation-delivery',
+                                'title' => '¿Cómo se hace realidad esa diferencia?',
+                                'targetId' => 'businessFieldDifferentiationDelivery',
+                                'placement' => 'inside-right',
+                                'paragraph' => 'Contá qué acciones, procesos o formas de atención permiten cumplir aquello que hace especial al negocio.',
+                                'example' => 'Realizamos una entrevista, confirmamos el diseño y ofrecemos muestras para pedidos especiales.',
+                            ],
+                        ],
+                        'customer_outcome' => [
+                            'label' => '¿Qué resultado obtiene el cliente?',
+                            'help' => [
+                                'id' => 'business-help-customer-outcome',
+                                'title' => '¿Qué resultado debería describirse?',
+                                'targetId' => 'businessFieldCustomerOutcome',
+                                'placement' => 'inside-left',
+                                'paragraph' => 'Describí el beneficio o cambio que recibe el cliente, no solamente el producto que compra.',
+                                'example' => 'Recibe un pastel acorde con su celebración y reduce la incertidumbre sobre el resultado final.',
+                            ],
+                        ],
+                        'purchase_reason' => [
+                            'label' => '¿Por qué considera que el cliente le compra?',
+                            'help' => [
+                                'id' => 'business-help-purchase-reason',
+                                'title' => '¿Qué motivo de compra buscamos?',
+                                'targetId' => 'businessFieldPurchaseReason',
+                                'placement' => 'inside-right',
+                                'paragraph' => 'Indicá las razones que los clientes expresan o demuestran al elegir el negocio.',
+                                'example' => 'Por la personalización, la atención cercana y las recomendaciones de otros clientes.',
+                            ],
+                        ],
+                        'acquisition_channels' => [
+                            'label' => '¿Por qué canales llegan actualmente los clientes?',
+                            'help' => [
+                                'id' => 'business-help-acquisition-channels',
+                                'title' => '¿Qué canales hay que registrar?',
+                                'targetId' => 'businessFieldAcquisitionChannels',
+                                'placement' => 'inside-left',
+                                'paragraph' => 'Mencioná las vías por las que las personas descubren o contactan actualmente al negocio.',
+                                'example' => 'Instagram, recomendaciones, ubicación del local y búsquedas en internet.',
+                            ],
+                        ],
                     ];
                     ?>
-                    <?php foreach ($diagnosisQuestions as $field => $label): ?>
-                        <div class="field-group">
-                            <label for="<?= esc($field) ?>"><?= esc($label) ?></label>
+                    <?php foreach ($diagnosisQuestions as $field => $question): ?>
+                        <?php $help = $question['help']; ?>
+                        <div
+                            class="field-group"
+                            id="<?= esc($help['targetId'], 'attr') ?>"
+                            data-context-help-focus-target
+                        >
+                            <div class="field-question-label">
+                                <label for="<?= esc($field) ?>"><?= esc($question['label']) ?></label>
+                                <?= $contextualHelp([
+                                    'id' => $help['id'],
+                                    'title' => $help['title'],
+                                    'targetId' => $help['targetId'],
+                                    'anchor' => 'target',
+                                    'placement' => $help['placement'],
+                                    'align' => 'start',
+                                    'paragraphs' => [$help['paragraph']],
+                                    'example' => $help['example'],
+                                ]) ?>
+                            </div>
                             <textarea
                                 class="form-control"
                                 id="<?= esc($field) ?>"
