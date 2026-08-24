@@ -33,7 +33,6 @@ test('contextual help is server-rendered, escaped and progressively enhanced', (
     assert.match(component, /data-context-help-close/);
     assert.match(component, /data-context-help-drag-handle/);
     assert.match(component, /data-context-help-target/);
-    assert.match(component, /data-context-help-placement/);
     assert.match(component, /esc\(\$title/);
     assert.match(component, /esc\(\$paragraph\)/);
     assert.match(component, /esc\(\$item\)/);
@@ -51,7 +50,6 @@ test('Mi negocio owns five concise contextual explanations', () => {
     assert.equal(focusedForms.length, 3);
     assert.match(profile, /business-help-purpose/);
     assert.match(profile, /'targetId' => 'businessDiagnosisPanel'/);
-    assert.match(profile, /'placement' => \$isOnboarding \? null : 'target-side'/);
     assert.match(profile, /id="businessDiagnosisPanel" data-context-help-focus-target/);
     assert.match(profile, /business-help-completion/);
     assert.match(profile, /business-help-general-data/);
@@ -77,19 +75,12 @@ test('the interaction builds a focused backdrop without affecting business state
     assert.match(script, /is-context-help-focus/);
     assert.match(script, /closest\('\[data-context-help-focus-target\]'\)/);
     assert.match(script, /moduleMain\?\.getBoundingClientRect/);
-    assert.match(script, /activeFocusTarget\?\.getBoundingClientRect/);
-    assert.match(script, /rectangleContainsPoint/);
-    assert.match(script, /rectanglesOverlap/);
     assert.match(script, /triggerRect\.right \+ viewportGap/);
-    assert.match(script, /!rectanglesOverlap\(candidateRectangle\(position\), focusRect, viewportGap\)/);
-    assert.match(script, /triggerIsInsideFocus/);
-    assert.match(script, /help\.dataset\.contextHelpPlacement === 'target-side'/);
-    assert.match(script, /targetAlignedSideCandidates/);
-    assert.match(script, /focusRect\.top/);
-    assert.match(
-        script,
-        /triggerIsInsideFocus\s*\? \[\.\.\.adjacentCandidates, \.\.\.focusSideCandidates, \.\.\.focusVerticalCandidates\]\s*: \[\.\.\.adjacentCandidates, \.\.\.focusVerticalCandidates, \.\.\.focusSideCandidates\]/,
-    );
+    assert.match(script, /triggerRect\.left - cardRect\.width - viewportGap/);
+    assert.match(script, /triggerRect\.bottom \+ viewportGap/);
+    assert.match(script, /triggerRect\.top - cardRect\.height - viewportGap/);
+    assert.match(script, /candidates\.find\(candidateFits\) \?\? candidates\[0\]/);
+    assert.doesNotMatch(script, /rectangleContainsPoint|rectanglesOverlap|contextHelpPlacement|focusRect/);
     assert.match(script, /help\.dataset\.contextHelpTarget/);
     assert.match(script, /document\.getElementById\(explicitTargetId\)/);
     assert.match(script, /is-positioned/);

@@ -42,20 +42,6 @@ const setHelpPosition = (help, left, top) => {
     help.style.setProperty('--context-help-top', `${Math.round(top)}px`);
 };
 
-const rectangleContainsPoint = (rectangle, x, y) => (
-    x >= rectangle.left
-    && x <= rectangle.right
-    && y >= rectangle.top
-    && y <= rectangle.bottom
-);
-
-const rectanglesOverlap = (first, second, gap = 0) => !(
-    first.right + gap <= second.left
-    || first.left >= second.right + gap
-    || first.bottom + gap <= second.top
-    || first.top >= second.bottom + gap
-);
-
 const setExpanded = (help, expanded) => {
     helpTrigger(help)?.setAttribute('aria-expanded', expanded ? 'true' : 'false');
 };
@@ -70,60 +56,22 @@ const positionHelp = (help) => {
 
     const triggerRect = trigger.getBoundingClientRect();
     const cardRect = card.getBoundingClientRect();
-    const focusRect = activeFocusTarget?.getBoundingClientRect() ?? triggerRect;
     const bounds = positionBounds(card);
     const sideTop = clamp(triggerRect.top - 8, bounds.minimumTop, bounds.maximumTop);
-    const targetSideTop = clamp(focusRect.top, bounds.minimumTop, bounds.maximumTop);
     const centeredLeft = triggerRect.left + (triggerRect.width / 2) - (cardRect.width / 2);
-    const adjacentCandidates = [
+    const candidates = [
         { left: triggerRect.right + viewportGap, top: sideTop },
         { left: triggerRect.left - cardRect.width - viewportGap, top: sideTop },
         { left: centeredLeft, top: triggerRect.bottom + viewportGap },
         { left: centeredLeft, top: triggerRect.top - cardRect.height - viewportGap },
     ];
-    const focusAlignedLeft = clamp(
-        triggerRect.right + viewportGap,
-        bounds.minimumLeft,
-        bounds.maximumLeft,
-    );
-    const focusSideCandidates = [
-        { left: focusRect.right + viewportGap, top: sideTop },
-        { left: focusRect.left - cardRect.width - viewportGap, top: sideTop },
-    ];
-    const targetAlignedSideCandidates = [
-        { left: focusRect.right + viewportGap, top: targetSideTop },
-        { left: focusRect.left - cardRect.width - viewportGap, top: targetSideTop },
-    ];
-    const focusVerticalCandidates = [
-        { left: focusAlignedLeft, top: focusRect.bottom + viewportGap },
-        { left: focusAlignedLeft, top: focusRect.top - cardRect.height - viewportGap },
-    ];
-    const triggerIsInsideFocus = rectangleContainsPoint(
-        focusRect,
-        triggerRect.left + (triggerRect.width / 2),
-        triggerRect.top + (triggerRect.height / 2),
-    );
-    const candidates = help.dataset.contextHelpPlacement === 'target-side'
-        ? [...targetAlignedSideCandidates, ...adjacentCandidates, ...focusVerticalCandidates]
-        : (triggerIsInsideFocus
-            ? [...adjacentCandidates, ...focusSideCandidates, ...focusVerticalCandidates]
-            : [...adjacentCandidates, ...focusVerticalCandidates, ...focusSideCandidates]);
     const candidateFits = (candidate) => (
         candidate.left >= bounds.minimumLeft
         && candidate.left <= bounds.maximumLeft
         && candidate.top >= bounds.minimumTop
         && candidate.top <= bounds.maximumTop
     );
-    const candidateRectangle = (candidate) => ({
-        left: candidate.left,
-        right: candidate.left + cardRect.width,
-        top: candidate.top,
-        bottom: candidate.top + cardRect.height,
-    });
-    const candidate = candidates.find((position) => (
-        candidateFits(position)
-        && !rectanglesOverlap(candidateRectangle(position), focusRect, viewportGap)
-    )) ?? candidates.find(candidateFits) ?? candidates[0];
+    const candidate = candidates.find(candidateFits) ?? candidates[0];
 
     setHelpPosition(
         help,

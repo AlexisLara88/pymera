@@ -71,7 +71,6 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                         'id'    => 'business-help-purpose',
                         'title' => '¿Para qué sirve este perfil?',
                         'targetId' => 'businessDiagnosisPanel',
-                        'placement' => $isOnboarding ? null : 'target-side',
                         'paragraphs' => [
                             'Describe tu negocio una vez y aporta contexto a tus objetivos, prioridades y finanzas.',
                         ],
@@ -91,7 +90,6 @@ foreach (array_slice($initialWords, 0, 2) as $word) {
                         <?= $contextualHelp([
                             'id'    => 'business-help-completion',
                             'title' => '¿Cuándo está listo mi perfil?',
-                            'placement' => $isOnboarding ? null : 'target-side',
                             'paragraphs' => [
                                 'Las primeras cuatro respuestas habilitan el recorrido. El diagnóstico complementario lleva el perfil al 100 %.',
                             ],

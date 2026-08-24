@@ -77,7 +77,6 @@ final class DashboardModuleTest extends CIUnitTestCase
 
         $profile->assertOK();
         $profile->assertSee('Configurar negocio');
-        $this->assertStringNotContainsString('data-context-help-placement="target-side"', $profile->getBody());
         $this->assertStringNotContainsString(
             'Completá las cuatro respuestas mínimas para configurar el perfil inicial de tu negocio.',
             $profile->getBody(),
