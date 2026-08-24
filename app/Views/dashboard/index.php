@@ -91,10 +91,23 @@ $priorityLabels = [
         <?php endif ?>
 
         <section class="dashboard-metrics" aria-label="Indicadores generales">
-            <article class="dashboard-metric dashboard-metric-objectives">
+            <article class="dashboard-metric dashboard-metric-objectives" id="dashboardActiveObjectives" data-context-help-focus-target>
                 <span class="metric-icon" aria-hidden="true">01</span>
                 <div>
-                    <small>Objetivos activos</small>
+                    <div class="dashboard-metric-label">
+                        <small>Objetivos activos</small>
+                        <?= $contextualHelp([
+                            'id'        => 'dashboard-help-active-objectives',
+                            'title'     => '¿Qué incluyen estos valores?',
+                            'targetId'  => 'dashboardActiveObjectives',
+                            'anchor'    => 'target',
+                            'placement' => 'top',
+                            'align'     => 'center',
+                            'paragraphs' => [
+                                'Cuenta los objetivos en estado activo. Las actividades abiertas son sus tareas pendientes o en curso; no incluye las completadas ni canceladas.',
+                            ],
+                        ]) ?>
+                    </div>
                     <strong><?= esc((string) $workflow_summary['active_objectives']) ?></strong>
                     <p><?= esc((string) $workflow_summary['open_activities']) ?> actividades abiertas</p>
                 </div>
@@ -120,18 +133,44 @@ $priorityLabels = [
                     <p><?= esc((string) $workflow_summary['completed_activities']) ?> completadas</p>
                 </div>
             </article>
-            <article class="dashboard-metric dashboard-metric-sales">
+            <article class="dashboard-metric dashboard-metric-sales" id="dashboardPeriodSales" data-context-help-focus-target>
                 <span class="metric-icon" aria-hidden="true">03</span>
                 <div>
-                    <small>Ventas del período</small>
+                    <div class="dashboard-metric-label">
+                        <small>Ventas del período</small>
+                        <?= $contextualHelp([
+                            'id'        => 'dashboard-help-period-sales',
+                            'title'     => '¿Qué ventas forman este total?',
+                            'targetId'  => 'dashboardPeriodSales',
+                            'anchor'    => 'target',
+                            'placement' => 'top',
+                            'align'     => 'center',
+                            'paragraphs' => [
+                                'Suma las ventas de los cierres registrados del período mostrado. Incluye las ventas manuales y las provenientes del CRM que ya fueron confirmadas en Finanzas; los borradores no participan.',
+                            ],
+                        ]) ?>
+                    </div>
                     <strong><?= $money($finance_totals['sales_cents']) ?></strong>
                     <p><?= esc($finance_period_label) ?> · <?= esc((string) $finance_summary['recorded_entry_count']) ?> cierres</p>
                 </div>
             </article>
-            <article class="dashboard-metric dashboard-metric-ebitda">
+            <article class="dashboard-metric dashboard-metric-ebitda" id="dashboardEbitda" data-context-help-focus-target>
                 <span class="metric-icon" aria-hidden="true">04</span>
                 <div>
-                    <small>EBITDA</small>
+                    <div class="dashboard-metric-label">
+                        <small>EBITDA</small>
+                        <?= $contextualHelp([
+                            'id'        => 'dashboard-help-ebitda',
+                            'title'     => '¿Cómo se calcula el EBITDA?',
+                            'targetId'  => 'dashboardEbitda',
+                            'anchor'    => 'target',
+                            'placement' => 'top',
+                            'align'     => 'center',
+                            'paragraphs' => [
+                                'Primero resta el costo de ventas a las ventas para obtener la utilidad bruta. Después resta los gastos operativos o fijos y los gastos administrativos.',
+                            ],
+                        ]) ?>
+                    </div>
                     <strong class="<?= $finance_totals['ebitda_cents'] < 0 ? 'is-negative' : 'is-positive' ?>">
                         <?= $money($finance_totals['ebitda_cents']) ?>
                     </strong>

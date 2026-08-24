@@ -115,8 +115,8 @@ final class DashboardModuleTest extends CIUnitTestCase
         $result->assertSee('USD 8.650,00');
         $result->assertSee('USD 2.470,00');
         $result->assertDontSee('Según la fórmula validada con el cliente');
-        $this->assertSame(4, substr_count($result->getBody(), 'class="context-help"'));
-        $this->assertSame(4, substr_count($result->getBody(), 'data-context-help-focus-target'));
+        $this->assertSame(7, substr_count($result->getBody(), 'class="context-help"'));
+        $this->assertSame(7, substr_count($result->getBody(), 'data-context-help-focus-target'));
         $this->assertStringContainsString('assets/css/contextual-help.css', $result->getBody());
         $this->assertStringContainsString('assets/js/contextual-help.js', $result->getBody());
         $this->assertStringNotContainsString('<form', $this->dashboardContent($result->getBody()));

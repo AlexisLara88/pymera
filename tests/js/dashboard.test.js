@@ -41,13 +41,16 @@ test('dashboard is a read-only synthesis of the four functional modules', () => 
     assert.match(view, /Editar perfil del negocio/);
 });
 
-test('dashboard adds four focused contextual helps without turning the page into a Vue app', () => {
-    assert.equal((view.match(/\$contextualHelp\(\[/g) || []).length, 4);
-    assert.equal((view.match(/data-context-help-focus-target/g) || []).length, 4);
-    assert.equal((view.match(/'anchor'\s*=>\s*'target'/g) || []).length, 4);
-    assert.equal((view.match(/'placement'\s*=>\s*'top'/g) || []).length, 4);
-    assert.equal((view.match(/'align'\s*=>\s*'center'/g) || []).length, 4);
+test('dashboard adds seven focused contextual helps without turning the page into a Vue app', () => {
+    assert.equal((view.match(/\$contextualHelp\(\[/g) || []).length, 7);
+    assert.equal((view.match(/data-context-help-focus-target/g) || []).length, 7);
+    assert.equal((view.match(/'anchor'\s*=>\s*'target'/g) || []).length, 7);
+    assert.equal((view.match(/'placement'\s*=>\s*'top'/g) || []).length, 7);
+    assert.equal((view.match(/'align'\s*=>\s*'center'/g) || []).length, 7);
+    assert.match(view, /dashboard-help-active-objectives/);
     assert.match(view, /dashboard-help-progress/);
+    assert.match(view, /dashboard-help-period-sales/);
+    assert.match(view, /dashboard-help-ebitda/);
     assert.match(view, /dashboard-help-finances/);
     assert.match(view, /dashboard-help-featured-objective/);
     assert.match(view, /dashboard-help-next-actions/);
