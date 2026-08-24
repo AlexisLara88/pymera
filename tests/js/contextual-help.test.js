@@ -134,6 +134,10 @@ test('the visual component spotlights its target without altering the sidebar', 
     assert.match(styles, /max-height:\s*min\(24rem, calc\(100vh - 2rem\)\)/);
     assert.match(styles, /overflow:\s*auto/);
     assert.match(styles, /\.context-help-trigger:focus-visible/);
+    assert.match(styles, /\.context-help-close > span::before/);
+    assert.match(styles, /\.context-help-close > span::after/);
+    assert.match(styles, /\.context-help-close:hover > span\s*\{[\s\S]*?transform:\s*rotate\(90deg\)/);
+    assert.match(styles, /@media \(prefers-reduced-motion:\s*reduce\)[\s\S]*?\.context-help-close > span/);
     assert.match(styles, /@media \(max-width:\s*680px\)/);
     assert.match(styles, /@media \(prefers-reduced-motion:\s*reduce\)/);
     assert.match(styles, /var\(--paper\)/);

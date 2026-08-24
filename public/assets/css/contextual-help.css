@@ -167,6 +167,7 @@ body.context-help-is-open .module-sidebar {
 
 .context-help-close {
     display: grid;
+    position: relative;
     flex: 0 0 auto;
     width: 1.8rem;
     height: 1.8rem;
@@ -177,10 +178,39 @@ body.context-help-is-open .module-sidebar {
     color: var(--muted);
     background: transparent;
     font: inherit;
-    font-size: 1.15rem;
-    line-height: 1;
     cursor: pointer;
-    transition: color 180ms ease, background 180ms ease, transform 220ms ease;
+    transition: color 180ms ease, background 180ms ease;
+}
+
+.context-help-close > span {
+    position: relative;
+    display: block;
+    width: 0.72rem;
+    height: 0.72rem;
+    color: inherit;
+    font-size: 0;
+    transform-origin: center;
+    transition: transform 220ms ease;
+}
+
+.context-help-close > span::before,
+.context-help-close > span::after {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0.78rem;
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+    content: "";
+}
+
+.context-help-close > span::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.context-help-close > span::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 .context-help.is-dragging .context-help-card {
@@ -194,6 +224,9 @@ body.context-help-is-open .module-sidebar {
 .context-help-close:hover {
     color: var(--ink);
     background: var(--canvas);
+}
+
+.context-help-close:hover > span {
     transform: rotate(90deg);
 }
 
@@ -245,7 +278,8 @@ body.context-help-is-open .module-sidebar {
     [data-context-help-focus-target],
     .context-help-card,
     .context-help-trigger,
-    .context-help-close {
+    .context-help-close,
+    .context-help-close > span {
         transition: none;
     }
 }
