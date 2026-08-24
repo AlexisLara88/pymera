@@ -31,10 +31,15 @@ $date = static function (?string $value): string {
 
     return $parsed === false ? $value : $parsed->format('d/m/Y');
 };
+$contextualHelp = static fn (array $configuration): string => view(
+    'components/contextual_help',
+    ['contextualHelp' => $configuration],
+    ['saveData' => false],
+);
 $profile = $profile ?? [];
-$featuredActivities = $featured_objective['activities'] ?? [];
 $featuredProgress = (int) ($featured_objective['progress_percent'] ?? 0);
 $featuredCompleted = (int) ($featured_objective['completed_activity_count'] ?? 0);
+$featuredProgressTotal = (int) ($featured_objective['progress_activity_count'] ?? 0);
 $priorityLabels = [
     'do_now'    => ['Hacer ahora', 'Urgente e importante'],
     'schedule'  => ['Planificar', 'Importante, no urgente'],
@@ -53,6 +58,7 @@ $priorityLabels = [
         'business/profile.css',
         'dashboard/index.css',
         'alpha-shell.css',
+        'contextual-help.css',
     ]]) ?>
 </head>
 <body class="business-module-body">
@@ -93,10 +99,23 @@ $priorityLabels = [
                     <p><?= esc((string) $workflow_summary['open_activities']) ?> actividades abiertas</p>
                 </div>
             </article>
-            <article class="dashboard-metric dashboard-metric-progress">
+            <article class="dashboard-metric dashboard-metric-progress" id="dashboardActivityProgress" data-context-help-focus-target>
                 <span class="metric-icon" aria-hidden="true">02</span>
                 <div>
-                    <small>Avance de actividades</small>
+                    <div class="dashboard-metric-label">
+                        <small>Avance de actividades</small>
+                        <?= $contextualHelp([
+                            'id'        => 'dashboard-help-progress',
+                            'title'     => '¿Cómo se calcula este avance?',
+                            'targetId'  => 'dashboardActivityProgress',
+                            'anchor'    => 'target',
+                            'placement' => 'top',
+                            'align'     => 'center',
+                            'paragraphs' => [
+                                'Cuenta las actividades completadas de objetivos activos y las divide entre sus actividades no canceladas.',
+                            ],
+                        ]) ?>
+                    </div>
                     <strong><?= esc((string) $workflow_summary['progress_percent']) ?>%</strong>
                     <p><?= esc((string) $workflow_summary['completed_activities']) ?> completadas</p>
                 </div>
@@ -116,16 +135,29 @@ $priorityLabels = [
                     <strong class="<?= $finance_totals['ebitda_cents'] < 0 ? 'is-negative' : 'is-positive' ?>">
                         <?= $money($finance_totals['ebitda_cents']) ?>
                     </strong>
-                    <p>Según la fórmula validada con el cliente</p>
+                    <p>Resultado operativo del período</p>
                 </div>
             </article>
         </section>
 
-        <section class="dashboard-panel dashboard-finances dashboard-finances-overview" aria-labelledby="dashboardFinancesTitle">
+        <section class="dashboard-panel dashboard-finances dashboard-finances-overview" id="dashboardFinancesPanel" aria-labelledby="dashboardFinancesTitle" data-context-help-focus-target>
             <header class="dashboard-panel-heading">
                 <div>
                     <span class="section-kicker">Resultado del período</span>
-                    <h3 id="dashboardFinancesTitle">Evolución financiera</h3>
+                    <div class="context-help-heading">
+                        <h3 id="dashboardFinancesTitle">Evolución financiera</h3>
+                        <?= $contextualHelp([
+                            'id'        => 'dashboard-help-finances',
+                            'title'     => '¿Qué información muestra esta gráfica?',
+                            'targetId'  => 'dashboardFinancesPanel',
+                            'anchor'    => 'target',
+                            'placement' => 'top',
+                            'align'     => 'center',
+                            'paragraphs' => [
+                                'Reúne hasta siete cierres registrados del período y compara las ventas con el costo de ventas y los gastos. Los borradores no participan.',
+                            ],
+                        ]) ?>
+                    </div>
                 </div>
                 <span class="period-chip"><?= esc($finance_period_label) ?></span>
             </header>
@@ -145,8 +177,8 @@ $priorityLabels = [
                             <?php foreach ($finance_chart_entries as $chartEntry): ?>
                                 <div class="dashboard-chart-column" aria-label="<?= esc((string) $chartEntry['label']) ?>: ventas <?= esc($money((int) $chartEntry['sales_cents'])) ?>; costos y gastos <?= esc($money((int) $chartEntry['costs_cents'])) ?>">
                                     <div aria-hidden="true">
-                                        <i style="height: <?= esc((string) max(4, (int) $chartEntry['sales_percent'])) ?>%"></i>
-                                        <b style="height: <?= esc((string) max(4, (int) $chartEntry['costs_percent'])) ?>%"></b>
+                                        <i style="height: <?= esc((string) $chartEntry['sales_percent']) ?>%"></i>
+                                        <b style="height: <?= esc((string) $chartEntry['costs_percent']) ?>%"></b>
                                     </div>
                                     <span><?= esc((string) $chartEntry['label']) ?></span>
                                 </div>
@@ -165,11 +197,24 @@ $priorityLabels = [
 
         <div class="dashboard-grid">
             <div class="dashboard-column dashboard-column-work">
-                <section class="dashboard-panel dashboard-focus" aria-labelledby="dashboardFocusTitle">
+                <section class="dashboard-panel dashboard-focus" id="dashboardFocusPanel" aria-labelledby="dashboardFocusTitle" data-context-help-focus-target>
                     <header class="dashboard-panel-heading">
                         <div>
                             <span class="section-kicker">Foco actual</span>
-                            <h3 id="dashboardFocusTitle">Objetivo destacado</h3>
+                            <div class="context-help-heading">
+                                <h3 id="dashboardFocusTitle">Objetivo destacado</h3>
+                                <?= $contextualHelp([
+                                    'id'        => 'dashboard-help-featured-objective',
+                                    'title'     => '¿Por qué aparece este objetivo?',
+                                    'targetId'  => 'dashboardFocusPanel',
+                                    'anchor'    => 'target',
+                                    'placement' => 'top',
+                                    'align'     => 'center',
+                                    'paragraphs' => [
+                                        'Muestra el objetivo activo actualizado más recientemente. Su avance utiliza únicamente las actividades no canceladas.',
+                                    ],
+                                ]) ?>
+                            </div>
                         </div>
                         <a href="<?= site_url('app/objetivos') ?>">Ver objetivos →</a>
                     </header>
@@ -198,7 +243,7 @@ $priorityLabels = [
                             <span class="progress-track" aria-hidden="true">
                                 <i style="--progress: <?= esc((string) $featuredProgress) ?>%"></i>
                             </span>
-                            <small><?= esc((string) $featuredCompleted) ?> de <?= esc((string) count($featuredActivities)) ?> actividades completadas</small>
+                            <small><?= esc((string) $featuredCompleted) ?> de <?= esc((string) $featuredProgressTotal) ?> actividades no canceladas completadas</small>
                         </div>
                     <?php endif ?>
                 </section>
@@ -223,11 +268,24 @@ $priorityLabels = [
             </div>
 
             <div class="dashboard-column dashboard-column-insight">
-                <section class="dashboard-panel dashboard-actions" aria-labelledby="dashboardActionsTitle">
+                <section class="dashboard-panel dashboard-actions" id="dashboardActionsPanel" aria-labelledby="dashboardActionsTitle" data-context-help-focus-target>
                     <header class="dashboard-panel-heading">
                         <div>
                             <span class="section-kicker">Próximos pasos</span>
-                            <h3 id="dashboardActionsTitle">Acciones que requieren atención</h3>
+                            <div class="context-help-heading">
+                                <h3 id="dashboardActionsTitle">Acciones que requieren atención</h3>
+                                <?= $contextualHelp([
+                                    'id'        => 'dashboard-help-next-actions',
+                                    'title'     => '¿Cómo se ordenan estas acciones?',
+                                    'targetId'  => 'dashboardActionsPanel',
+                                    'anchor'    => 'target',
+                                    'placement' => 'top',
+                                    'align'     => 'center',
+                                    'paragraphs' => [
+                                        'Muestra hasta cinco actividades abiertas de objetivos activos: primero las vencidas, luego el cuadrante de prioridad y finalmente la fecha.',
+                                    ],
+                                ]) ?>
+                            </div>
                         </div>
                         <a href="<?= site_url('app/prioridades') ?>">Ver matriz →</a>
                     </header>
@@ -275,5 +333,6 @@ $priorityLabels = [
     </main>
 </div>
 <script src="<?= base_url('assets/js/alpha-shell.js?v=' . filemtime(FCPATH . 'assets/js/alpha-shell.js')) ?>" defer></script>
+<script src="<?= base_url('assets/js/contextual-help.js?v=' . filemtime(FCPATH . 'assets/js/contextual-help.js')) ?>" defer></script>
 </body>
 </html>

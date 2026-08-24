@@ -33,12 +33,20 @@ final class DashboardService
         $workflow  = $this->workflow->overview();
         $finance   = $this->finances->overview();
         $activities = $workflow['activities'];
-        $activeActivities = array_values(array_filter(
+        $activeObjectiveIds = array_fill_keys(array_map(
+            static fn (array $objective): int => (int) $objective['id'],
+            array_filter(
+                $workflow['objectives'],
+                static fn (array $objective): bool => $objective['status'] === 'active',
+            ),
+        ), true);
+        $eligibleActivities = array_values(array_filter(
             $activities,
-            static fn (array $activity): bool => $activity['status'] !== 'cancelled',
+            static fn (array $activity): bool => isset($activeObjectiveIds[(int) $activity['objective_id']])
+                && $activity['status'] !== 'cancelled',
         ));
         $openActivities = array_values(array_filter(
-            $activeActivities,
+            $eligibleActivities,
             static fn (array $activity): bool => in_array(
                 $activity['status'],
                 ['pending', 'in_progress'],
@@ -46,12 +54,12 @@ final class DashboardService
             ),
         ));
         $completedActivities = count(array_filter(
-            $activeActivities,
+            $eligibleActivities,
             static fn (array $activity): bool => $activity['status'] === 'completed',
         ));
-        $activityProgress = $activeActivities === []
+        $activityProgress = $eligibleActivities === []
             ? 0
-            : (int) round(($completedActivities / count($activeActivities)) * 100);
+            : (int) round(($completedActivities / count($eligibleActivities)) * 100);
         $prioritySummary = array_fill_keys(
             ['do_now', 'schedule', 'delegate', 'eliminate'],
             0,
@@ -92,8 +100,17 @@ final class DashboardService
             'requires_onboarding' => false,
             'workflow_summary' => [
                 ...$workflow['workflow_summary'],
+                'activities'           => count($eligibleActivities),
                 'open_activities'      => count($openActivities),
                 'completed_activities' => $completedActivities,
+                'in_progress'          => count(array_filter(
+                    $eligibleActivities,
+                    static fn (array $activity): bool => $activity['status'] === 'in_progress',
+                )),
+                'overdue'              => count(array_filter(
+                    $openActivities,
+                    static fn (array $activity): bool => $activity['is_overdue'],
+                )),
                 'progress_percent'     => $activityProgress,
             ],
             'priority_summary'   => $prioritySummary,

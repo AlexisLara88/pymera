@@ -86,12 +86,17 @@ final class ObjectiveService
             $objective['status_label'] = WorkflowCatalog::OBJECTIVE_STATUSES[$objective['status']]
                 ?? (string) $objective['status'];
             $objective['activities'] = $byObjective[(int) $objective['id']] ?? [];
-            $completed = count(array_filter(
+            $progressActivities = array_values(array_filter(
                 $objective['activities'],
+                static fn (array $activity): bool => $activity['status'] !== 'cancelled',
+            ));
+            $completed = count(array_filter(
+                $progressActivities,
                 static fn (array $activity): bool => $activity['status'] === 'completed',
             ));
-            $total = count($objective['activities']);
+            $total = count($progressActivities);
             $objective['completed_activity_count'] = $completed;
+            $objective['progress_activity_count'] = $total;
             $objective['progress_percent'] = $total === 0
                 ? 0
                 : (int) round(($completed / $total) * 100);
@@ -131,7 +136,7 @@ final class ObjectiveService
                 'in_progress'       => $inProgress,
                 'overdue'           => $overdue,
             ],
-            'featured_objective' => $activeObjectives[0] ?? $objectives[0] ?? null,
+            'featured_objective' => $activeObjectives[0] ?? null,
         ];
     }
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Domain\BusinessRoleCatalog;
 use App\Database\Seeds\DemoAlphaSeeder;
+use App\Models\ActivityModel;
 use App\Models\BusinessModel;
 use App\Models\BusinessProfileModel;
 use App\Models\BusinessUserModel;
@@ -113,6 +114,11 @@ final class DashboardModuleTest extends CIUnitTestCase
         $result->assertSee('Últimos cierres confirmados');
         $result->assertSee('USD 8.650,00');
         $result->assertSee('USD 2.470,00');
+        $result->assertDontSee('Según la fórmula validada con el cliente');
+        $this->assertSame(4, substr_count($result->getBody(), 'class="context-help"'));
+        $this->assertSame(4, substr_count($result->getBody(), 'data-context-help-focus-target'));
+        $this->assertStringContainsString('assets/css/contextual-help.css', $result->getBody());
+        $this->assertStringContainsString('assets/js/contextual-help.js', $result->getBody());
         $this->assertStringNotContainsString('<form', $this->dashboardContent($result->getBody()));
         $this->assertStringNotContainsString('Mi negocio', $this->primaryNavigation($result->getBody()));
         $this->assertStringContainsString('Perfil del negocio', $result->getBody());
@@ -172,6 +178,56 @@ final class DashboardModuleTest extends CIUnitTestCase
             $overview['workflow_summary']['open_activities'],
             array_sum($overview['priority_summary']),
         );
+    }
+
+    public function testDashboardUsesOnlyNonCancelledActivitiesFromActiveObjectives(): void
+    {
+        $user       = $this->createUser('active-scope');
+        $businessId = $this->createBusiness('Negocio con alcances distintos');
+        $this->createCompleteProfile($businessId, 'Perfil completo para probar el Dashboard');
+        $this->createMembership($user, $businessId);
+        $activeObjectiveId = $this->createObjective($businessId, 'Objetivo operativo', 'active');
+        $pausedObjectiveId = $this->createObjective($businessId, 'Objetivo pausado', 'paused');
+
+        $this->createActivity($activeObjectiveId, 'Actividad completada', 'completed', true, true);
+        $this->createActivity($activeObjectiveId, 'Actividad abierta', 'pending', false, true);
+        $this->createActivity($activeObjectiveId, 'Actividad cancelada', 'cancelled', true, true);
+        $this->createActivity($pausedObjectiveId, 'Actividad de objetivo pausado', 'pending', true, true);
+        $this->actingAs($user);
+
+        $overview = (new DashboardService())->overview();
+
+        $this->assertSame(1, $overview['workflow_summary']['active_objectives']);
+        $this->assertSame(2, $overview['workflow_summary']['activities']);
+        $this->assertSame(1, $overview['workflow_summary']['open_activities']);
+        $this->assertSame(1, $overview['workflow_summary']['completed_activities']);
+        $this->assertSame(50, $overview['workflow_summary']['progress_percent']);
+        $this->assertSame(1, array_sum($overview['priority_summary']));
+        $this->assertCount(1, $overview['next_actions']);
+        $this->assertSame('Actividad abierta', $overview['next_actions'][0]['title']);
+        $this->assertSame('Objetivo operativo', $overview['featured_objective']['title']);
+        $this->assertSame(1, $overview['featured_objective']['completed_activity_count']);
+        $this->assertSame(2, $overview['featured_objective']['progress_activity_count']);
+        $this->assertSame(50, $overview['featured_objective']['progress_percent']);
+    }
+
+    public function testDashboardDoesNotPresentAnInactiveObjectiveAsCurrentFocus(): void
+    {
+        $user       = $this->createUser('without-active-focus');
+        $businessId = $this->createBusiness('Negocio sin objetivo activo');
+        $this->createCompleteProfile($businessId, 'Perfil completo sin foco operativo');
+        $this->createMembership($user, $businessId);
+        $pausedObjectiveId = $this->createObjective($businessId, 'Objetivo pausado', 'paused');
+        $this->createActivity($pausedObjectiveId, 'Actividad pausada', 'pending', true, true);
+        $this->actingAs($user);
+
+        $overview = (new DashboardService())->overview();
+
+        $this->assertNull($overview['featured_objective']);
+        $this->assertSame(0, $overview['workflow_summary']['activities']);
+        $this->assertSame(0, $overview['workflow_summary']['open_activities']);
+        $this->assertSame(0, $overview['workflow_summary']['progress_percent']);
+        $this->assertSame([], $overview['next_actions']);
     }
 
     public function testDashboardDoesNotExposeAnotherBusinessData(): void
@@ -270,6 +326,38 @@ final class DashboardModuleTest extends CIUnitTestCase
             'status'      => 'active',
         ], true);
         $this->assertNotFalse($membershipId);
+    }
+
+    private function createObjective(int $businessId, string $title, string $status): int
+    {
+        $objectiveId = (new ObjectiveModel())->insert([
+            'business_id' => $businessId,
+            'title'       => $title,
+            'status'      => $status,
+        ], true);
+        $this->assertNotFalse($objectiveId);
+
+        return (int) $objectiveId;
+    }
+
+    private function createActivity(
+        int $objectiveId,
+        string $title,
+        string $status,
+        bool $urgent,
+        bool $important,
+    ): int {
+        $activityId = (new ActivityModel())->insert([
+            'objective_id' => $objectiveId,
+            'title'        => $title,
+            'status'       => $status,
+            'is_urgent'    => $urgent ? 1 : 0,
+            'is_important' => $important ? 1 : 0,
+            'due_date'     => '2026-08-20',
+        ], true);
+        $this->assertNotFalse($activityId);
+
+        return (int) $activityId;
     }
 
     private function dashboardContent(string $body): string

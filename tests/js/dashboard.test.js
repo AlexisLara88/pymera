@@ -35,9 +35,25 @@ test('dashboard is a read-only synthesis of the four functional modules', () => 
 
     assert.doesNotMatch(view, /method="post"|csrf_field\(\)|fetch\(|XMLHttpRequest/);
     assert.doesNotMatch(view, /EBITDA provisional/);
+    assert.doesNotMatch(view, /Según la fórmula validada con el cliente/);
     assert.doesNotMatch(view, />Vista general</);
     assert.doesNotMatch(view, /window\.Vue|createApp\(|v-if|v-for|v-model/);
     assert.match(view, /Editar perfil del negocio/);
+});
+
+test('dashboard adds four focused contextual helps without turning the page into a Vue app', () => {
+    assert.equal((view.match(/\$contextualHelp\(\[/g) || []).length, 4);
+    assert.equal((view.match(/data-context-help-focus-target/g) || []).length, 4);
+    assert.equal((view.match(/'anchor'\s*=>\s*'target'/g) || []).length, 4);
+    assert.equal((view.match(/'placement'\s*=>\s*'top'/g) || []).length, 4);
+    assert.equal((view.match(/'align'\s*=>\s*'center'/g) || []).length, 4);
+    assert.match(view, /dashboard-help-progress/);
+    assert.match(view, /dashboard-help-finances/);
+    assert.match(view, /dashboard-help-featured-objective/);
+    assert.match(view, /dashboard-help-next-actions/);
+    assert.match(view, /'contextual-help\.css'/);
+    assert.match(view, /assets\/js\/contextual-help\.js/);
+    assert.doesNotMatch(view, /dashboard-help-profile/);
 });
 
 test('dashboard escapes stored business content and formats derived values server-side', () => {
@@ -57,6 +73,9 @@ test('dashboard layout is responsive, compact and keeps balanced CSS structure',
     assert.match(stylesheet, /\.dashboard-chart\s*{/);
     assert.match(stylesheet, /\.dashboard-column\s*{/);
     assert.match(stylesheet, /\.dashboard-finance-visual\s*{/);
+    assert.match(stylesheet, /\.dashboard-metric-label\s*{/);
+    assert.match(stylesheet, /\.dashboard-focus\.is-context-help-focus\s*{/);
+    assert.doesNotMatch(view, /max\(4,\s*\(int\) \$chartEntry/);
     assert.ok(
         view.indexOf('dashboard-finances-overview') < view.indexOf('dashboard-grid'),
         'the financial overview must remain above the operational panel grid',

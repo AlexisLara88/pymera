@@ -98,6 +98,20 @@
     font-weight: 750;
 }
 
+.dashboard-metric-label {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.dashboard-metric-label small {
+    margin-bottom: 0;
+}
+
+.dashboard-metric.is-context-help-focus {
+    overflow: visible;
+}
+
 .dashboard-metric strong {
     display: block;
     overflow-wrap: anywhere;
@@ -189,6 +203,12 @@
         radial-gradient(circle at 95% 10%, rgb(255 255 255 / 10%), transparent 15rem),
         linear-gradient(145deg, #164b52, #10383e);
     box-shadow: 0 20px 50px rgb(18 62 69 / 18%);
+}
+
+.dashboard-focus.is-context-help-focus {
+    background:
+        radial-gradient(circle at 95% 10%, rgb(255 255 255 / 10%), transparent 15rem),
+        linear-gradient(145deg, #164b52, #10383e);
 }
 
 .dashboard-focus .section-kicker,

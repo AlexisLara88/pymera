@@ -117,7 +117,7 @@ $isChecked = static function (
                     <div class="progress-track">
                         <span style="width: <?= esc((string) $featured_objective['progress_percent']) ?>%"></span>
                     </div>
-                    <small><?= esc((string) $featured_objective['completed_activity_count']) ?> de <?= count($featured_objective['activities']) ?> actividades completadas</small>
+                    <small><?= esc((string) $featured_objective['completed_activity_count']) ?> de <?= esc((string) $featured_objective['progress_activity_count']) ?> actividades no canceladas completadas</small>
                 </div>
             </article>
         <?php endif ?>
