@@ -287,11 +287,30 @@ $priorityLabels = [
                     <?php endif ?>
                 </section>
 
-                <section class="dashboard-panel dashboard-priorities" aria-labelledby="dashboardPrioritiesTitle">
+                <section class="dashboard-panel dashboard-priorities" id="dashboardPrioritiesPanel" aria-labelledby="dashboardPrioritiesTitle" data-context-help-focus-target>
                     <header class="dashboard-panel-heading">
                         <div>
                             <span class="section-kicker">Carga de trabajo</span>
-                            <h3 id="dashboardPrioritiesTitle">Prioridades abiertas</h3>
+                            <div class="context-help-heading">
+                                <h3 id="dashboardPrioritiesTitle">Prioridades abiertas</h3>
+                                <?= $contextualHelp([
+                                    'id'        => 'dashboard-help-priorities',
+                                    'title'     => '¿Cómo se distribuyen estas prioridades?',
+                                    'targetId'  => 'dashboardPrioritiesPanel',
+                                    'anchor'    => 'target',
+                                    'placement' => 'top',
+                                    'align'     => 'center',
+                                    'paragraphs' => [
+                                        'Clasifica las actividades pendientes o en curso de objetivos activos según su urgencia e importancia. Los valores se actualizan desde las tareas.',
+                                    ],
+                                    'items' => [
+                                        'Hacer ahora: urgente e importante.',
+                                        'Planificar: importante y no urgente.',
+                                        'Delegar: urgente y de menor impacto.',
+                                        'Eliminar: no urgente y de bajo impacto.',
+                                    ],
+                                ]) ?>
+                            </div>
                         </div>
                     </header>
                     <div class="priority-summary">
