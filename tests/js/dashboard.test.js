@@ -78,6 +78,8 @@ test('dashboard layout is responsive, compact and keeps balanced CSS structure',
     assert.match(stylesheet, /\.dashboard-finance-visual\s*{/);
     assert.match(stylesheet, /\.dashboard-metric-label\s*{/);
     assert.match(stylesheet, /\.dashboard-focus\.is-context-help-focus\s*{/);
+    assert.match(stylesheet, /\.dashboard-metric\s*{[\s\S]*?overflow:\s*hidden/);
+    assert.doesNotMatch(stylesheet, /\.dashboard-metric\.is-context-help-focus\s*{[\s\S]*?overflow:\s*visible/);
     assert.doesNotMatch(view, /max\(4,\s*\(int\) \$chartEntry/);
     assert.ok(
         view.indexOf('dashboard-finances-overview') < view.indexOf('dashboard-grid'),
