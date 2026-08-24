@@ -90,8 +90,9 @@ final class BusinessModuleTest extends CIUnitTestCase
         $this->assertSame(14, substr_count($result->getBody(), 'data-context-help-focus-target'));
         $this->assertSame(14, substr_count($result->getBody(), 'data-context-help-anchor="target"'));
         $this->assertSame(9, substr_count($result->getBody(), 'class="field-question-label"'));
-        $this->assertSame(8, substr_count($result->getBody(), 'data-context-help-placement="inside-right"'));
-        $this->assertSame(5, substr_count($result->getBody(), 'data-context-help-placement="inside-left"'));
+        $this->assertSame(4, substr_count($result->getBody(), 'data-context-help-placement="inside-right"'));
+        $this->assertSame(9, substr_count($result->getBody(), 'data-context-help-placement="top"'));
+        $this->assertSame(10, substr_count($result->getBody(), 'data-context-help-align="center"'));
         $this->assertSame(1, substr_count($result->getBody(), 'data-context-help-placement="left"'));
         $this->assertSame(14, substr_count($result->getBody(), 'data-context-help-target="'));
         $this->assertStringContainsString('business-help-differentiation-delivery', $result->getBody());

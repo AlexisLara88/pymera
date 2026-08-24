@@ -58,8 +58,9 @@ test('Mi negocio owns block and question-level contextual explanations', () => {
     assert.match(profile, /'targetId' => 'businessMinimumProfileFormCard'/);
     assert.match(profile, /'targetId' => 'businessGuidedDiagnosisFormCard'/);
     assert.equal((profile.match(/'anchor' => 'target'/g) || []).length, 7);
-    assert.equal((profile.match(/'placement' => 'inside-right'/g) || []).length, 8);
-    assert.equal((profile.match(/'placement' => 'inside-left'/g) || []).length, 5);
+    assert.equal((profile.match(/'placement' => 'inside-right'/g) || []).length, 4);
+    assert.equal((profile.match(/'placement' => 'top'/g) || []).length, 2);
+    assert.equal((profile.match(/'align' => 'center'/g) || []).length, 3);
     assert.equal((profile.match(/'placement' => 'left'/g) || []).length, 1);
     assert.match(profile, /id="businessDiagnosisPanel" data-context-help-focus-target/);
     assert.match(profile, /business-help-completion/);
