@@ -9,7 +9,8 @@
  *     paragraphs?: list<string>,
  *     items?: list<string>,
  *     example?: string|null,
- *     targetId?: string|null
+ *     targetId?: string|null,
+ *     placement?: string|null
  * } $contextualHelp
  */
 
@@ -19,6 +20,9 @@ $paragraphs   = $contextualHelp['paragraphs'] ?? [];
 $items        = $contextualHelp['items'] ?? [];
 $example      = $contextualHelp['example'] ?? null;
 $targetId     = $contextualHelp['targetId'] ?? null;
+$placement    = in_array($contextualHelp['placement'] ?? null, ['target-side'], true)
+    ? $contextualHelp['placement']
+    : null;
 $titleId     = $id . '-title';
 $contentId   = $id . '-content';
 ?>
@@ -26,6 +30,7 @@ $contentId   = $id . '-content';
     class="context-help"
     data-context-help
     <?= $targetId !== null ? 'data-context-help-target="' . esc($targetId, 'attr') . '"' : '' ?>
+    <?= $placement !== null ? 'data-context-help-placement="' . esc($placement, 'attr') . '"' : '' ?>
 >
     <summary
         class="context-help-trigger"

@@ -33,6 +33,7 @@ test('contextual help is server-rendered, escaped and progressively enhanced', (
     assert.match(component, /data-context-help-close/);
     assert.match(component, /data-context-help-drag-handle/);
     assert.match(component, /data-context-help-target/);
+    assert.match(component, /data-context-help-placement/);
     assert.match(component, /esc\(\$title/);
     assert.match(component, /esc\(\$paragraph\)/);
     assert.match(component, /esc\(\$item\)/);
@@ -50,6 +51,7 @@ test('Mi negocio owns five concise contextual explanations', () => {
     assert.equal(focusedForms.length, 3);
     assert.match(profile, /business-help-purpose/);
     assert.match(profile, /'targetId' => 'businessDiagnosisPanel'/);
+    assert.match(profile, /'placement' => \$isOnboarding \? null : 'target-side'/);
     assert.match(profile, /id="businessDiagnosisPanel" data-context-help-focus-target/);
     assert.match(profile, /business-help-completion/);
     assert.match(profile, /business-help-general-data/);
@@ -81,6 +83,9 @@ test('the interaction builds a focused backdrop without affecting business state
     assert.match(script, /triggerRect\.right \+ viewportGap/);
     assert.match(script, /!rectanglesOverlap\(candidateRectangle\(position\), focusRect, viewportGap\)/);
     assert.match(script, /triggerIsInsideFocus/);
+    assert.match(script, /help\.dataset\.contextHelpPlacement === 'target-side'/);
+    assert.match(script, /targetAlignedSideCandidates/);
+    assert.match(script, /focusRect\.top/);
     assert.match(
         script,
         /triggerIsInsideFocus\s*\? \[\.\.\.adjacentCandidates, \.\.\.focusSideCandidates, \.\.\.focusVerticalCandidates\]\s*: \[\.\.\.adjacentCandidates, \.\.\.focusVerticalCandidates, \.\.\.focusSideCandidates\]/,

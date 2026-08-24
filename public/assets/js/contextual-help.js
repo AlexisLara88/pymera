@@ -73,6 +73,7 @@ const positionHelp = (help) => {
     const focusRect = activeFocusTarget?.getBoundingClientRect() ?? triggerRect;
     const bounds = positionBounds(card);
     const sideTop = clamp(triggerRect.top - 8, bounds.minimumTop, bounds.maximumTop);
+    const targetSideTop = clamp(focusRect.top, bounds.minimumTop, bounds.maximumTop);
     const centeredLeft = triggerRect.left + (triggerRect.width / 2) - (cardRect.width / 2);
     const adjacentCandidates = [
         { left: triggerRect.right + viewportGap, top: sideTop },
@@ -89,6 +90,10 @@ const positionHelp = (help) => {
         { left: focusRect.right + viewportGap, top: sideTop },
         { left: focusRect.left - cardRect.width - viewportGap, top: sideTop },
     ];
+    const targetAlignedSideCandidates = [
+        { left: focusRect.right + viewportGap, top: targetSideTop },
+        { left: focusRect.left - cardRect.width - viewportGap, top: targetSideTop },
+    ];
     const focusVerticalCandidates = [
         { left: focusAlignedLeft, top: focusRect.bottom + viewportGap },
         { left: focusAlignedLeft, top: focusRect.top - cardRect.height - viewportGap },
@@ -98,9 +103,11 @@ const positionHelp = (help) => {
         triggerRect.left + (triggerRect.width / 2),
         triggerRect.top + (triggerRect.height / 2),
     );
-    const candidates = triggerIsInsideFocus
-        ? [...adjacentCandidates, ...focusSideCandidates, ...focusVerticalCandidates]
-        : [...adjacentCandidates, ...focusVerticalCandidates, ...focusSideCandidates];
+    const candidates = help.dataset.contextHelpPlacement === 'target-side'
+        ? [...targetAlignedSideCandidates, ...adjacentCandidates, ...focusVerticalCandidates]
+        : (triggerIsInsideFocus
+            ? [...adjacentCandidates, ...focusSideCandidates, ...focusVerticalCandidates]
+            : [...adjacentCandidates, ...focusVerticalCandidates, ...focusSideCandidates]);
     const candidateFits = (candidate) => (
         candidate.left >= bounds.minimumLeft
         && candidate.left <= bounds.maximumLeft
