@@ -417,6 +417,28 @@ body:has(.objective-modal-layer:target) .module-main > :not(.objective-creator-a
     background: rgb(244 241 233 / 50%);
 }
 
+.workflow-activity-guide {
+    display: flex;
+    gap: 0.55rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.7rem clamp(1rem, 3vw, 1.6rem);
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    background: color-mix(in srgb, var(--paper) 72%, transparent);
+    font-size: 0.76rem;
+    font-weight: 800;
+}
+
+.workflow-activity-guide.is-context-help-focus {
+    border-radius: 0;
+}
+
+.progress-value .context-help-trigger > span {
+    color: inherit;
+    font-size: inherit;
+}
+
 .activity-row > summary {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;

@@ -42,6 +42,11 @@ $isChecked = static function (
 
     return (bool) $fallback;
 };
+$contextualHelp = static fn (array $configuration): string => view(
+    'components/contextual_help',
+    ['contextualHelp' => $configuration],
+    ['saveData' => false],
+);
 ?>
 <!doctype html>
 <html lang="es">
@@ -54,6 +59,7 @@ $isChecked = static function (
         'business/profile.css',
         'workflow/index.css',
         'alpha-shell.css',
+        'contextual-help.css',
     ]]) ?>
 </head>
 <body class="business-module-body" data-active-form="<?= esc($formKey ?? '') ?>">
@@ -70,9 +76,22 @@ $isChecked = static function (
             'title'    => 'Objetivos',
         ]) ?>
 
-        <header class="module-header module-header-compact">
+        <header class="module-header module-header-compact" id="objectiveConceptHeader" data-context-help-focus-target>
             <div>
-                <h2>Convertí problemas en objetivos concretos</h2>
+                <div class="context-help-heading">
+                    <h2>Convertí problemas en objetivos concretos</h2>
+                    <?= $contextualHelp([
+                        'id'        => 'objectives-help-concept',
+                        'title'     => '¿Qué diferencia hay entre un objetivo y una actividad?',
+                        'targetId'  => 'objectiveConceptHeader',
+                        'anchor'    => 'target',
+                        'placement' => 'top',
+                        'align'     => 'center',
+                        'paragraphs' => [
+                            'El objetivo expresa el resultado que querés alcanzar. Las actividades son las acciones concretas necesarias para conseguirlo.',
+                        ],
+                    ]) ?>
+                </div>
                 <p>Organizá acciones de mejora y revisá su avance sin perder el contexto del negocio.</p>
             </div>
             <a class="button button-primary" href="#objectiveCreator" data-open-objective-creator>
@@ -109,10 +128,23 @@ $isChecked = static function (
                         <span><small>Origen</small><strong>Plan del negocio</strong></span>
                     </div>
                 </div>
-                <div class="progress-block">
+                <div class="progress-block" id="objectiveProgressSummary" data-context-help-focus-target>
                     <div class="progress-value">
                         <strong><?= esc((string) $featured_objective['progress_percent']) ?>%</strong>
-                        <span>completado</span>
+                        <div class="context-help-heading">
+                            <span>completado</span>
+                            <?= $contextualHelp([
+                                'id'        => 'objectives-help-progress',
+                                'title'     => '¿Cómo se calcula el avance?',
+                                'targetId'  => 'objectiveProgressSummary',
+                                'anchor'    => 'target',
+                                'placement' => 'top',
+                                'align'     => 'center',
+                                'paragraphs' => [
+                                    'Cada actividad no cancelada tiene el mismo peso. El porcentaje divide las actividades completadas entre el total considerado.',
+                                ],
+                            ]) ?>
+                        </div>
                     </div>
                     <div class="progress-track">
                         <span style="width: <?= esc((string) $featured_objective['progress_percent']) ?>%"></span>
@@ -131,10 +163,23 @@ $isChecked = static function (
         ]) ?>
 
         <section class="objectives-list" aria-labelledby="currentObjectivesTitle">
-            <div class="section-heading-row">
+            <div class="section-heading-row" id="objectiveManagementHeading" data-context-help-focus-target>
                 <div>
                     <p class="eyebrow">Seguimiento</p>
-                    <h2 id="currentObjectivesTitle">Objetivos actuales</h2>
+                    <div class="context-help-heading">
+                        <h2 id="currentObjectivesTitle">Objetivos actuales</h2>
+                        <?= $contextualHelp([
+                            'id'        => 'objectives-help-archive',
+                            'title'     => '¿Qué sucede al archivar?',
+                            'targetId'  => 'objectiveManagementHeading',
+                            'anchor'    => 'target',
+                            'placement' => 'top',
+                            'align'     => 'center',
+                            'paragraphs' => [
+                                'Archivar retira el objetivo o la actividad del trabajo activo. No lo marca como completado ni modifica el avance alcanzado.',
+                            ],
+                        ]) ?>
+                    </div>
                 </div>
                 <span class="count-badge"><?= count($objectives) ?> activos</span>
             </div>
@@ -273,6 +318,24 @@ $isChecked = static function (
                     </details>
 
                     <section class="activities-section" aria-label="Actividades de <?= esc((string) $objective['title']) ?>">
+                        <div
+                            class="workflow-activity-guide"
+                            id="objectiveActivityGuide<?= $objectiveId ?>"
+                            data-context-help-focus-target
+                        >
+                            <span>Plan de actividades</span>
+                            <?= $contextualHelp([
+                                'id'        => 'objectives-help-activities-' . $objectiveId,
+                                'title'     => '¿Cómo se organizan las actividades?',
+                                'targetId'  => 'objectiveActivityGuide' . $objectiveId,
+                                'anchor'    => 'target',
+                                'placement' => 'top',
+                                'align'     => 'center',
+                                'paragraphs' => [
+                                    'El estado indica si la actividad está pendiente, en curso, completada o cancelada. Las opciones Urgente e Importante determinan automáticamente su cuadrante en Prioridades.',
+                                ],
+                            ]) ?>
+                        </div>
                         <?php foreach ($objective['activities'] as $activity): ?>
                             <?php
                             $activityId = (int) $activity['id'];
@@ -482,5 +545,6 @@ $isChecked = static function (
 <?= view('layouts/alpha_frontend_scripts') ?>
 <script src="<?= base_url('assets/js/workflow/index.js?v=' . filemtime(FCPATH . 'assets/js/workflow/index.js')) ?>" defer></script>
 <script src="<?= base_url('assets/js/alpha-shell.js?v=' . filemtime(FCPATH . 'assets/js/alpha-shell.js')) ?>" defer></script>
+<script src="<?= base_url('assets/js/contextual-help.js?v=' . filemtime(FCPATH . 'assets/js/contextual-help.js')) ?>" defer></script>
 </body>
 </html>

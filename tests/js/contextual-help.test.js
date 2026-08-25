@@ -14,6 +14,14 @@ const profile = fs.readFileSync(
     path.join(projectRoot, 'app/Views/business/profile.php'),
     'utf8',
 );
+const objectives = fs.readFileSync(
+    path.join(projectRoot, 'app/Views/objectives/index.php'),
+    'utf8',
+);
+const objectiveCreator = fs.readFileSync(
+    path.join(projectRoot, 'app/Views/objectives/_creator_modal.php'),
+    'utf8',
+);
 const script = fs.readFileSync(
     path.join(projectRoot, 'public/assets/js/contextual-help.js'),
     'utf8',
@@ -84,6 +92,30 @@ test('Mi negocio owns block and question-level contextual explanations', () => {
         profile.indexOf('assets/js/business/profile.js') < profile.indexOf('assets/js/contextual-help.js'),
         'Vue must mount before contextual help binds to the final editor nodes',
     );
+});
+
+test('Objetivos explains its workflow without placing contextual help inside the Vue modal', () => {
+    const instances = objectives.match(/\$contextualHelp\(\[/g) || [];
+
+    assert.equal(instances.length, 4);
+    assert.match(objectives, /id="objectiveConceptHeader" data-context-help-focus-target/);
+    assert.match(objectives, /id="objectiveProgressSummary" data-context-help-focus-target/);
+    assert.match(objectives, /id="objectiveManagementHeading" data-context-help-focus-target/);
+    assert.match(objectives, /id="objectiveActivityGuide<\?= \$objectiveId \?>"/);
+    assert.match(objectives, /objectives-help-concept/);
+    assert.match(objectives, /objectives-help-progress/);
+    assert.match(objectives, /objectives-help-archive/);
+    assert.match(objectives, /objectives-help-activities-/);
+    assert.equal((objectives.match(/'anchor'\s*=>\s*'target'/g) || []).length, 4);
+    assert.equal((objectives.match(/'placement'\s*=>\s*'top'/g) || []).length, 4);
+    assert.equal((objectives.match(/'align'\s*=>\s*'center'/g) || []).length, 4);
+    assert.match(objectives, /'contextual-help\.css'/);
+    assert.match(objectives, /assets\/js\/contextual-help\.js/);
+    assert.ok(
+        objectives.indexOf('assets/js/workflow/index.js') < objectives.indexOf('assets/js/contextual-help.js'),
+        'Vue must mount before contextual help binds to the final objective nodes',
+    );
+    assert.doesNotMatch(objectiveCreator, /contextualHelp|data-context-help/);
 });
 
 test('the interaction builds a focused backdrop without affecting business state', () => {
