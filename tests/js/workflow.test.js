@@ -156,8 +156,8 @@ test('objective creation uses the approved Vue modal without moving business rul
     assert.match(objectiveView, /'workflow\/index\.css'/);
     assert.match(objectiveView, /'contextual-help\.css'/);
     assert.match(objectiveView, /assets\/js\/contextual-help\.js/);
-    assert.match(styles, /\.workflow-activity-guide\s*\{/);
-    assert.match(styles, /\.progress-value \.context-help-trigger > span\s*\{/);
+    assert.match(styles, /\.objective-card-tools\s*\{/);
+    assert.doesNotMatch(styles, /\.workflow-activity-guide\s*\{/);
 });
 
 test('functional views use the shared shell without technical environment labels', () => {

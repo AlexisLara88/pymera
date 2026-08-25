@@ -97,18 +97,18 @@ test('Mi negocio owns block and question-level contextual explanations', () => {
 test('Objetivos explains its workflow without placing contextual help inside the Vue modal', () => {
     const instances = objectives.match(/\$contextualHelp\(\[/g) || [];
 
-    assert.equal(instances.length, 4);
+    assert.equal(instances.length, 3);
     assert.match(objectives, /id="objectiveConceptHeader" data-context-help-focus-target/);
-    assert.match(objectives, /id="objectiveProgressSummary" data-context-help-focus-target/);
-    assert.match(objectives, /id="objectiveManagementHeading" data-context-help-focus-target/);
-    assert.match(objectives, /id="objectiveActivityGuide<\?= \$objectiveId \?>"/);
+    assert.match(objectives, /id="featuredObjectiveCard" data-context-help-focus-target/);
+    assert.match(objectives, /class="objective-card" id="<\?= esc\(\$objectiveKey\) \?>" data-context-help-focus-target/);
+    assert.doesNotMatch(objectives, /id="objectiveManagementHeading"|workflow-activity-guide/);
     assert.match(objectives, /objectives-help-concept/);
     assert.match(objectives, /objectives-help-progress/);
-    assert.match(objectives, /objectives-help-archive/);
-    assert.match(objectives, /objectives-help-activities-/);
-    assert.equal((objectives.match(/'anchor'\s*=>\s*'target'/g) || []).length, 4);
-    assert.equal((objectives.match(/'placement'\s*=>\s*'top'/g) || []).length, 4);
-    assert.equal((objectives.match(/'align'\s*=>\s*'center'/g) || []).length, 4);
+    assert.match(objectives, /objectives-help-card-/);
+    assert.match(objectives, /'targetId'\s*=>\s*\$objectiveKey/);
+    assert.equal((objectives.match(/'anchor'\s*=>\s*'target'/g) || []).length, 3);
+    assert.equal((objectives.match(/'placement'\s*=>\s*'top'/g) || []).length, 3);
+    assert.equal((objectives.match(/'align'\s*=>\s*'center'/g) || []).length, 3);
     assert.match(objectives, /'contextual-help\.css'/);
     assert.match(objectives, /assets\/js\/contextual-help\.js/);
     assert.ok(

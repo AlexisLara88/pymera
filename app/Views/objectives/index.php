@@ -114,11 +114,22 @@ $contextualHelp = static fn (array $configuration): string => view(
         <?php endif ?>
 
         <?php if ($featured_objective !== null): ?>
-            <article class="panel objective-hero">
+            <article class="panel objective-hero" id="featuredObjectiveCard" data-context-help-focus-target>
                 <div class="objective-main">
                     <div class="objective-meta">
                         <span class="category-tag"><?= esc($featured_objective['category_label']) ?></span>
                         <span class="status-tag status-progress"><?= esc($featured_objective['status_label']) ?></span>
+                        <?= $contextualHelp([
+                            'id'        => 'objectives-help-progress',
+                            'title'     => '¿Cómo se calcula el avance?',
+                            'targetId'  => 'featuredObjectiveCard',
+                            'anchor'    => 'target',
+                            'placement' => 'top',
+                            'align'     => 'center',
+                            'paragraphs' => [
+                                'Cada actividad no cancelada tiene el mismo peso. El porcentaje divide las actividades completadas entre el total considerado.',
+                            ],
+                        ]) ?>
                     </div>
                     <h3><?= esc((string) $featured_objective['title']) ?></h3>
                     <p><?= esc((string) ($featured_objective['description'] ?: 'Objetivo listo para organizar su plan de acción.')) ?></p>
@@ -128,23 +139,10 @@ $contextualHelp = static fn (array $configuration): string => view(
                         <span><small>Origen</small><strong>Plan del negocio</strong></span>
                     </div>
                 </div>
-                <div class="progress-block" id="objectiveProgressSummary" data-context-help-focus-target>
+                <div class="progress-block">
                     <div class="progress-value">
                         <strong><?= esc((string) $featured_objective['progress_percent']) ?>%</strong>
-                        <div class="context-help-heading">
-                            <span>completado</span>
-                            <?= $contextualHelp([
-                                'id'        => 'objectives-help-progress',
-                                'title'     => '¿Cómo se calcula el avance?',
-                                'targetId'  => 'objectiveProgressSummary',
-                                'anchor'    => 'target',
-                                'placement' => 'top',
-                                'align'     => 'center',
-                                'paragraphs' => [
-                                    'Cada actividad no cancelada tiene el mismo peso. El porcentaje divide las actividades completadas entre el total considerado.',
-                                ],
-                            ]) ?>
-                        </div>
+                        <span>completado</span>
                     </div>
                     <div class="progress-track">
                         <span style="width: <?= esc((string) $featured_objective['progress_percent']) ?>%"></span>
@@ -163,23 +161,10 @@ $contextualHelp = static fn (array $configuration): string => view(
         ]) ?>
 
         <section class="objectives-list" aria-labelledby="currentObjectivesTitle">
-            <div class="section-heading-row" id="objectiveManagementHeading" data-context-help-focus-target>
+            <div class="section-heading-row">
                 <div>
                     <p class="eyebrow">Seguimiento</p>
-                    <div class="context-help-heading">
-                        <h2 id="currentObjectivesTitle">Objetivos actuales</h2>
-                        <?= $contextualHelp([
-                            'id'        => 'objectives-help-archive',
-                            'title'     => '¿Qué sucede al archivar?',
-                            'targetId'  => 'objectiveManagementHeading',
-                            'anchor'    => 'target',
-                            'placement' => 'top',
-                            'align'     => 'center',
-                            'paragraphs' => [
-                                'Archivar retira el objetivo o la actividad del trabajo activo. No lo marca como completado ni modifica el avance alcanzado.',
-                            ],
-                        ]) ?>
-                    </div>
+                    <h2 id="currentObjectivesTitle">Objetivos actuales</h2>
                 </div>
                 <span class="count-badge"><?= count($objectives) ?> activos</span>
             </div>
@@ -199,7 +184,7 @@ $contextualHelp = static fn (array $configuration): string => view(
                 $objectiveId = (int) $objective['id'];
                 $objectiveKey = 'objective-' . $objectiveId;
                 ?>
-                <article class="objective-card" id="<?= esc($objectiveKey) ?>">
+                <article class="objective-card" id="<?= esc($objectiveKey) ?>" data-context-help-focus-target>
                     <header class="objective-card-header">
                         <div>
                             <span class="category-chip"><?= esc($objective['category_label']) ?></span>
@@ -211,7 +196,21 @@ $contextualHelp = static fn (array $configuration): string => view(
                                 <?php endif ?>
                             </p>
                         </div>
-                        <span class="activity-count"><?= count($objective['activities']) ?> actividades</span>
+                        <div class="objective-card-tools">
+                            <span class="activity-count"><?= count($objective['activities']) ?> actividades</span>
+                            <?= $contextualHelp([
+                                'id'        => 'objectives-help-card-' . $objectiveId,
+                                'title'     => '¿Cómo se organiza este objetivo?',
+                                'targetId'  => $objectiveKey,
+                                'anchor'    => 'target',
+                                'placement' => 'top',
+                                'align'     => 'center',
+                                'paragraphs' => [
+                                    'Las actividades muestran el trabajo necesario y su estado. Urgente e Importante determinan automáticamente el cuadrante que verás en Prioridades.',
+                                    'Archivar retira el objetivo o una actividad del trabajo activo, pero no significa que se haya completado.',
+                                ],
+                            ]) ?>
+                        </div>
                     </header>
 
                     <details class="edit-panel" <?= $isActiveForm($objectiveKey) ? 'open' : '' ?>>
@@ -318,24 +317,6 @@ $contextualHelp = static fn (array $configuration): string => view(
                     </details>
 
                     <section class="activities-section" aria-label="Actividades de <?= esc((string) $objective['title']) ?>">
-                        <div
-                            class="workflow-activity-guide"
-                            id="objectiveActivityGuide<?= $objectiveId ?>"
-                            data-context-help-focus-target
-                        >
-                            <span>Plan de actividades</span>
-                            <?= $contextualHelp([
-                                'id'        => 'objectives-help-activities-' . $objectiveId,
-                                'title'     => '¿Cómo se organizan las actividades?',
-                                'targetId'  => 'objectiveActivityGuide' . $objectiveId,
-                                'anchor'    => 'target',
-                                'placement' => 'top',
-                                'align'     => 'center',
-                                'paragraphs' => [
-                                    'El estado indica si la actividad está pendiente, en curso, completada o cancelada. Las opciones Urgente e Importante determinan automáticamente su cuadrante en Prioridades.',
-                                ],
-                            ]) ?>
-                        </div>
                         <?php foreach ($objective['activities'] as $activity): ?>
                             <?php
                             $activityId = (int) $activity['id'];
