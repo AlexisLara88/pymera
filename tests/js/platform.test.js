@@ -89,3 +89,35 @@ test('primary platform actions preserve readable contrast in the light theme', (
     assert.match(shellStyles, /\.button-primary\s*\{[\s\S]*?color:\s*#fff;[\s\S]*?background:\s*var\(--brand\);/);
     assert.match(shellStyles, /\.button-primary:hover,[\s\S]*?\.button-primary:focus-visible\s*\{[\s\S]*?color:\s*#fff;/);
 });
+
+test('account and membership status changes require an explicit contextual confirmation', () => {
+    assert.match(view, /data-platform-confirm-dialog/);
+    assert.match(view, /data-platform-confirm-title/);
+    assert.match(view, /data-platform-confirm-description/);
+    assert.match(view, /data-platform-status-scope="membership"/);
+    assert.match(view, /data-platform-status-scope="account"/);
+    assert.match(view, /data-platform-status-trigger/);
+    assert.match(view, /aria-controls="platformStatusConfirmationDialog"/);
+    assert.match(view, /aria-haspopup="dialog"/);
+    assert.match(script, /initializeStatusConfirmation\(\)/);
+    assert.match(script, /¿Desactivar la cuenta/);
+    assert.match(script, /¿Pausar el acceso/);
+    assert.match(script, /primaryCancelButton\?\.focus/);
+    assert.match(script, /pendingForm\.requestSubmit\(\)/);
+    assert.match(styles, /\.platform-confirm-danger/);
+});
+
+test('account directory can be filtered locally by user, email or associated business', () => {
+    assert.match(view, /data-platform-account-search/);
+    assert.match(view, /Buscar por usuario, correo o negocio/);
+    assert.match(view, /data-platform-account-search-value/);
+    assert.match(view, /data-platform-account-count/);
+    assert.match(view, /data-platform-account-empty/);
+    assert.match(view, /aria-controls="platformAccountList"/);
+    assert.match(script, /initializeAccountSearch\(\)/);
+    assert.match(script, /normalize\('NFD'\)/);
+    assert.match(script, /haystack\.includes\(query\)/);
+    assert.match(script, /account\.hidden = ! matches/);
+    assert.doesNotMatch(script, /fetch\(|XMLHttpRequest|window\.Vue/);
+    assert.match(styles, /\.platform-account-search\s*\{/);
+});

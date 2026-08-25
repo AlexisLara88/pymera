@@ -4,7 +4,175 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeOwnerDialog();
     initializeDisabledFeatureNotice();
     initializeOwnerPasswordForm();
+    initializeStatusConfirmation();
+    initializeAccountSearch();
 });
+
+function initializeStatusConfirmation() {
+    const dialog = document.querySelector('[data-platform-confirm-dialog]');
+    const triggers = Array.from(document.querySelectorAll('[data-platform-status-trigger]'));
+
+    if (! dialog || triggers.length === 0) {
+        return;
+    }
+
+    const title = dialog.querySelector('[data-platform-confirm-title]');
+    const description = dialog.querySelector('[data-platform-confirm-description]');
+    const confirmButton = dialog.querySelector('[data-platform-confirm-submit]');
+    const cancelButtons = dialog.querySelectorAll('[data-platform-confirm-cancel]');
+    const primaryCancelButton = dialog.querySelector('.platform-confirm-actions [data-platform-confirm-cancel]');
+    let pendingForm = null;
+    let opener = null;
+
+    if (! title || ! description || ! confirmButton) {
+        return;
+    }
+
+    const copyFor = (form) => {
+        const scope = form.dataset.platformStatusScope;
+        const action = form.dataset.platformStatusAction;
+        const user = form.dataset.platformStatusUser || 'esta persona';
+        const business = form.dataset.platformStatusBusiness || 'este negocio';
+
+        if (scope === 'account' && action === 'deactivate') {
+            return {
+                title: `¿Desactivar la cuenta “${user}”?`,
+                description: 'La cuenta quedará inactiva, pero sus negocios y datos no se eliminarán.',
+                label: 'Desactivar cuenta',
+                danger: true,
+            };
+        }
+
+        if (scope === 'account') {
+            return {
+                title: `¿Activar la cuenta “${user}”?`,
+                description: 'La cuenta volverá a quedar activa. Sus accesos a negocios conservarán su estado actual.',
+                label: 'Activar cuenta',
+                danger: false,
+            };
+        }
+
+        if (action === 'pause') {
+            return {
+                title: `¿Pausar el acceso de “${user}” a “${business}”?`,
+                description: 'Sólo se suspenderá este acceso. La cuenta, el negocio y sus datos se conservarán.',
+                label: 'Pausar acceso',
+                danger: true,
+            };
+        }
+
+        return {
+            title: `¿Activar el acceso de “${user}” a “${business}”?`,
+            description: 'La relación con este negocio volverá a quedar activa sin modificar los demás accesos de la cuenta.',
+            label: 'Activar acceso',
+            danger: false,
+        };
+    };
+
+    const openDialog = (form, button) => {
+        const copy = copyFor(form);
+
+        pendingForm = form;
+        opener = button;
+        title.textContent = copy.title;
+        description.textContent = copy.description;
+        confirmButton.textContent = copy.label;
+        confirmButton.classList.toggle('button-primary', ! copy.danger);
+        confirmButton.classList.toggle('platform-confirm-danger', copy.danger);
+        confirmButton.disabled = false;
+
+        if (typeof dialog.showModal === 'function') {
+            if (! dialog.open) {
+                dialog.showModal();
+            }
+        } else {
+            dialog.setAttribute('open', '');
+            dialog.classList.add('is-fallback-open');
+        }
+
+        primaryCancelButton?.focus({ preventScroll: true });
+    };
+
+    const closeDialog = () => {
+        if (typeof dialog.close === 'function' && dialog.open) {
+            dialog.close();
+        } else {
+            dialog.removeAttribute('open');
+            dialog.classList.remove('is-fallback-open');
+            opener?.focus({ preventScroll: true });
+            pendingForm = null;
+        }
+    };
+
+    triggers.forEach((button) => {
+        button.addEventListener('click', () => {
+            const form = button.closest('[data-platform-status-form]');
+
+            if (form) {
+                openDialog(form, button);
+            }
+        });
+    });
+
+    cancelButtons.forEach((button) => button.addEventListener('click', closeDialog));
+
+    dialog.addEventListener('click', (event) => {
+        if (event.target === dialog) {
+            closeDialog();
+        }
+    });
+
+    dialog.addEventListener('close', () => {
+        opener?.focus({ preventScroll: true });
+        pendingForm = null;
+    });
+
+    confirmButton.addEventListener('click', () => {
+        if (! pendingForm) {
+            return;
+        }
+
+        confirmButton.disabled = true;
+        pendingForm.requestSubmit();
+    });
+}
+
+function initializeAccountSearch() {
+    const input = document.querySelector('[data-platform-account-search]');
+    const accounts = Array.from(document.querySelectorAll('[data-platform-account]'));
+    const count = document.querySelector('[data-platform-account-count]');
+    const empty = document.querySelector('[data-platform-account-empty]');
+
+    if (! input || accounts.length === 0 || ! count || ! empty) {
+        return;
+    }
+
+    const normalize = (value) => value
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLocaleLowerCase('es')
+        .trim();
+
+    const filterAccounts = () => {
+        const query = normalize(input.value);
+        let visibleAccounts = 0;
+
+        accounts.forEach((account) => {
+            const haystack = normalize(account.dataset.platformAccountSearchValue || '');
+            const matches = query === '' || haystack.includes(query);
+
+            account.hidden = ! matches;
+            visibleAccounts += matches ? 1 : 0;
+        });
+
+        count.textContent = visibleAccounts === 1 ? '1 cuenta' : `${visibleAccounts} cuentas`;
+        empty.hidden = visibleAccounts !== 0;
+    };
+
+    input.addEventListener('input', filterAccounts);
+    input.addEventListener('search', filterAccounts);
+    filterAccounts();
+}
 
 function initializeOwnerDialog() {
     const dialog = document.querySelector('[data-platform-dialog]');

@@ -47,6 +47,10 @@ final class PlatformAdministrationTest extends CIUnitTestCase
         $response->assertSee('Nuevo administrador');
         $response->assertSee('Funcionalidad deshabilitada');
         $response->assertSee('data-platform-disabled-feature');
+        $response->assertSee('data-platform-confirm-dialog');
+        $response->assertSee('data-platform-account-search');
+        $response->assertSee('Buscar por usuario, correo o negocio');
+        $response->assertSee('data-platform-account-count');
         $response->assertSee('assets/js/platform/index.js');
         $response->assertSee('platform-account-action is-protected');
         $response->assertSee('disabled');

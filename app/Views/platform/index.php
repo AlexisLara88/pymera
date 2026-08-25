@@ -232,15 +232,75 @@ $auditLabels = [
         </div>
     </dialog>
 
+    <dialog
+        class="platform-dialog platform-confirm-dialog"
+        id="platformStatusConfirmationDialog"
+        aria-labelledby="platformStatusConfirmationTitle"
+        aria-describedby="platformStatusConfirmationDescription"
+        data-platform-confirm-dialog
+    >
+        <div class="platform-dialog-card platform-confirm-dialog-card">
+            <header class="platform-dialog-header">
+                <div>
+                    <span class="eyebrow">Confirmar acción</span>
+                    <h2 id="platformStatusConfirmationTitle" data-platform-confirm-title>Confirmar cambio</h2>
+                </div>
+                <button
+                    class="platform-dialog-close"
+                    type="button"
+                    aria-label="Cerrar confirmación"
+                    title="Cerrar confirmación"
+                    data-platform-confirm-cancel
+                ><span aria-hidden="true">×</span></button>
+            </header>
+            <p id="platformStatusConfirmationDescription" data-platform-confirm-description></p>
+            <footer class="platform-dialog-actions platform-confirm-actions">
+                <button class="button button-secondary" type="button" data-platform-confirm-cancel>Cancelar</button>
+                <button class="button button-primary platform-confirm-submit" type="button" data-platform-confirm-submit>
+                    Confirmar
+                </button>
+            </footer>
+        </div>
+    </dialog>
+
     <section class="platform-panel">
-        <header>
-            <span class="eyebrow">Identidades</span>
-            <h2>Cuentas y accesos</h2>
+        <header class="platform-account-panel-heading">
+            <div>
+                <span class="eyebrow">Identidades</span>
+                <h2>Cuentas y accesos</h2>
+            </div>
+            <label class="platform-account-search">
+                <span class="visually-hidden">Buscar por usuario, correo o negocio</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="11" cy="11" r="7"></circle>
+                    <path d="m16.2 16.2 4.3 4.3"></path>
+                </svg>
+                <input
+                    type="search"
+                    placeholder="Buscar por usuario, correo o negocio"
+                    autocomplete="off"
+                    aria-controls="platformAccountList"
+                    data-platform-account-search
+                >
+            </label>
         </header>
-        <div class="platform-account-list">
+        <div class="platform-account-search-status" aria-live="polite">
+            <span data-platform-account-count><?= count($accounts) ?> <?= count($accounts) === 1 ? 'cuenta' : 'cuentas' ?></span>
+        </div>
+        <div class="platform-account-list" id="platformAccountList" data-platform-account-list>
             <?php foreach ($accounts as $account): ?>
                 <?php $isProtectedAdministrator = $account['active'] && in_array('platform_admin', $account['groups'], true); ?>
-                <article class="platform-account">
+                <?php
+                $accountSearchValues = [(string) $account['username'], (string) $account['email']];
+                foreach ($account['memberships'] as $membership) {
+                    $accountSearchValues[] = (string) $membership['business_name'];
+                }
+                ?>
+                <article
+                    class="platform-account"
+                    data-platform-account
+                    data-platform-account-search-value="<?= esc(implode(' ', $accountSearchValues), 'attr') ?>"
+                >
                     <div class="platform-account-main">
                         <span class="platform-avatar"><?= esc(strtoupper(substr((string) $account['username'], 0, 1))) ?></span>
                         <div>
@@ -266,10 +326,24 @@ $auditLabels = [
                                     <strong><?= esc($membership['business_name']) ?></strong>
                                     <small><?= esc($roleLabels[$membership['role_code']] ?? $membership['role_code']) ?> · <?= esc($membership['status']) ?></small>
                                 </span>
-                                <form action="<?= esc(site_url('admin/memberships/' . $membership['id'] . '/status'), 'attr') ?>" method="post">
+                                <form
+                                    action="<?= esc(site_url('admin/memberships/' . $membership['id'] . '/status'), 'attr') ?>"
+                                    method="post"
+                                    data-platform-status-form
+                                    data-platform-status-scope="membership"
+                                    data-platform-status-action="<?= $membership['status'] === 'active' ? 'pause' : 'activate' ?>"
+                                    data-platform-status-user="<?= esc((string) $account['username'], 'attr') ?>"
+                                    data-platform-status-business="<?= esc((string) $membership['business_name'], 'attr') ?>"
+                                >
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="status" value="<?= $membership['status'] === 'active' ? 'inactive' : 'active' ?>">
-                                    <button class="button button-secondary" type="submit">
+                                    <button
+                                        class="button button-secondary"
+                                        type="button"
+                                        aria-haspopup="dialog"
+                                        aria-controls="platformStatusConfirmationDialog"
+                                        data-platform-status-trigger
+                                    >
                                         <?= $membership['status'] === 'active' ? 'Pausar acceso' : 'Activar acceso' ?>
                                     </button>
                                 </form>
@@ -287,10 +361,23 @@ $auditLabels = [
                             Desactivar cuenta
                         </button>
                     <?php else: ?>
-                        <form action="<?= esc(site_url('admin/accounts/' . $account['id'] . '/status'), 'attr') ?>" method="post">
+                        <form
+                            action="<?= esc(site_url('admin/accounts/' . $account['id'] . '/status'), 'attr') ?>"
+                            method="post"
+                            data-platform-status-form
+                            data-platform-status-scope="account"
+                            data-platform-status-action="<?= $account['active'] ? 'deactivate' : 'activate' ?>"
+                            data-platform-status-user="<?= esc((string) $account['username'], 'attr') ?>"
+                        >
                             <?= csrf_field() ?>
                             <input type="hidden" name="status" value="<?= $account['active'] ? 'inactive' : 'active' ?>">
-                            <button class="button button-secondary platform-account-action" type="submit">
+                            <button
+                                class="button button-secondary platform-account-action"
+                                type="button"
+                                aria-haspopup="dialog"
+                                aria-controls="platformStatusConfirmationDialog"
+                                data-platform-status-trigger
+                            >
                                 <?= $account['active'] ? 'Desactivar cuenta' : 'Activar cuenta' ?>
                             </button>
                         </form>
@@ -298,6 +385,9 @@ $auditLabels = [
                 </article>
             <?php endforeach; ?>
         </div>
+        <p class="platform-account-empty" data-platform-account-empty hidden>
+            No encontramos cuentas que coincidan con la búsqueda.
+        </p>
     </section>
 
     <section class="platform-grid">
