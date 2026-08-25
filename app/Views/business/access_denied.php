@@ -16,7 +16,7 @@
     <p>Tu cuenta no tiene un único negocio activo autorizado. Solicitá a la administración que revise la asociación.</p>
     <form action="<?= site_url('logout') ?>" method="post">
         <?= csrf_field() ?>
-        <button class="button button-secondary" type="submit">Volver al inicio de sesión</button>
+        <button class="button button-secondary" type="submit">Volver</button>
     </form>
 </main>
 </body>

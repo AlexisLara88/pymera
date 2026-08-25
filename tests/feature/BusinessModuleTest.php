@@ -64,7 +64,7 @@ final class BusinessModuleTest extends CIUnitTestCase
 
         $result->assertStatus(403);
         $result->assertSee('No pudimos abrir este negocio');
-        $result->assertSee('Volver al inicio de sesión');
+        $this->assertStringContainsString('>Volver</button>', $result->getBody());
         $result->assertSee('csrf_test_name');
         $result->assertDontSee('Volver a la demostración');
         $this->assertStringContainsString('action="' . site_url('logout') . '"', $result->getBody());
