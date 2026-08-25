@@ -98,7 +98,9 @@ test('Objetivos explains its workflow without placing contextual help inside the
     const instances = objectives.match(/\$contextualHelp\(\[/g) || [];
 
     assert.equal(instances.length, 3);
-    assert.match(objectives, /id="objectiveConceptHeader" data-context-help-focus-target/);
+    assert.match(objectives, /id="objectiveWorkflowContent" data-context-help-focus-target/);
+    assert.match(objectives, /id="objectiveConceptHeader"/);
+    assert.doesNotMatch(objectives, /id="objectiveConceptHeader" data-context-help-focus-target/);
     assert.match(objectives, /id="featuredObjectiveCard" data-context-help-focus-target/);
     assert.match(objectives, /class="objective-card" id="<\?= esc\(\$objectiveKey\) \?>" data-context-help-focus-target/);
     assert.doesNotMatch(objectives, /id="objectiveManagementHeading"|workflow-activity-guide/);
@@ -106,9 +108,12 @@ test('Objetivos explains its workflow without placing contextual help inside the
     assert.match(objectives, /objectives-help-progress/);
     assert.match(objectives, /objectives-help-card-/);
     assert.match(objectives, /'targetId'\s*=>\s*\$objectiveKey/);
-    assert.equal((objectives.match(/'anchor'\s*=>\s*'target'/g) || []).length, 3);
-    assert.equal((objectives.match(/'placement'\s*=>\s*'top'/g) || []).length, 3);
-    assert.equal((objectives.match(/'align'\s*=>\s*'center'/g) || []).length, 3);
+    assert.equal((objectives.match(/'anchor'\s*=>\s*'target'/g) || []).length, 2);
+    assert.equal((objectives.match(/'anchor'\s*=>\s*'trigger'/g) || []).length, 1);
+    assert.equal((objectives.match(/'placement'\s*=>\s*'top'/g) || []).length, 2);
+    assert.equal((objectives.match(/'placement'\s*=>\s*'right'/g) || []).length, 1);
+    assert.equal((objectives.match(/'align'\s*=>\s*'center'/g) || []).length, 2);
+    assert.equal((objectives.match(/'align'\s*=>\s*'start'/g) || []).length, 1);
     assert.match(objectives, /'contextual-help\.css'/);
     assert.match(objectives, /assets\/js\/contextual-help\.js/);
     assert.ok(

@@ -76,17 +76,18 @@ $contextualHelp = static fn (array $configuration): string => view(
             'title'    => 'Objetivos',
         ]) ?>
 
-        <header class="module-header module-header-compact" id="objectiveConceptHeader" data-context-help-focus-target>
+        <section class="objective-workflow-content" id="objectiveWorkflowContent" data-context-help-focus-target>
+        <header class="module-header module-header-compact" id="objectiveConceptHeader">
             <div>
                 <div class="context-help-heading">
                     <h2>Convertí problemas en objetivos concretos</h2>
                     <?= $contextualHelp([
                         'id'        => 'objectives-help-concept',
                         'title'     => '¿Qué diferencia hay entre un objetivo y una actividad?',
-                        'targetId'  => 'objectiveConceptHeader',
-                        'anchor'    => 'target',
-                        'placement' => 'top',
-                        'align'     => 'center',
+                        'targetId'  => 'objectiveWorkflowContent',
+                        'anchor'    => 'trigger',
+                        'placement' => 'right',
+                        'align'     => 'start',
                         'paragraphs' => [
                             'El objetivo expresa el resultado que querés alcanzar. Las actividades son las acciones concretas necesarias para conseguirlo.',
                         ],
@@ -519,6 +520,7 @@ $contextualHelp = static fn (array $configuration): string => view(
                     </section>
                 </article>
             <?php endforeach ?>
+        </section>
         </section>
     </main>
 </div>
