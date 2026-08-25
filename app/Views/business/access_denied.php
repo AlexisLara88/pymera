@@ -14,7 +14,10 @@
     <p class="eyebrow">PyMERA</p>
     <h1 id="accessTitle">No pudimos abrir este negocio</h1>
     <p>Tu cuenta no tiene un único negocio activo autorizado. Solicitá a la administración que revise la asociación.</p>
-    <a class="button button-secondary" href="<?= site_url('demo') ?>">Volver a la demostración</a>
+    <form action="<?= site_url('logout') ?>" method="post">
+        <?= csrf_field() ?>
+        <button class="button button-secondary" type="submit">Volver al inicio de sesión</button>
+    </form>
 </main>
 </body>
 </html>

@@ -14,7 +14,7 @@
     <p class="eyebrow">PyMERA</p>
     <h1 id="unavailableTitle">No pudimos cargar el módulo</h1>
     <p>La información no fue modificada. Intentá nuevamente o informá el inconveniente a la administración.</p>
-    <a class="button button-secondary" href="<?= site_url('demo') ?>">Volver a la demostración</a>
+    <a class="button button-secondary" href="<?= site_url('demolite') ?>">Volver a PyMERA</a>
 </main>
 </body>
 </html>

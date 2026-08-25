@@ -206,6 +206,7 @@ Las contraseñas se solicitan interactivamente y no se almacenan en código ni d
 - La suite comprueba el rechazo sin token y la aceptación con token.
 - `/` y `/demo` permanecen públicos y de solo lectura.
 - `/demolite` conduce a la alfa; los módulos sólo permiten escritura mediante sesión, CSRF y negocio autorizado.
+- Si una cuenta autenticada pierde su acceso activo al negocio, la pantalla segura permite cerrar la sesión mediante `POST` con CSRF y volver al ingreso; nunca deriva al prototipo congelado `/demo`.
 - La demo no puede cargar el seeder automáticamente.
 - La interfaz del negocio no muestra rótulos técnicos o experimentales; las limitaciones del MVP se conservan en la documentación.
 - La publicación temporal opera por HTTP; HTTPS, cookies `Secure`, recuperación y respaldos formales quedan para la etapa de producto.
