@@ -212,10 +212,29 @@ $priorityLabels = [
                             <p>Registrá ventas, costos y gastos para construir la lectura del período.</p>
                         </div>
                     <?php else: ?>
+                        <p class="dashboard-chart-hint">Seleccioná una fecha para ver sus valores.</p>
                         <div class="dashboard-chart" aria-label="Evolución de ventas, costos y gastos de los últimos cierres">
                             <?php foreach ($finance_chart_entries as $chartEntry): ?>
-                                <div class="dashboard-chart-column" aria-label="<?= esc((string) $chartEntry['label']) ?>: ventas <?= esc($money((int) $chartEntry['sales_cents'])) ?>; costos y gastos <?= esc($money((int) $chartEntry['costs_cents'])) ?>">
-                                    <div aria-hidden="true">
+                                <div
+                                    class="dashboard-chart-column"
+                                    role="group"
+                                    tabindex="0"
+                                    aria-label="<?= esc((string) $chartEntry['label']) ?>: ventas <?= esc($money((int) $chartEntry['sales_cents'])) ?>; costos y gastos <?= esc($money((int) $chartEntry['costs_cents'])) ?>"
+                                >
+                                    <div class="dashboard-chart-tooltip" aria-hidden="true">
+                                        <strong><?= esc((string) $chartEntry['label']) ?></strong>
+                                        <dl>
+                                            <div>
+                                                <dt><i class="is-sales"></i>Ventas</dt>
+                                                <dd><?= esc($money((int) $chartEntry['sales_cents'])) ?></dd>
+                                            </div>
+                                            <div>
+                                                <dt><i class="is-costs"></i>Costos y gastos</dt>
+                                                <dd><?= esc($money((int) $chartEntry['costs_cents'])) ?></dd>
+                                            </div>
+                                        </dl>
+                                    </div>
+                                    <div class="dashboard-chart-bars" aria-hidden="true">
                                         <i style="height: <?= esc((string) $chartEntry['sales_percent']) ?>%"></i>
                                         <b style="height: <?= esc((string) $chartEntry['costs_percent']) ?>%"></b>
                                     </div>

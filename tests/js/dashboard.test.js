@@ -69,6 +69,17 @@ test('dashboard escapes stored business content and formats derived values serve
     assert.doesNotMatch(view, /localStorage|sessionStorage/);
 });
 
+test('financial chart exposes each dynamic value without duplicating calculations', () => {
+    assert.match(view, /Seleccioná una fecha para ver sus valores/);
+    assert.match(view, /class="dashboard-chart-column"[\s\S]*?role="group"[\s\S]*?tabindex="0"/);
+    assert.match(view, /class="dashboard-chart-tooltip"/);
+    assert.match(view, /\$money\(\(int\) \$chartEntry\['sales_cents'\]\)/);
+    assert.match(view, /\$money\(\(int\) \$chartEntry\['costs_cents'\]\)/);
+    assert.match(stylesheet, /\.dashboard-chart-column:hover \.dashboard-chart-tooltip/);
+    assert.match(stylesheet, /\.dashboard-chart-column:focus \.dashboard-chart-tooltip/);
+    assert.doesNotMatch(view, /window\.Vue|createApp\(|data-chart-value/);
+});
+
 test('dashboard layout is responsive, compact and keeps balanced CSS structure', () => {
     assert.match(stylesheet, /grid-template-columns:\s*repeat\(4/);
     assert.match(stylesheet, /grid-template-columns:\s*minmax\(0,\s*0\.92fr\)/);

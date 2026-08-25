@@ -112,6 +112,9 @@ final class DashboardModuleTest extends CIUnitTestCase
         $result->assertSee('EBITDA');
         $result->assertDontSee('EBITDA provisional');
         $result->assertSee('Últimos cierres confirmados');
+        $result->assertSee('Seleccioná una fecha para ver sus valores.');
+        $this->assertStringContainsString('class="dashboard-chart-tooltip"', $result->getBody());
+        $this->assertStringContainsString('tabindex="0"', $result->getBody());
         $result->assertSee('USD 8.650,00');
         $result->assertSee('USD 2.470,00');
         $result->assertDontSee('Según la fórmula validada con el cliente');
