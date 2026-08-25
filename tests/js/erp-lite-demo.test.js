@@ -46,13 +46,16 @@ test('the prototype labels its simulated and future capabilities', () => {
 });
 
 test('the prototype offers a protected way to close an authenticated session', () => {
-    const logoutForm = view.match(/<form class="prototype-session"[\s\S]*?<\/form>/)?.[0] || '';
+    const logoutForm = view.match(/<form class="sidebar-session"[\s\S]*?<\/form>/)?.[0] || '';
 
     assert.match(logoutForm, /action="<\?= site_url\('logout'\) \?>"/);
     assert.match(logoutForm, /method="post"/);
     assert.match(logoutForm, /csrf_field\(\)/);
+    assert.match(logoutForm, /Sesión protegida/);
     assert.match(logoutForm, /Cerrar sesión/);
-    assert.match(styles, /\.prototype-logout\s*\{/);
+    assert.match(styles, /\.sidebar-bottom\s*\{/);
+    assert.match(styles, /\.sidebar-session\s*\{/);
+    assert.doesNotMatch(view, /class="prototype-session"/);
 });
 
 test('the finance screen follows the provisional client formula', () => {

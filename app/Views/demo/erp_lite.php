@@ -56,13 +56,21 @@
             </button>
         </nav>
 
-        <div class="business-switcher">
-            <span class="business-avatar">DB</span>
-            <div>
-                <strong>Dulce Barrio</strong>
-                <small>Pastelería artesanal</small>
+        <div class="sidebar-bottom">
+            <div class="business-switcher">
+                <span class="business-avatar">DB</span>
+                <div>
+                    <strong>Dulce Barrio</strong>
+                    <small>Pastelería artesanal</small>
+                </div>
+                <span class="demo-chip">Demo</span>
             </div>
-            <span class="demo-chip">Demo</span>
+
+            <form class="sidebar-session" action="<?= site_url('logout') ?>" method="post">
+                <?= csrf_field() ?>
+                <span>Sesión protegida</span>
+                <button type="submit">Cerrar sesión</button>
+            </form>
         </div>
     </aside>
 
@@ -93,17 +101,6 @@
                         <small>Propietaria</small>
                     </div>
                 </div>
-                <form class="prototype-session" action="<?= site_url('logout') ?>" method="post">
-                    <?= csrf_field() ?>
-                    <button class="prototype-logout" type="submit" title="Cerrar sesión">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4"></path>
-                            <path d="m15 16 4-4-4-4"></path>
-                            <path d="M19 12H9"></path>
-                        </svg>
-                        <span>Cerrar sesión</span>
-                    </button>
-                </form>
             </div>
         </header>
 
