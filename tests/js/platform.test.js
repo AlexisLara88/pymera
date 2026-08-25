@@ -36,6 +36,22 @@ test('platform owner creation is exposed through an accessible native dialog', (
     assert.match(script, /event\.target === dialog/);
 });
 
+test('the same owner dialog selects an active business or reveals fields for a new one', () => {
+    assert.match(view, /Nueva cuenta propietaria/);
+    assert.match(view, /name="business_id"/);
+    assert.match(view, /data-owner-business-select/);
+    assert.match(view, /Crear un negocio nuevo/);
+    assert.match(view, /data-owner-new-business/);
+    assert.match(view, /data-owner-new-business-field/);
+    assert.match(view, />Crear cuenta</);
+    assert.match(script, /initializeOwnerBusinessSelection\(\)/);
+    assert.match(script, /select\.value === 'new'/);
+    assert.match(script, /fieldsContainer\.hidden = ! createsBusiness/);
+    assert.match(script, /field\.disabled = ! createsBusiness/);
+    assert.match(styles, /\.platform-new-business\s*\{/);
+    assert.match(styles, /\.platform-new-business\[hidden\]/);
+});
+
 test('new web administrators remain visibly and operationally disabled', () => {
     assert.match(view, /Nuevo administrador/);
     assert.match(view, /data-platform-disabled-feature/);

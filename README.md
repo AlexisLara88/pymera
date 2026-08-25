@@ -119,7 +119,7 @@ validación local controlada.
 - No existe vencimiento o rotación automática de estas contraseñas de validación.
 - El cambio personal no crea archivos ni tablas adicionales: Shield actualiza la identidad de contraseña existente y la sesión actual se regenera.
 - `/entry` dirige una cuenta del producto a `/app` y un administrador a `/admin`.
-- `/admin` permite crear cuentas propietarias con negocio mediante un modal, activar o desactivar cuentas y accesos y consultar auditoría administrativa.
+- `/admin` permite crear cuentas propietarias desde un único modal, asociarlas a un negocio activo existente o crear uno nuevo, activar o desactivar cuentas y accesos y consultar auditoría administrativa. Un negocio admite varios propietarios equivalentes; cada cuenta conserva un único negocio activo.
 - La creación web de nuevos administradores está temporalmente deshabilitada y también es rechazada por el backend; el comando interactivo queda disponible únicamente para un aprovisionamiento administrativo excepcional y autorizado.
 - La cuenta personal de administración vigente ya fue aprovisionada fuera del código.
 

@@ -25,6 +25,27 @@ class BusinessModel extends Model
     ];
     protected $validationMessages = [];
 
+    /** @return array<string, mixed>|null */
+    public function activeById(int $businessId): ?array
+    {
+        if ($businessId < 1) {
+            return null;
+        }
+
+        return $this->where('id', $businessId)
+            ->where('status', 'active')
+            ->first();
+    }
+
+    /** @return list<array<string, mixed>> */
+    public function activeOptions(): array
+    {
+        return $this->select('id, name, currency_code')
+            ->where('status', 'active')
+            ->orderBy('name', 'ASC')
+            ->findAll();
+    }
+
     /** @return list<array<string, mixed>> */
     public function administrativeOverview(): array
     {

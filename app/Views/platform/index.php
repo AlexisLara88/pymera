@@ -3,6 +3,7 @@
 /**
  * @var list<array<string, mixed>> $accounts
  * @var list<array<string, mixed>> $businesses
+ * @var list<array<string, mixed>> $active_businesses
  * @var list<array<string, mixed>> $audit_events
  * @var bool                       $administrator_creation_enabled
  * @var string|null                $success
@@ -75,8 +76,8 @@ $auditLabels = [
         <article class="platform-panel platform-create-card">
             <div>
                 <span class="eyebrow">Cuenta de producto</span>
-                <h2>Nuevo propietario y negocio</h2>
-                <p>Crea la identidad, el negocio y su acceso como Propietario dentro de una sola operación.</p>
+                <h2>Nueva cuenta propietaria</h2>
+                <p>Asocia la cuenta con un negocio actual o crea uno nuevo dentro de la misma operación.</p>
             </div>
             <button class="button button-primary" type="button" data-platform-dialog-open="ownerCreationDialog">
                 Abrir formulario
@@ -116,7 +117,7 @@ $auditLabels = [
             <header class="platform-dialog-header">
                 <div>
                     <span class="eyebrow">Cuenta de producto</span>
-                    <h2 id="ownerCreationTitle">Nuevo propietario y negocio</h2>
+                    <h2 id="ownerCreationTitle">Nueva cuenta propietaria</h2>
                 </div>
                 <button
                     class="platform-dialog-close"
@@ -128,7 +129,7 @@ $auditLabels = [
             </header>
 
             <p id="ownerCreationDescription">
-                La cuenta, el negocio y el acceso Propietario se crearán juntos al confirmar el formulario.
+                Completa la identidad y elige el negocio al que tendrá acceso como Propietario.
             </p>
 
             <form
@@ -144,9 +145,77 @@ $auditLabels = [
                 <?= csrf_field() ?>
                 <label>Correo<input name="email" type="email" required autocomplete="off"></label>
                 <label>Usuario<input name="username" type="text" required minlength="3" maxlength="30" autocomplete="off"></label>
-                <label class="is-wide">Negocio<input name="business_name" type="text" required maxlength="120"></label>
-                <label>Moneda<input name="currency_code" type="text" value="USD" required minlength="3" maxlength="3"></label>
-                <label>Zona horaria<input name="timezone" type="text" value="America/Guayaquil" required></label>
+
+                <div class="platform-form-field is-wide">
+                    <label for="ownerBusinessSelection">Negocio</label>
+                    <select
+                        id="ownerBusinessSelection"
+                        name="business_id"
+                        required
+                        aria-describedby="ownerBusinessSelectionHint"
+                        data-owner-business-select
+                    >
+                        <option value="" disabled<?= $active_businesses !== [] ? ' selected' : '' ?>>Seleccioná un negocio</option>
+                        <?php foreach ($active_businesses as $business): ?>
+                            <option value="<?= (int) $business['id'] ?>">
+                                <?= esc($business['name']) ?> · <?= esc($business['currency_code']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                        <option value="new"<?= $active_businesses === [] ? ' selected' : '' ?>>Crear un negocio nuevo</option>
+                    </select>
+                    <small id="ownerBusinessSelectionHint" class="platform-field-hint" aria-live="polite" data-owner-business-hint>
+                        Seleccioná un negocio activo o creá uno nuevo.
+                    </small>
+                </div>
+
+                <section
+                    class="platform-new-business is-wide"
+                    aria-labelledby="newBusinessFieldsTitle"
+                    data-owner-new-business
+                    <?= $active_businesses !== [] ? 'hidden' : '' ?>
+                >
+                    <header>
+                        <strong id="newBusinessFieldsTitle">Datos del nuevo negocio</strong>
+                        <small>Estos datos sólo se solicitan cuando el negocio todavía no existe.</small>
+                    </header>
+                    <div class="platform-new-business-grid">
+                        <label class="is-wide">
+                            Nombre
+                            <input
+                                name="business_name"
+                                type="text"
+                                required
+                                maxlength="120"
+                                <?= $active_businesses !== [] ? 'disabled' : '' ?>
+                                data-owner-new-business-field
+                            >
+                        </label>
+                        <label>
+                            Moneda
+                            <input
+                                name="currency_code"
+                                type="text"
+                                value="USD"
+                                required
+                                minlength="3"
+                                maxlength="3"
+                                <?= $active_businesses !== [] ? 'disabled' : '' ?>
+                                data-owner-new-business-field
+                            >
+                        </label>
+                        <label>
+                            Zona horaria
+                            <input
+                                name="timezone"
+                                type="text"
+                                value="America/Guayaquil"
+                                required
+                                <?= $active_businesses !== [] ? 'disabled' : '' ?>
+                                data-owner-new-business-field
+                            >
+                        </label>
+                    </div>
+                </section>
 
                 <div class="platform-form-field">
                     <label for="ownerPassword">Contraseña</label>
@@ -226,7 +295,7 @@ $auditLabels = [
 
                 <footer class="platform-dialog-actions is-wide">
                     <button class="button button-secondary" type="button" data-platform-dialog-close>Cancelar</button>
-                    <button class="button button-primary" type="submit">Crear propietario y negocio</button>
+                    <button class="button button-primary" type="submit">Crear cuenta</button>
                 </footer>
             </form>
         </div>

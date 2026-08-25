@@ -4,9 +4,39 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeOwnerDialog();
     initializeDisabledFeatureNotice();
     initializeOwnerPasswordForm();
+    initializeOwnerBusinessSelection();
     initializeStatusConfirmation();
     initializeAccountSearch();
 });
+
+function initializeOwnerBusinessSelection() {
+    const select = document.querySelector('[data-owner-business-select]');
+    const fieldsContainer = document.querySelector('[data-owner-new-business]');
+    const fields = Array.from(document.querySelectorAll('[data-owner-new-business-field]'));
+    const hint = document.querySelector('[data-owner-business-hint]');
+
+    if (! select || ! fieldsContainer || fields.length === 0) {
+        return;
+    }
+
+    const synchronize = () => {
+        const createsBusiness = select.value === 'new';
+
+        fieldsContainer.hidden = ! createsBusiness;
+        fields.forEach((field) => {
+            field.disabled = ! createsBusiness;
+        });
+
+        if (hint) {
+            hint.textContent = createsBusiness
+                ? 'Completa los datos del negocio que se creará con la cuenta.'
+                : 'La cuenta se asociará al negocio seleccionado sin modificar sus datos.';
+        }
+    };
+
+    select.addEventListener('change', synchronize);
+    synchronize();
+}
 
 function initializeStatusConfirmation() {
     const dialog = document.querySelector('[data-platform-confirm-dialog]');

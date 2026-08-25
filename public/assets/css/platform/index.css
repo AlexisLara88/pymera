@@ -276,6 +276,7 @@ html[data-theme="dark"] .platform-disabled-action:focus-visible {
 }
 
 .platform-form input,
+.platform-form select,
 .platform-password-field input {
     width: 100%;
     min-width: 0;
@@ -286,7 +287,53 @@ html[data-theme="dark"] .platform-disabled-action:focus-visible {
     border-radius: 12px;
 }
 
+.platform-form select {
+    min-height: 46px;
+    cursor: pointer;
+}
+
+.platform-form input:focus-visible,
+.platform-form select:focus-visible {
+    border-color: var(--brand-2, #1f6f78);
+    outline: 3px solid color-mix(in srgb, var(--brand-2, #1f6f78) 18%, transparent);
+    outline-offset: 1px;
+}
+
 .platform-form .is-wide { grid-column: 1 / -1; }
+
+.platform-field-hint {
+    color: var(--muted, #64748b);
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.45;
+}
+
+.platform-new-business {
+    padding: 16px;
+    border: 1px solid var(--line, #dde3ea);
+    border-radius: 16px;
+    background: var(--surface-soft, #f8fafb);
+}
+
+.platform-new-business[hidden] {
+    display: none;
+}
+
+.platform-new-business > header {
+    display: grid;
+    gap: 4px;
+    margin-bottom: 14px;
+}
+
+.platform-new-business > header small {
+    color: var(--muted, #64748b);
+}
+
+.platform-new-business-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
 
 .platform-password-field {
     position: relative;
@@ -542,6 +589,7 @@ html[data-theme="dark"] .platform-account-action.is-protected:focus-visible {
     .platform-topbar { align-items: flex-start; flex-direction: column; }
     .platform-account-panel-heading { align-items: stretch; flex-direction: column; }
     .platform-account-search { width: 100%; }
+    .platform-new-business-grid { grid-template-columns: 1fr; }
     .platform-summary { display: grid; }
     .platform-form .is-wide { grid-column: auto; }
     .platform-account { display: grid; }

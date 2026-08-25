@@ -47,11 +47,13 @@ final class PlatformAdminController extends BaseController
         }
 
         try {
-            $this->administration->createOwner($input);
+            $result = $this->administration->createOwner($input);
 
             return redirect()->to(site_url('admin'))->with(
                 'success',
-                'La cuenta propietaria y su negocio se crearon correctamente.',
+                $result['business_created']
+                    ? 'La cuenta propietaria y su negocio se crearon correctamente.'
+                    : 'La cuenta propietaria se asoció correctamente con el negocio existente.',
             );
         } catch (PlatformAccessException|RuntimeException $exception) {
             $this->logFailure($exception);

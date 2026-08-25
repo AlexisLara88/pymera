@@ -75,6 +75,58 @@ final class AccountProvisioningService
         });
     }
 
+    /**
+     * @return array{user_id: int, business_id: int, membership_id: int}
+     */
+    public function createOwnerForBusiness(
+        string $email,
+        string $username,
+        string $password,
+        int $businessId,
+        ?int $actorUserId = null,
+    ): array {
+        [$email, $username, $password] = $this->validatedIdentity($email, $username, $password);
+
+        if ($businessId < 1) {
+            throw new RuntimeException('Seleccioná un negocio activo válido.');
+        }
+
+        return $this->transaction(function () use (
+            $email,
+            $username,
+            $password,
+            $businessId,
+            $actorUserId,
+        ): array {
+            $business = model(BusinessModel::class)->activeById($businessId);
+
+            if ($business === null) {
+                throw new RuntimeException('El negocio seleccionado no existe o no está activo.');
+            }
+
+            $userId = $this->createUser($email, $username, $password, 'alpha');
+            $membershipId = $this->createMembership(
+                $userId,
+                $businessId,
+                BusinessRoleCatalog::OWNER,
+            );
+
+            $this->audit->record('user', $userId, 'created', $actorUserId);
+            $this->audit->record(
+                'business_membership',
+                $membershipId,
+                'membership_created',
+                $actorUserId,
+            );
+
+            return [
+                'user_id'       => $userId,
+                'business_id'   => $businessId,
+                'membership_id' => $membershipId,
+            ];
+        });
+    }
+
     public function createPlatformAdministrator(
         string $email,
         string $username,

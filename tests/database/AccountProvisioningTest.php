@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Domain\BusinessRoleCatalog;
+use App\Models\BusinessModel;
 use App\Services\AccountProvisioningService;
 use CodeIgniter\Config\Services;
 use CodeIgniter\Shield\Entities\User;
@@ -78,6 +79,110 @@ final class AccountProvisioningTest extends CIUnitTestCase
             'subject_id'   => $userId,
             'action'       => 'created',
         ]);
+    }
+
+    public function testOwnerCanBeCreatedForAnExistingActiveBusinessWithoutDuplicatingIt(): void
+    {
+        $businessId = (new BusinessModel())->insert([
+            'name'          => 'Negocio compartido',
+            'currency_code' => 'USD',
+            'timezone'      => 'America/Guayaquil',
+            'status'        => 'active',
+        ], true);
+        $this->assertIsInt($businessId);
+        $businessCount = $this->db->table('businesses')->countAllResults();
+
+        $result = (new AccountProvisioningService())->createOwnerForBusiness(
+            'shared-owner@example.test',
+            'shared-owner',
+            'Safe-Test-Password-42!',
+            $businessId,
+        );
+
+        $this->assertSame($businessId, $result['business_id']);
+        $this->assertSame($businessCount, $this->db->table('businesses')->countAllResults());
+        $this->seeInDatabase('business_users', [
+            'user_id'     => $result['user_id'],
+            'business_id' => $businessId,
+            'role_code'   => BusinessRoleCatalog::OWNER,
+            'status'      => 'active',
+        ]);
+        $this->assertSame(2, $this->db->table('platform_audit_events')->countAllResults());
+        $this->dontSeeInDatabase('platform_audit_events', [
+            'subject_type' => 'business',
+            'action'       => 'created',
+        ]);
+    }
+
+    public function testInactiveBusinessRejectsNewOwnerWithoutLeavingPartialAccount(): void
+    {
+        $businessId = (new BusinessModel())->insert([
+            'name'          => 'Negocio pausado',
+            'currency_code' => 'USD',
+            'timezone'      => 'America/Guayaquil',
+            'status'        => 'inactive',
+        ], true);
+        $this->assertIsInt($businessId);
+
+        try {
+            (new AccountProvisioningService())->createOwnerForBusiness(
+                'inactive-owner@example.test',
+                'inactive-owner',
+                'Safe-Test-Password-42!',
+                $businessId,
+            );
+            $this->fail('An inactive business should reject a new owner.');
+        } catch (RuntimeException $exception) {
+            $this->assertSame(
+                'El negocio seleccionado no existe o no está activo.',
+                $exception->getMessage(),
+            );
+        }
+
+        $this->assertNull(auth()->getProvider()->findByCredentials([
+            'email' => 'inactive-owner@example.test',
+        ]));
+        $this->dontSeeInDatabase('business_users', ['business_id' => $businessId]);
+        $this->assertSame(0, $this->db->table('platform_audit_events')->countAllResults());
+    }
+
+    public function testSeveralOwnersCanShareOneBusinessWithoutGivingAnyAccountTwoActiveBusinesses(): void
+    {
+        $businessId = (new BusinessModel())->insert([
+            'name'          => 'Negocio con varios propietarios',
+            'currency_code' => 'USD',
+            'timezone'      => 'America/Guayaquil',
+            'status'        => 'active',
+        ], true);
+        $this->assertIsInt($businessId);
+        $service = new AccountProvisioningService();
+
+        $first = $service->createOwnerForBusiness(
+            'first-owner@example.test',
+            'first-owner',
+            'Safe-Test-Password-42!',
+            $businessId,
+        );
+        $second = $service->createOwnerForBusiness(
+            'second-owner@example.test',
+            'second-owner',
+            'Safe-Test-Password-43!',
+            $businessId,
+        );
+
+        $this->assertNotSame($first['user_id'], $second['user_id']);
+        $this->assertSame(2, $this->db->table('business_users')
+            ->where('business_id', $businessId)
+            ->where('status', 'active')
+            ->countAllResults());
+        $this->assertSame(1, $this->db->table('business_users')
+            ->where('user_id', $first['user_id'])
+            ->where('status', 'active')
+            ->countAllResults());
+        $this->assertSame(1, $this->db->table('business_users')
+            ->where('user_id', $second['user_id'])
+            ->where('status', 'active')
+            ->countAllResults());
     }
 
     public function testDuplicateIdentityDoesNotCreatePartialBusinessData(): void
