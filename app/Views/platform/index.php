@@ -76,7 +76,7 @@ $auditLabels = [
         <article class="platform-panel platform-create-card">
             <div>
                 <span class="eyebrow">Cuenta de producto</span>
-                <h2>Nueva cuenta propietaria</h2>
+                <h2>Nueva cuenta</h2>
                 <p>Asocia la cuenta con un negocio actual o crea uno nuevo dentro de la misma operación.</p>
             </div>
             <button class="button button-primary" type="button" data-platform-dialog-open="ownerCreationDialog">
@@ -117,7 +117,7 @@ $auditLabels = [
             <header class="platform-dialog-header">
                 <div>
                     <span class="eyebrow">Cuenta de producto</span>
-                    <h2 id="ownerCreationTitle">Nueva cuenta propietaria</h2>
+                    <h2 id="ownerCreationTitle">Nueva cuenta</h2>
                 </div>
                 <button
                     class="platform-dialog-close"
@@ -129,7 +129,7 @@ $auditLabels = [
             </header>
 
             <p id="ownerCreationDescription">
-                Completa la identidad y elige el negocio al que tendrá acceso como Propietario.
+                Completa la identidad y elige el negocio al que tendrá acceso.
             </p>
 
             <form

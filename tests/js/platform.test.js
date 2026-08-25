@@ -37,7 +37,8 @@ test('platform owner creation is exposed through an accessible native dialog', (
 });
 
 test('the same owner dialog selects an active business or reveals fields for a new one', () => {
-    assert.match(view, /Nueva cuenta propietaria/);
+    assert.match(view, /Nueva cuenta/);
+    assert.doesNotMatch(view, /Nueva cuenta propietaria/);
     assert.match(view, /name="business_id"/);
     assert.match(view, /data-owner-business-select/);
     assert.match(view, /Crear un negocio nuevo/);

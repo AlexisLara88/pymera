@@ -52,8 +52,8 @@ final class PlatformAdminController extends BaseController
             return redirect()->to(site_url('admin'))->with(
                 'success',
                 $result['business_created']
-                    ? 'La cuenta propietaria y su negocio se crearon correctamente.'
-                    : 'La cuenta propietaria se asoció correctamente con el negocio existente.',
+                    ? 'La cuenta y su negocio se crearon correctamente.'
+                    : 'La cuenta se asoció correctamente con el negocio existente.',
             );
         } catch (PlatformAccessException|RuntimeException $exception) {
             $this->logFailure($exception);

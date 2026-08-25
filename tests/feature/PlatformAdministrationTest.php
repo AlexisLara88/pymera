@@ -58,7 +58,8 @@ final class PlatformAdministrationTest extends CIUnitTestCase
         $response->assertSee('admin@example.test');
         $response->assertSee('data-platform-dialog');
         $response->assertSee('data-owner-creation-form');
-        $response->assertSee('Nueva cuenta propietaria');
+        $response->assertSee('Nueva cuenta');
+        $response->assertDontSee('Nueva cuenta propietaria');
         $response->assertSee('data-owner-business-select');
         $response->assertSee('Crear un negocio nuevo');
         $response->assertSee('data-owner-new-business');
@@ -144,7 +145,7 @@ final class PlatformAdministrationTest extends CIUnitTestCase
         $response->assertRedirectTo('/admin');
         $response->assertSessionHas(
             'success',
-            'La cuenta propietaria se asoció correctamente con el negocio existente.',
+            'La cuenta se asoció correctamente con el negocio existente.',
         );
         $this->assertSame($businessCount, $this->db->table('businesses')->countAllResults());
         $this->seeInDatabase('business_users', [
