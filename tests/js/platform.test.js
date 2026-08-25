@@ -67,6 +67,7 @@ test('new web administrators remain visibly and operationally disabled', () => {
 test('owner passwords have visibility controls and live matching feedback', () => {
     assert.match(view, /id="ownerPassword"/);
     assert.match(view, /id="ownerPasswordConfirmation"/);
+    assert.match(view, /<label for="ownerPasswordConfirmation">Confirmar contraseña<\/label>/);
     assert.match(view, /data-password-toggle="ownerPassword"/);
     assert.match(view, /data-password-toggle="ownerPasswordConfirmation"/);
     assert.match(view, /aria-pressed="false"/);
@@ -91,6 +92,8 @@ test('platform modal and disabled state preserve the visual system', () => {
     assert.match(styles, /backdrop-filter: blur\(7px\)/);
     assert.match(styles, /\.platform-dialog-close:hover span/);
     assert.match(styles, /rotate\(180deg\)/);
+    assert.match(styles, /\.platform-dialog-close span::before/);
+    assert.match(styles, /\.platform-dialog-close span::after/);
     assert.match(styles, /\.platform-disabled-action/);
     assert.match(styles, /html\[data-theme="dark"\] \.platform-disabled-action/);
     assert.match(styles, /\.platform-password-field input\.is-valid/);

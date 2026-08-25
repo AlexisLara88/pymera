@@ -256,7 +256,7 @@ $auditLabels = [
                 </div>
 
                 <div class="platform-form-field">
-                    <label for="ownerPasswordConfirmation">Confirmación</label>
+                    <label for="ownerPasswordConfirmation">Confirmar contraseña</label>
                     <div class="platform-password-field">
                         <input
                             id="ownerPasswordConfirmation"
