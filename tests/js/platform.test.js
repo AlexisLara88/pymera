@@ -18,6 +18,10 @@ const styles = fs.readFileSync(
     path.join(projectRoot, 'public/assets/css/platform/index.css'),
     'utf8',
 );
+const shellStyles = fs.readFileSync(
+    path.join(projectRoot, 'public/assets/css/alpha-shell.css'),
+    'utf8',
+);
 
 test('platform owner creation is exposed through an accessible native dialog', () => {
     assert.match(view, /<dialog[\s\S]*data-platform-dialog/);
@@ -78,4 +82,10 @@ test('platform modal and disabled state preserve the visual system', () => {
     const openBraces = (styles.match(/{/g) || []).length;
     const closeBraces = (styles.match(/}/g) || []).length;
     assert.equal(openBraces, closeBraces);
+});
+
+test('primary platform actions preserve readable contrast in the light theme', () => {
+    assert.match(view, /class="button button-primary"[\s\S]*Abrir formulario/);
+    assert.match(shellStyles, /\.button-primary\s*\{[\s\S]*?color:\s*#fff;[\s\S]*?background:\s*var\(--brand\);/);
+    assert.match(shellStyles, /\.button-primary:hover,[\s\S]*?\.button-primary:focus-visible\s*\{[\s\S]*?color:\s*#fff;/);
 });

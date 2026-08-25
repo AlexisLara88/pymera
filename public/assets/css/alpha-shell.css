@@ -594,12 +594,14 @@ body.alpha-menu-is-open {
 }
 
 .button-primary {
+    color: #fff;
     background: var(--brand);
     box-shadow: 0 8px 18px rgb(18 62 69 / 16%);
 }
 
 .button-primary:hover,
 .button-primary:focus-visible {
+    color: #fff;
     background: #18515a;
     box-shadow: 0 10px 22px rgb(18 62 69 / 22%);
 }
