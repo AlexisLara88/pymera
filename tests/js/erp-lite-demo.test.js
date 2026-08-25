@@ -45,6 +45,16 @@ test('the prototype labels its simulated and future capabilities', () => {
     assert.match(view, /No se está ejecutando inteligencia artificial/);
 });
 
+test('the prototype offers a protected way to close an authenticated session', () => {
+    const logoutForm = view.match(/<form class="prototype-session"[\s\S]*?<\/form>/)?.[0] || '';
+
+    assert.match(logoutForm, /action="<\?= site_url\('logout'\) \?>"/);
+    assert.match(logoutForm, /method="post"/);
+    assert.match(logoutForm, /csrf_field\(\)/);
+    assert.match(logoutForm, /Cerrar sesión/);
+    assert.match(styles, /\.prototype-logout\s*\{/);
+});
+
 test('the finance screen follows the provisional client formula', () => {
     assert.match(view, /Ventas del día/);
     assert.match(view, /Costo de ventas/);
