@@ -89,7 +89,7 @@ test('finance JavaScript only provides progressive enhancement', () => {
 });
 
 test('finance keeps one total-sales KPI with a native collapsed origin breakdown', () => {
-    assert.match(view, /<details[\s\S]*?class="metric-card accent-green finance-sales-card"[\s\S]*?id="financeTotalSalesCard"/);
+    assert.match(view, /<details class="metric-card accent-green finance-sales-card">/);
     assert.match(view, /Ventas totales/);
     assert.match(view, /Registradas manualmente/);
     assert.match(view, /Provenientes del CRM/);

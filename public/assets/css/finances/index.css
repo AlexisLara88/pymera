@@ -4,6 +4,7 @@
 
 .finance-main .finance-metrics {
     grid-template-columns: repeat(5, minmax(0, 1fr));
+    margin-bottom: 0;
 }
 
 .finance-metrics-heading,
@@ -15,7 +16,8 @@
 }
 
 .finance-metrics-heading {
-    margin: 0 0 0.55rem 0.2rem;
+    justify-content: space-between;
+    margin-bottom: 0.55rem;
 }
 
 .finance-help-heading h2,
@@ -24,26 +26,26 @@
     margin-bottom: 0;
 }
 
-.finance-metric-help-wrapper {
-    position: relative;
-    min-width: 0;
-}
-
-.finance-metric-help-wrapper .finance-sales-card {
-    height: 100%;
-}
-
-.finance-metric-help-wrapper > .context-help {
-    position: absolute;
-    z-index: 4;
-    top: 0.65rem;
-    right: 2.75rem;
+.finance-overview {
+    margin-bottom: 18px;
+    padding: 0.65rem;
+    border: 1px solid var(--line);
+    border-radius: 1.15rem;
+    background: color-mix(in srgb, var(--surface) 82%, transparent);
 }
 
 .finance-main .finance-create.is-context-help-focus,
 .finance-main .chart-panel.is-context-help-focus,
 .finance-main .finance-history.is-context-help-focus {
     overflow: visible;
+}
+
+.finance-main .finance-help-heading .context-help-trigger,
+.finance-main .finance-metrics-heading .context-help-trigger,
+.finance-main .period-filter-heading .context-help-trigger {
+    width: 1.45rem;
+    height: 1.45rem;
+    font-size: 0.75rem;
 }
 
 .finance-break-even-card::before {
