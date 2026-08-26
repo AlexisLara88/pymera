@@ -85,9 +85,24 @@ $breakEvenDescription = match ($breakEvenStatus) {
             'title'    => 'Finanzas',
         ]) ?>
 
+        <section class="finance-workflow-content" id="financeWorkflowContent" data-context-help-focus-target>
         <header class="module-header module-header-compact">
             <div>
-                <h2>Revisá cómo cerró el negocio</h2>
+                <div class="context-help-heading">
+                    <h2>Revisá cómo cerró el negocio</h2>
+                    <?= $contextualHelp([
+                        'id'        => 'finances-help-concept',
+                        'title'     => '¿Para qué sirve Finanzas?',
+                        'targetId'  => 'financeWorkflowContent',
+                        'anchor'    => 'trigger',
+                        'placement' => 'right',
+                        'align'     => 'start',
+                        'paragraphs' => [
+                            'Finanzas reúne los cierres diarios del período para mostrar ventas, costos, gastos y resultados del negocio en un solo lugar.',
+                            'Los registros confirmados actualizan el resumen y la evolución. Los borradores conservan la carga sin afectar los cálculos.',
+                        ],
+                    ]) ?>
+                </div>
                 <p>Registrá ventas, costos y gastos agregados para seguir la utilidad bruta y el EBITDA.</p>
             </div>
             <form
@@ -152,23 +167,38 @@ $breakEvenDescription = match ($breakEvenStatus) {
                     'placement' => 'top',
                     'align'     => 'center',
                     'paragraphs' => [
-                        'Ventas totales suma los registros manuales y las oportunidades ganadas incluidas desde Clientes y ventas. Una venta proveniente del CRM no debe cargarse nuevamente.',
-                        'La utilidad bruta es Ventas menos Costo de ventas. El EBITDA también descuenta Gastos operativos o fijos y Gastos administrativos.',
-                        'El punto de equilibrio usa el margen de contribución y la base de gastos fijos y administrativos. Sin ventas o con margen no positivo se muestra como no disponible.',
+                        'Resume los importes confirmados del período seleccionado. Cada tarjeta explica el origen o la fórmula de su propio resultado.',
                     ],
                 ]) ?>
             </header>
 
             <div class="metric-row finance-metrics">
-            <details class="metric-card accent-green finance-sales-card">
-                <summary>
-                    <span>
-                        <span>Ventas totales</span>
-                        <strong><?= $money($sales_breakdown['total_sales_cents']) ?></strong>
+            <article
+                class="metric-card accent-green finance-sales-card"
+                id="financeTotalSalesCard"
+                data-context-help-focus-target
+            >
+                <div class="finance-metric-heading">
+                    <span>Ventas totales</span>
+                    <?= $contextualHelp([
+                        'id'        => 'finances-help-total-sales',
+                        'title'     => '¿Qué compone las ventas totales?',
+                        'targetId'  => 'financeTotalSalesCard',
+                        'anchor'    => 'target',
+                        'placement' => 'top',
+                        'align'     => 'center',
+                        'paragraphs' => [
+                            'Suma las ventas registradas manualmente y las oportunidades ganadas que decidiste incluir desde Clientes y ventas.',
+                            'Una venta proveniente del CRM no debe cargarse nuevamente de forma manual.',
+                        ],
+                    ]) ?>
+                </div>
+                <strong><?= $money($sales_breakdown['total_sales_cents']) ?></strong>
+                <details class="finance-sales-details">
+                    <summary>
                         <small><?= esc($period_label) ?> · Ver desglose</small>
-                    </span>
-                    <i aria-hidden="true"></i>
-                </summary>
+                        <i aria-hidden="true"></i>
+                    </summary>
                 <dl class="finance-sales-breakdown">
                     <div>
                         <dt>Registradas manualmente</dt>
@@ -183,24 +213,84 @@ $breakEvenDescription = match ($breakEvenStatus) {
                         <dd><?= $money($sales_breakdown['total_sales_cents']) ?></dd>
                     </div>
                 </dl>
-            </details>
-            <article class="metric-card">
-                <span>Costo de ventas</span>
+                </details>
+            </article>
+            <article class="metric-card" id="financeCostOfSalesCard" data-context-help-focus-target>
+                <div class="finance-metric-heading">
+                    <span>Costo de ventas</span>
+                    <?= $contextualHelp([
+                        'id'        => 'finances-help-cost-of-sales',
+                        'title'     => '¿Qué incluye el costo de ventas?',
+                        'targetId'  => 'financeCostOfSalesCard',
+                        'anchor'    => 'target',
+                        'placement' => 'top',
+                        'align'     => 'center',
+                        'paragraphs' => [
+                            'Incluye insumos y costos variables directamente relacionados con lo vendido durante el período.',
+                            'No incluye los gastos operativos o administrativos generales del negocio.',
+                        ],
+                    ]) ?>
+                </div>
                 <strong><?= $money($totals['cost_of_sales_cents']) ?></strong>
                 <small>Costos variables asociados</small>
             </article>
-            <article class="metric-card accent-blue">
-                <span>Utilidad bruta</span>
+            <article class="metric-card accent-blue" id="financeGrossProfitCard" data-context-help-focus-target>
+                <div class="finance-metric-heading">
+                    <span>Utilidad bruta</span>
+                    <?= $contextualHelp([
+                        'id'        => 'finances-help-gross-profit',
+                        'title'     => '¿Cómo se calcula la utilidad bruta?',
+                        'targetId'  => 'financeGrossProfitCard',
+                        'anchor'    => 'target',
+                        'placement' => 'top',
+                        'align'     => 'center',
+                        'paragraphs' => [
+                            'Se calcula restando el Costo de ventas a las Ventas totales del período.',
+                        ],
+                    ]) ?>
+                </div>
                 <strong class="<?= $resultClass($totals['gross_profit_cents']) ?>"><?= $money($totals['gross_profit_cents']) ?></strong>
                 <small>Ventas menos costo de ventas</small>
             </article>
-            <article class="metric-card accent-warm">
-                <span>EBITDA</span>
+            <article class="metric-card accent-warm" id="financeEbitdaCard" data-context-help-focus-target>
+                <div class="finance-metric-heading">
+                    <span>EBITDA</span>
+                    <?= $contextualHelp([
+                        'id'        => 'finances-help-ebitda',
+                        'title'     => '¿Cómo se calcula el EBITDA?',
+                        'targetId'  => 'financeEbitdaCard',
+                        'anchor'    => 'target',
+                        'placement' => 'top',
+                        'align'     => 'center',
+                        'paragraphs' => [
+                            'Se calcula como Ventas menos Costo de ventas, Gastos operativos o fijos y Gastos administrativos.',
+                            'Es un indicador operativo del alcance actual y no equivale necesariamente a la utilidad neta contable o fiscal.',
+                        ],
+                    ]) ?>
+                </div>
                 <strong class="<?= $resultClass($totals['ebitda_cents']) ?>"><?= $money($totals['ebitda_cents']) ?></strong>
                 <small>Según la fórmula del cliente</small>
             </article>
-            <article class="metric-card finance-break-even-card<?= $breakEvenSales === null ? ' pending' : '' ?>">
-                <span>Punto de equilibrio estimado</span>
+            <article
+                class="metric-card finance-break-even-card<?= $breakEvenSales === null ? ' pending' : '' ?>"
+                id="financeBreakEvenCard"
+                data-context-help-focus-target
+            >
+                <div class="finance-metric-heading">
+                    <span>Punto de equilibrio estimado</span>
+                    <?= $contextualHelp([
+                        'id'        => 'finances-help-break-even',
+                        'title'     => '¿Cómo se calcula el punto de equilibrio?',
+                        'targetId'  => 'financeBreakEvenCard',
+                        'anchor'    => 'target',
+                        'placement' => 'top',
+                        'align'     => 'center',
+                        'paragraphs' => [
+                            'Estima la venta necesaria para cubrir los gastos operativos o fijos y administrativos usando el margen de contribución del período.',
+                            'Si no hay ventas o el margen es nulo o negativo, se muestra como no disponible.',
+                        ],
+                    ]) ?>
+                </div>
                 <strong><?= $breakEvenSales === null ? 'No disponible' : $money((int) $breakEvenSales) ?></strong>
                 <small><?= esc($breakEvenDescription) ?></small>
             </article>
@@ -471,6 +561,7 @@ $breakEvenDescription = match ($breakEvenStatus) {
                     </details>
                 <?php endforeach ?>
             </div>
+            </section>
         </section>
     </main>
 </div>

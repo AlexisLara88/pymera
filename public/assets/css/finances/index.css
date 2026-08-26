@@ -9,6 +9,7 @@
 
 .finance-metrics-heading,
 .finance-help-heading,
+.finance-metric-heading,
 .period-filter-heading {
     display: flex;
     gap: 0.5rem;
@@ -22,8 +23,19 @@
 
 .finance-help-heading h2,
 .finance-help-heading h3,
+.finance-metric-heading > span,
 .period-filter-heading label {
     margin-bottom: 0;
+}
+
+.finance-metric-heading {
+    min-width: 0;
+    justify-content: space-between;
+}
+
+.finance-metric-heading > span {
+    min-width: 0;
+    line-height: 1.25;
 }
 
 .finance-overview {
@@ -36,45 +48,52 @@
 
 .finance-main .finance-create.is-context-help-focus,
 .finance-main .chart-panel.is-context-help-focus,
-.finance-main .finance-history.is-context-help-focus {
+.finance-main .finance-history.is-context-help-focus,
+.finance-main .metric-card.is-context-help-focus {
     overflow: visible;
 }
 
 .finance-main .finance-help-heading .context-help-trigger,
 .finance-main .finance-metrics-heading .context-help-trigger,
+.finance-main .finance-metric-heading .context-help-trigger,
 .finance-main .period-filter-heading .context-help-trigger {
     width: 1.45rem;
     height: 1.45rem;
     font-size: 0.75rem;
 }
 
+.finance-main .metric-card .context-help-trigger > span {
+    color: inherit;
+    font-size: inherit;
+}
+
 .finance-break-even-card::before {
     background: var(--brand-2);
 }
 
-.finance-sales-card {
-    padding: 0;
+.finance-main .finance-sales-card {
+    padding: 15px 16px;
 }
 
-.finance-sales-card summary {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+.finance-sales-details {
+    margin-top: 1px;
+}
+
+.finance-sales-details summary {
+    display: flex;
     gap: 10px;
     align-items: center;
-    padding: 15px 16px;
+    justify-content: space-between;
+    padding: 0;
     list-style: none;
     cursor: pointer;
 }
 
-.finance-sales-card summary::-webkit-details-marker {
+.finance-sales-details summary::-webkit-details-marker {
     display: none;
 }
 
-.finance-sales-card summary > span {
-    min-width: 0;
-}
-
-.finance-sales-card summary > i {
+.finance-sales-details summary > i {
     position: relative;
     width: 24px;
     height: 24px;
@@ -82,8 +101,8 @@
     background: var(--green-soft);
 }
 
-.finance-sales-card summary > i::before,
-.finance-sales-card summary > i::after {
+.finance-sales-details summary > i::before,
+.finance-sales-details summary > i::after {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -95,16 +114,16 @@
     transform: translate(-50%, -50%);
 }
 
-.finance-sales-card summary > i::after {
+.finance-sales-details summary > i::after {
     transform: translate(-50%, -50%) rotate(90deg);
     transition: transform .18s ease;
 }
 
-.finance-sales-card[open] summary > i::after {
+.finance-sales-details[open] summary > i::after {
     transform: translate(-50%, -50%) rotate(0);
 }
 
-.finance-sales-card summary:focus-visible {
+.finance-sales-details summary:focus-visible {
     outline: 3px solid color-mix(in srgb, var(--green) 24%, transparent);
     outline-offset: -3px;
 }
@@ -113,7 +132,7 @@
     display: grid;
     gap: 8px;
     margin: 0;
-    padding: 0 16px 15px;
+    padding: 0 0 2px;
     border-top: 1px solid var(--line);
 }
 

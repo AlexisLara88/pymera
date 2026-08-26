@@ -89,14 +89,15 @@ test('finance JavaScript only provides progressive enhancement', () => {
 });
 
 test('finance keeps one total-sales KPI with a native collapsed origin breakdown', () => {
-    assert.match(view, /<details class="metric-card accent-green finance-sales-card">/);
+    assert.match(view, /<article[\s\S]*?class="metric-card accent-green finance-sales-card"[\s\S]*?id="financeTotalSalesCard"/);
+    assert.match(view, /<details class="finance-sales-details">/);
     assert.match(view, /Ventas totales/);
     assert.match(view, /Registradas manualmente/);
     assert.match(view, /Provenientes del CRM/);
     assert.match(view, /Total usado en los cálculos/);
     assert.match(view, /sales_breakdown\['manual_sales_cents'\]/);
     assert.match(view, /sales_breakdown\['crm_sales_cents'\]/);
-    assert.match(styles, /\.finance-sales-card summary/);
+    assert.match(styles, /\.finance-sales-details summary/);
     assert.doesNotMatch(script, /finance-sales-card|sales_breakdown/);
 });
 

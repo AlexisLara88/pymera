@@ -159,16 +159,28 @@ test('Prioridades explains the matrix and highlights each quadrant independently
     assert.match(priorities, /assets\/js\/contextual-help\.js/);
 });
 
-test('Finanzas explains its five mapped blocks without floating controls over metrics', () => {
+test('Finanzas explains the screen, its five metrics and its operational blocks', () => {
     const instances = finances.match(/\$contextualHelp\(\[/g) || [];
 
-    assert.equal(instances.length, 5);
+    assert.equal(instances.length, 11);
+    assert.match(finances, /finances-help-concept/);
     assert.match(finances, /finances-help-period/);
+    assert.match(finances, /finances-help-total-sales/);
+    assert.match(finances, /finances-help-cost-of-sales/);
+    assert.match(finances, /finances-help-gross-profit/);
+    assert.match(finances, /finances-help-ebitda/);
+    assert.match(finances, /finances-help-break-even/);
     assert.match(finances, /finances-help-indicators/);
     assert.match(finances, /finances-help-daily-entry/);
     assert.match(finances, /finances-help-evolution/);
     assert.match(finances, /finances-help-history/);
     assert.match(finances, /id="financeOverview"[\s\S]*?data-context-help-focus-target/);
+    assert.match(finances, /id="financeWorkflowContent"[\s\S]*?data-context-help-focus-target/);
+    assert.match(finances, /id="financeTotalSalesCard"[\s\S]*?data-context-help-focus-target/);
+    assert.match(finances, /id="financeCostOfSalesCard"[\s\S]*?data-context-help-focus-target/);
+    assert.match(finances, /id="financeGrossProfitCard"[\s\S]*?data-context-help-focus-target/);
+    assert.match(finances, /id="financeEbitdaCard"[\s\S]*?data-context-help-focus-target/);
+    assert.match(finances, /id="financeBreakEvenCard"[\s\S]*?data-context-help-focus-target/);
     assert.match(finances, /'placement'\s*=>\s*'bottom'/);
     assert.match(finances, /'align'\s*=>\s*'end'/);
     assert.match(finances, /id="create-entry"/);
@@ -176,7 +188,7 @@ test('Finanzas explains its five mapped blocks without floating controls over me
     assert.match(finances, /id="financeHistoryPanel"[\s\S]*?data-context-help-focus-target/);
     assert.match(finances, /'contextual-help\.css'/);
     assert.match(finances, /assets\/js\/contextual-help\.js/);
-    assert.doesNotMatch(finances, /finances-help-total-sales|finance-metric-help-wrapper/);
+    assert.doesNotMatch(finances, /finance-metric-help-wrapper/);
     assert.doesNotMatch(finances, /alpha-future-indicators|<section class="indicator-row"/);
 });
 
