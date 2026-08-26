@@ -151,13 +151,7 @@ $breakEvenDescription = match ($breakEvenStatus) {
             </div>
         <?php endif ?>
 
-        <section
-            class="finance-overview"
-            id="financeOverview"
-            data-context-help-focus-target
-            aria-label="Resumen financiero del período"
-        >
-            <div class="metric-row finance-metrics">
+        <div class="metric-row finance-metrics" aria-label="Resumen financiero del período">
             <article
                 class="metric-card accent-green finance-sales-card"
                 id="financeTotalSalesCard"
@@ -279,8 +273,7 @@ $breakEvenDescription = match ($breakEvenStatus) {
                 <strong><?= $breakEvenSales === null ? 'No disponible' : $money((int) $breakEvenSales) ?></strong>
                 <small><?= esc($breakEvenDescription) ?></small>
             </article>
-            </div>
-        </section>
+        </div>
 
         <div class="content-grid alpha-finance-workspace">
         <section class="finance-create" id="create-entry" data-context-help-focus-target>

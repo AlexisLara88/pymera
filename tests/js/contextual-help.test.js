@@ -173,7 +173,7 @@ test('Finanzas explains the screen, its five metrics and its operational blocks'
     assert.match(finances, /finances-help-daily-entry/);
     assert.match(finances, /finances-help-evolution/);
     assert.match(finances, /finances-help-history/);
-    assert.match(finances, /id="financeOverview"[\s\S]*?data-context-help-focus-target/);
+    assert.match(finances, /class="metric-row finance-metrics"/);
     assert.match(finances, /id="financeWorkflowContent"[\s\S]*?data-context-help-focus-target/);
     assert.match(finances, /id="financeTotalSalesCard"[\s\S]*?data-context-help-focus-target/);
     assert.match(finances, /id="financeCostOfSalesCard"[\s\S]*?data-context-help-focus-target/);
@@ -188,7 +188,7 @@ test('Finanzas explains the screen, its five metrics and its operational blocks'
     assert.match(finances, /'contextual-help\.css'/);
     assert.match(finances, /assets\/js\/contextual-help\.js/);
     assert.doesNotMatch(finances, /finances-help-indicators/);
-    assert.doesNotMatch(finances, /finance-metrics-heading|Resumen del período/);
+    assert.doesNotMatch(finances, /finance-overview|finance-metrics-heading|Resumen del período/);
     assert.doesNotMatch(finances, /finance-metric-help-wrapper/);
     assert.doesNotMatch(finances, /alpha-future-indicators|<section class="indicator-row"/);
 });

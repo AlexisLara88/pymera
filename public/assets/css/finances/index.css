@@ -4,7 +4,6 @@
 
 .finance-main .finance-metrics {
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    margin-bottom: 0;
 }
 
 .finance-help-heading,
@@ -30,14 +29,6 @@
 .finance-metric-heading > span {
     min-width: 0;
     line-height: 1.25;
-}
-
-.finance-overview {
-    margin-bottom: 18px;
-    padding: 0.65rem;
-    border: 1px solid var(--line);
-    border-radius: 1.15rem;
-    background: color-mix(in srgb, var(--surface) 82%, transparent);
 }
 
 .finance-main .finance-create.is-context-help-focus,
