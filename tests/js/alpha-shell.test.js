@@ -104,6 +104,11 @@ test('the functional shell preserves the approved demo design tokens and respons
     assert.match(stylesheet, /@media \(max-width:\s*720px\)/);
     assert.match(stylesheet, /prefers-reduced-motion/);
     assert.doesNotMatch(stylesheet, /Georgia/);
+    assert.match(stylesheet, /\.module-sidebar \.main-nav\s*{[\s\S]*?overflow-x:\s*hidden;[\s\S]*?overflow-y:\s*auto;/);
+
+    const navHoverRule = stylesheet.match(/\.module-nav-item:hover,\s*\.module-nav-item:focus-visible\s*{([^}]*)}/);
+    assert.ok(navHoverRule);
+    assert.doesNotMatch(navHoverRule[1], /transform:\s*translateX/);
 
     const openBraces = (stylesheet.match(/{/g) || []).length;
     const closeBraces = (stylesheet.match(/}/g) || []).length;

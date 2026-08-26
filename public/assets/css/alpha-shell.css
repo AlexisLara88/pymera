@@ -120,6 +120,7 @@ body.alpha-menu-is-open {
     flex-direction: column;
     gap: 5px;
     margin-top: 24px;
+    overflow-x: hidden;
     overflow-y: auto;
 }
 
@@ -132,14 +133,13 @@ body.alpha-menu-is-open {
     padding: 11px 12px;
     border-radius: 12px;
     color: #d3e2e2;
-    transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+    transition: background 0.18s ease, color 0.18s ease;
 }
 
 .module-nav-item:hover,
 .module-nav-item:focus-visible {
     color: #fff;
     background: rgb(255 255 255 / 7%);
-    transform: translateX(2px);
 }
 
 .module-nav-item.is-active {
