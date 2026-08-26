@@ -159,17 +159,6 @@ $breakEvenDescription = match ($breakEvenStatus) {
         >
             <header class="finance-metrics-heading">
                 <span class="section-kicker">Resumen del período</span>
-                <?= $contextualHelp([
-                    'id'        => 'finances-help-indicators',
-                    'title'     => '¿De dónde salen y cómo se calculan estos resultados?',
-                    'targetId'  => 'financeOverview',
-                    'anchor'    => 'target',
-                    'placement' => 'top',
-                    'align'     => 'center',
-                    'paragraphs' => [
-                        'Resume los importes confirmados del período seleccionado. Cada tarjeta explica el origen o la fórmula de su propio resultado.',
-                    ],
-                ]) ?>
             </header>
 
             <div class="metric-row finance-metrics">

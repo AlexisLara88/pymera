@@ -162,7 +162,7 @@ test('Prioridades explains the matrix and highlights each quadrant independently
 test('Finanzas explains the screen, its five metrics and its operational blocks', () => {
     const instances = finances.match(/\$contextualHelp\(\[/g) || [];
 
-    assert.equal(instances.length, 11);
+    assert.equal(instances.length, 10);
     assert.match(finances, /finances-help-concept/);
     assert.match(finances, /finances-help-period/);
     assert.match(finances, /finances-help-total-sales/);
@@ -170,7 +170,6 @@ test('Finanzas explains the screen, its five metrics and its operational blocks'
     assert.match(finances, /finances-help-gross-profit/);
     assert.match(finances, /finances-help-ebitda/);
     assert.match(finances, /finances-help-break-even/);
-    assert.match(finances, /finances-help-indicators/);
     assert.match(finances, /finances-help-daily-entry/);
     assert.match(finances, /finances-help-evolution/);
     assert.match(finances, /finances-help-history/);
@@ -188,6 +187,7 @@ test('Finanzas explains the screen, its five metrics and its operational blocks'
     assert.match(finances, /id="financeHistoryPanel"[\s\S]*?data-context-help-focus-target/);
     assert.match(finances, /'contextual-help\.css'/);
     assert.match(finances, /assets\/js\/contextual-help\.js/);
+    assert.doesNotMatch(finances, /finances-help-indicators/);
     assert.doesNotMatch(finances, /finance-metric-help-wrapper/);
     assert.doesNotMatch(finances, /alpha-future-indicators|<section class="indicator-row"/);
 });
