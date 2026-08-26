@@ -94,10 +94,12 @@ test('finance keeps one total-sales KPI with a native collapsed origin breakdown
     assert.match(view, /Ventas totales/);
     assert.match(view, /Registradas manualmente/);
     assert.match(view, /Provenientes del CRM/);
-    assert.match(view, /Total usado en los cálculos/);
+    assert.match(view, /<dt>Total<\/dt>/);
+    assert.doesNotMatch(view, /Total usado en los cálculos/);
     assert.match(view, /sales_breakdown\['manual_sales_cents'\]/);
     assert.match(view, /sales_breakdown\['crm_sales_cents'\]/);
     assert.match(styles, /\.finance-sales-details summary/);
+    assert.match(styles, /\.finance-main \.finance-metrics\s*{[\s\S]*?align-items:\s*start;/);
     assert.doesNotMatch(script, /finance-sales-card|sales_breakdown/);
 });
 

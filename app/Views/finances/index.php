@@ -188,7 +188,7 @@ $breakEvenDescription = match ($breakEvenStatus) {
                         <dd><?= $money($sales_breakdown['crm_sales_cents']) ?></dd>
                     </div>
                     <div>
-                        <dt>Total usado en los cálculos</dt>
+                        <dt>Total</dt>
                         <dd><?= $money($sales_breakdown['total_sales_cents']) ?></dd>
                     </div>
                 </dl>
@@ -256,7 +256,7 @@ $breakEvenDescription = match ($breakEvenStatus) {
                 data-context-help-focus-target
             >
                 <div class="finance-metric-heading">
-                    <span>Punto de equilibrio estimado</span>
+                    <span>Punto de equilibrio</span>
                     <?= $contextualHelp([
                         'id'        => 'finances-help-break-even',
                         'title'     => '¿Cómo se calcula el punto de equilibrio?',

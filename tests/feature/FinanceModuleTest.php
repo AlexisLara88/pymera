@@ -278,11 +278,13 @@ final class FinanceModuleTest extends CIUnitTestCase
         $result->assertSee('&lt;script&gt;alert("nota")&lt;/script&gt;');
         $result->assertSee('EBITDA');
         $result->assertDontSee('EBITDA provisional');
-        $result->assertSee('Punto de equilibrio estimado');
+        $result->assertSee('Punto de equilibrio');
+        $result->assertDontSee('Punto de equilibrio estimado');
         $result->assertSee('Ventas totales');
         $result->assertSee('Registradas manualmente');
         $result->assertSee('Provenientes del CRM');
-        $result->assertSee('Total usado en los cálculos');
+        $this->assertStringContainsString('<dt>Total</dt>', $result->getBody());
+        $result->assertDontSee('Total usado en los cálculos');
         $result->assertSee('USD 18,75');
         $result->assertSee('Venta mínima estimada del período');
         $this->assertStringNotContainsString('<script>alert("nota")</script>', $result->getBody());
