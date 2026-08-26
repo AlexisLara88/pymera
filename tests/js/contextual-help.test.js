@@ -22,6 +22,10 @@ const objectiveCreator = fs.readFileSync(
     path.join(projectRoot, 'app/Views/objectives/_creator_modal.php'),
     'utf8',
 );
+const priorities = fs.readFileSync(
+    path.join(projectRoot, 'app/Views/priorities/index.php'),
+    'utf8',
+);
 const script = fs.readFileSync(
     path.join(projectRoot, 'public/assets/js/contextual-help.js'),
     'utf8',
@@ -121,6 +125,27 @@ test('Objetivos explains its workflow without placing contextual help inside the
         'Vue must mount before contextual help binds to the final objective nodes',
     );
     assert.doesNotMatch(objectiveCreator, /contextualHelp|data-context-help/);
+});
+
+test('Prioridades explains and highlights each Eisenhower quadrant independently', () => {
+    const instances = priorities.match(/\$contextualHelp\(\[/g) || [];
+
+    assert.equal(instances.length, 1);
+    assert.match(priorities, /foreach \(\$quadrantLabels as \$quadrant => \$label\)/);
+    assert.match(priorities, /id="<\?= esc\(\$quadrantTargetId, 'attr'\) \?>"/);
+    assert.match(priorities, /data-context-help-focus-target/);
+    assert.match(priorities, /priorities-help-/);
+    assert.match(priorities, /¿Qué va en Hacer ahora\?/);
+    assert.match(priorities, /¿Qué va en Planificar\?/);
+    assert.match(priorities, /¿Qué va en Delegar\?/);
+    assert.match(priorities, /¿Qué va en Eliminar\?/);
+    assert.match(priorities, /'targetId'\s*=>\s*\$quadrantTargetId/);
+    assert.match(priorities, /'anchor'\s*=>\s*'target'/);
+    assert.match(priorities, /'placement'\s*=>\s*'top'/);
+    assert.match(priorities, /'align'\s*=>\s*'center'/);
+    assert.doesNotMatch(priorities, /href="#matrixHelp"|id="matrixHelp"/);
+    assert.match(priorities, /'contextual-help\.css'/);
+    assert.match(priorities, /assets\/js\/contextual-help\.js/);
 });
 
 test('the interaction builds a focused backdrop without affecting business state', () => {

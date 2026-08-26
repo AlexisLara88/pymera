@@ -131,6 +131,11 @@ test('objective creation uses the approved Vue modal without moving business rul
     assert.match(objectiveView, /view\('layouts\/alpha_frontend_scripts'\)/);
     assert.doesNotMatch(objectiveView, /objective-create-disclosure/);
     assert.match(priorityView, /eisenhower-legend/);
+    assert.doesNotMatch(priorityView, /href="#matrixHelp"|id="matrixHelp"/);
+    assert.match(priorityView, /data-context-help-focus-target/);
+    assert.match(priorityView, /'contextual-help\.css'/);
+    assert.match(priorityView, /assets\/js\/contextual-help\.js/);
+    assert.match(shellStyles, /\.priorities-main \.quadrant > header > \.context-help\s*\{/);
     assert.match(script, /window\.Vue\.createApp/);
     assert.match(script, /element\.inert = true/);
     assert.match(script, /event\.key === 'Escape'/);

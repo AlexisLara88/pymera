@@ -19,6 +19,41 @@ $quadrantDescriptions = [
     'delegate'  => 'Urgente + menos importante',
     'eliminate' => 'No urgente + bajo impacto',
 ];
+$quadrantHelp = [
+    'do_now' => [
+        'title' => '¿Qué va en Hacer ahora?',
+        'paragraphs' => [
+            'Reúne actividades marcadas como Urgentes e Importantes. Conviene atenderlas primero porque combinan impacto y presión de tiempo.',
+            'La clasificación se modifica desde las opciones Urgente e Importante de la actividad en Objetivos.',
+        ],
+    ],
+    'schedule' => [
+        'title' => '¿Qué va en Planificar?',
+        'paragraphs' => [
+            'Reúne actividades Importantes que no están marcadas como Urgentes. Conviene asignarles tiempo antes de que se conviertan en urgentes.',
+            'La clasificación se modifica desde las opciones Urgente e Importante de la actividad en Objetivos.',
+        ],
+    ],
+    'delegate' => [
+        'title' => '¿Qué va en Delegar?',
+        'paragraphs' => [
+            'Reúne actividades Urgentes de menor impacto. Sugiere resolverlas pronto o delegarlas cuando exista otra persona adecuada; PyMERA no las asigna automáticamente.',
+            'La clasificación se modifica desde las opciones Urgente e Importante de la actividad en Objetivos.',
+        ],
+    ],
+    'eliminate' => [
+        'title' => '¿Qué va en Eliminar?',
+        'paragraphs' => [
+            'Reúne actividades que no están marcadas como Urgentes ni Importantes. Conviene revisar si aportan al objetivo y cancelarlas o archivarlas cuando no justifican tiempo.',
+            'La clasificación se modifica desde las opciones Urgente e Importante de la actividad en Objetivos.',
+        ],
+    ],
+];
+$contextualHelp = static fn (array $configuration): string => view(
+    'components/contextual_help',
+    ['contextualHelp' => $configuration],
+    ['saveData' => false],
+);
 $businessName = (string) ($business['name'] ?? 'Negocio');
 $businessInitial = function_exists('mb_substr')
     ? mb_strtoupper(mb_substr($businessName, 0, 1))
@@ -35,6 +70,7 @@ $businessInitial = function_exists('mb_substr')
         'business/profile.css',
         'workflow/index.css',
         'alpha-shell.css',
+        'contextual-help.css',
     ]]) ?>
 </head>
 <body class="business-module-body">
@@ -67,16 +103,29 @@ $businessInitial = function_exists('mb_substr')
             <span><i class="priority-dot priority-schedule"></i> Planificar</span>
             <span><i class="priority-dot priority-delegate"></i> Delegar</span>
             <span><i class="priority-dot priority-eliminate"></i> Eliminar</span>
-            <a href="#matrixHelp">¿Cómo se clasifica?</a>
         </div>
 
         <section class="priority-matrix" aria-label="Matriz de Eisenhower">
             <?php foreach ($quadrantLabels as $quadrant => $label): ?>
-                <article class="quadrant quadrant-<?= esc($quadrant) ?>">
+                <?php $quadrantTargetId = 'priorityQuadrant-' . $quadrant; ?>
+                <article
+                    class="quadrant quadrant-<?= esc($quadrant) ?>"
+                    id="<?= esc($quadrantTargetId, 'attr') ?>"
+                    data-context-help-focus-target
+                >
                     <header>
                         <span><?= esc($quadrantDescriptions[$quadrant] ?? 'Clasificación derivada') ?></span>
                         <strong><?= esc($label) ?></strong>
                         <em><?= count($quadrants[$quadrant] ?? []) ?> tarea<?= count($quadrants[$quadrant] ?? []) === 1 ? '' : 's' ?></em>
+                        <?= $contextualHelp([
+                            'id'        => 'priorities-help-' . str_replace('_', '-', $quadrant),
+                            'title'     => $quadrantHelp[$quadrant]['title'],
+                            'targetId'  => $quadrantTargetId,
+                            'anchor'    => 'target',
+                            'placement' => 'top',
+                            'align'     => 'center',
+                            'paragraphs' => $quadrantHelp[$quadrant]['paragraphs'],
+                        ]) ?>
                     </header>
 
                     <div
@@ -108,13 +157,9 @@ $businessInitial = function_exists('mb_substr')
                 </article>
             <?php endforeach ?>
         </section>
-
-        <aside class="matrix-note" id="matrixHelp">
-            <strong>Cómo se calcula</strong>
-            <p>Urgente + importante: Hacer ahora. Importante: Planificar. Urgente: Delegar. Sin ambas: Eliminar.</p>
-        </aside>
     </main>
 </div>
 <script src="<?= base_url('assets/js/alpha-shell.js?v=' . filemtime(FCPATH . 'assets/js/alpha-shell.js')) ?>" defer></script>
+<script src="<?= base_url('assets/js/contextual-help.js?v=' . filemtime(FCPATH . 'assets/js/contextual-help.js')) ?>" defer></script>
 </body>
 </html>

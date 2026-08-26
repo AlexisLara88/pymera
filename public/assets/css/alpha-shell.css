@@ -1377,8 +1377,17 @@ body.alpha-menu-is-open {
 }
 
 .priorities-main .quadrant > header {
+    position: relative;
     padding: 10px 13px 9px;
+    padding-right: 48px;
     box-shadow: 0 1px 0 rgb(25 48 55 / 4%);
+}
+
+.priorities-main .quadrant > header > .context-help {
+    position: absolute;
+    top: 50%;
+    right: 11px;
+    transform: translateY(-50%);
 }
 
 .priorities-main .quadrant > header > span {
