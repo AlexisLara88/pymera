@@ -188,6 +188,7 @@ test('Finanzas explains the screen, its five metrics and its operational blocks'
     assert.match(finances, /'contextual-help\.css'/);
     assert.match(finances, /assets\/js\/contextual-help\.js/);
     assert.doesNotMatch(finances, /finances-help-indicators/);
+    assert.doesNotMatch(finances, /finance-metrics-heading|Resumen del período/);
     assert.doesNotMatch(finances, /finance-metric-help-wrapper/);
     assert.doesNotMatch(finances, /alpha-future-indicators|<section class="indicator-row"/);
 });

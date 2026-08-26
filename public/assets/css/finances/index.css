@@ -7,18 +7,12 @@
     margin-bottom: 0;
 }
 
-.finance-metrics-heading,
 .finance-help-heading,
 .finance-metric-heading,
 .period-filter-heading {
     display: flex;
     gap: 0.5rem;
     align-items: center;
-}
-
-.finance-metrics-heading {
-    justify-content: space-between;
-    margin-bottom: 0.55rem;
 }
 
 .finance-help-heading h2,
@@ -54,7 +48,6 @@
 }
 
 .finance-main .finance-help-heading .context-help-trigger,
-.finance-main .finance-metrics-heading .context-help-trigger,
 .finance-main .finance-metric-heading .context-help-trigger,
 .finance-main .period-filter-heading .context-help-trigger {
     width: 1.45rem;

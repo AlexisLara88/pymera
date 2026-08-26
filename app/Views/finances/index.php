@@ -157,10 +157,6 @@ $breakEvenDescription = match ($breakEvenStatus) {
             data-context-help-focus-target
             aria-label="Resumen financiero del período"
         >
-            <header class="finance-metrics-heading">
-                <span class="section-kicker">Resumen del período</span>
-            </header>
-
             <div class="metric-row finance-metrics">
             <article
                 class="metric-card accent-green finance-sales-card"
