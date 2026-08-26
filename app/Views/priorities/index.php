@@ -89,7 +89,21 @@ $businessInitial = function_exists('mb_substr')
 
         <header class="module-header module-header-compact">
             <div>
-                <h2>Decidí dónde enfocar tu tiempo</h2>
+                <div class="context-help-heading">
+                    <h2>Decidí dónde enfocar tu tiempo</h2>
+                    <?= $contextualHelp([
+                        'id'        => 'priorities-help-matrix',
+                        'title'     => '¿Cómo funciona la Matriz de Eisenhower?',
+                        'targetId'  => 'priorityMatrix',
+                        'anchor'    => 'trigger',
+                        'placement' => 'right',
+                        'align'     => 'start',
+                        'paragraphs' => [
+                            'La matriz organiza las actividades de tus objetivos según su urgencia e importancia. No crea tareas nuevas ni duplica información.',
+                            'Para cambiar un cuadrante, editá las opciones Urgente e Importante de la actividad desde Objetivos.',
+                        ],
+                    ]) ?>
+                </div>
                 <p>Las actividades se organizan según su urgencia e importancia sin duplicar los datos originales.</p>
             </div>
             <div class="module-header-actions">
@@ -105,7 +119,12 @@ $businessInitial = function_exists('mb_substr')
             <span><i class="priority-dot priority-eliminate"></i> Eliminar</span>
         </div>
 
-        <section class="priority-matrix" aria-label="Matriz de Eisenhower">
+        <section
+            class="priority-matrix"
+            id="priorityMatrix"
+            data-context-help-focus-target
+            aria-label="Matriz de Eisenhower"
+        >
             <?php foreach ($quadrantLabels as $quadrant => $label): ?>
                 <?php $quadrantTargetId = 'priorityQuadrant-' . $quadrant; ?>
                 <article

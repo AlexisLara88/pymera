@@ -127,10 +127,17 @@ test('Objetivos explains its workflow without placing contextual help inside the
     assert.doesNotMatch(objectiveCreator, /contextualHelp|data-context-help/);
 });
 
-test('Prioridades explains and highlights each Eisenhower quadrant independently', () => {
+test('Prioridades explains the matrix and highlights each quadrant independently', () => {
     const instances = priorities.match(/\$contextualHelp\(\[/g) || [];
 
-    assert.equal(instances.length, 1);
+    assert.equal(instances.length, 2);
+    assert.match(priorities, /priorities-help-matrix/);
+    assert.match(priorities, /¿Cómo funciona la Matriz de Eisenhower\?/);
+    assert.match(priorities, /id="priorityMatrix"/);
+    assert.match(priorities, /'targetId'\s*=>\s*'priorityMatrix'/);
+    assert.match(priorities, /'anchor'\s*=>\s*'trigger'/);
+    assert.match(priorities, /'placement'\s*=>\s*'right'/);
+    assert.match(priorities, /'align'\s*=>\s*'start'/);
     assert.match(priorities, /foreach \(\$quadrantLabels as \$quadrant => \$label\)/);
     assert.match(priorities, /id="<\?= esc\(\$quadrantTargetId, 'attr'\) \?>"/);
     assert.match(priorities, /data-context-help-focus-target/);

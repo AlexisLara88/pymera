@@ -1387,7 +1387,7 @@ body.alpha-menu-is-open {
     position: absolute;
     top: 50%;
     right: 11px;
-    transform: translateY(-50%);
+    margin-top: -0.85rem;
 }
 
 .priorities-main .quadrant > header > span {
