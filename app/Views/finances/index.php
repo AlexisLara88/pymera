@@ -44,6 +44,11 @@ $money = static function (int $cents) use ($currency): string {
     return $sign . $currency . ' ' . number_format($absolute / 100, 2, ',', '.');
 };
 $resultClass = static fn (int $cents): string => $cents < 0 ? 'is-negative' : 'is-positive';
+$contextualHelp = static fn (array $configuration): string => view(
+    'components/contextual_help',
+    ['contextualHelp' => $configuration],
+    ['saveData' => false],
+);
 $breakEvenSales = $finance_indicators['break_even_sales_cents'];
 $breakEvenStatus = (string) $finance_indicators['break_even_status'];
 $breakEvenDescription = match ($breakEvenStatus) {
@@ -63,6 +68,7 @@ $breakEvenDescription = match ($breakEvenStatus) {
         'business/profile.css',
         'finances/index.css',
         'alpha-shell.css',
+        'contextual-help.css',
     ]]) ?>
 </head>
 <body class="business-module-body" data-active-form="<?= esc($formKey ?? '') ?>">
@@ -84,8 +90,28 @@ $breakEvenDescription = match ($breakEvenStatus) {
                 <h2>Revisá cómo cerró el negocio</h2>
                 <p>Registrá ventas, costos y gastos agregados para seguir la utilidad bruta y el EBITDA.</p>
             </div>
-            <form class="period-filter" action="<?= site_url('app/finanzas') ?>" method="get">
-                <label for="period">Período</label>
+            <form
+                class="period-filter"
+                id="financePeriodFilter"
+                action="<?= site_url('app/finanzas') ?>"
+                method="get"
+                data-context-help-focus-target
+            >
+                <div class="period-filter-heading">
+                    <label for="period">Período</label>
+                    <?= $contextualHelp([
+                        'id'        => 'finances-help-period',
+                        'title'     => '¿Qué información cambia con el período?',
+                        'targetId'  => 'financePeriodFilter',
+                        'anchor'    => 'trigger',
+                        'placement' => 'left',
+                        'align'     => 'center',
+                        'paragraphs' => [
+                            'El período actualiza el resumen, el gráfico y los registros diarios que ves en pantalla.',
+                            'Cambiarlo no modifica ni elimina movimientos de otros meses.',
+                        ],
+                    ]) ?>
+                </div>
                 <div class="period-filter-controls">
                     <input class="period-filter-input" id="period" name="period" type="month" value="<?= esc($period) ?>" required>
                     <button class="button button-secondary" type="submit">Ver</button>
@@ -110,8 +136,34 @@ $breakEvenDescription = match ($breakEvenStatus) {
             </div>
         <?php endif ?>
 
-        <section class="metric-row finance-metrics" aria-label="Resumen financiero del período">
-            <details class="metric-card accent-green finance-sales-card">
+        <div class="finance-metrics-heading">
+            <span class="section-kicker">Resumen del período</span>
+            <?= $contextualHelp([
+                'id'        => 'finances-help-indicators',
+                'title'     => '¿Cómo se calculan estos resultados?',
+                'targetId'  => 'financeMetrics',
+                'anchor'    => 'target',
+                'placement' => 'top',
+                'align'     => 'center',
+                'paragraphs' => [
+                    'La utilidad bruta es Ventas menos Costo de ventas. El EBITDA también descuenta Gastos operativos o fijos y Gastos administrativos.',
+                    'El punto de equilibrio usa el margen de contribución y la base de gastos fijos y administrativos. Sin ventas o con margen no positivo se muestra como no disponible.',
+                ],
+            ]) ?>
+        </div>
+
+        <section
+            class="metric-row finance-metrics"
+            id="financeMetrics"
+            data-context-help-focus-target
+            aria-label="Resumen financiero del período"
+        >
+            <div class="finance-metric-help-wrapper">
+            <details
+                class="metric-card accent-green finance-sales-card"
+                id="financeTotalSalesCard"
+                data-context-help-focus-target
+            >
                 <summary>
                     <span>
                         <span>Ventas totales</span>
@@ -135,6 +187,19 @@ $breakEvenDescription = match ($breakEvenStatus) {
                     </div>
                 </dl>
             </details>
+            <?= $contextualHelp([
+                'id'        => 'finances-help-total-sales',
+                'title'     => '¿De dónde salen las ventas totales?',
+                'targetId'  => 'financeTotalSalesCard',
+                'anchor'    => 'target',
+                'placement' => 'top',
+                'align'     => 'center',
+                'paragraphs' => [
+                    'Suma las ventas registradas manualmente y las oportunidades ganadas que decidiste incluir desde Clientes y ventas.',
+                    'Una venta ya incluida desde el CRM no debe cargarse nuevamente de forma manual.',
+                ],
+            ]) ?>
+            </div>
             <article class="metric-card">
                 <span>Costo de ventas</span>
                 <strong><?= $money($totals['cost_of_sales_cents']) ?></strong>
@@ -158,10 +223,24 @@ $breakEvenDescription = match ($breakEvenStatus) {
         </section>
 
         <div class="content-grid alpha-finance-workspace">
-        <section class="finance-create" id="create-entry">
+        <section class="finance-create" id="create-entry" data-context-help-focus-target>
             <div>
                 <p class="eyebrow">Nuevo registro diario</p>
-                <h2>¿Cómo cerró el día?</h2>
+                <div class="finance-help-heading">
+                    <h2>¿Cómo cerró el día?</h2>
+                    <?= $contextualHelp([
+                        'id'        => 'finances-help-daily-entry',
+                        'title'     => '¿Dónde registro cada importe?',
+                        'targetId'  => 'create-entry',
+                        'anchor'    => 'target',
+                        'placement' => 'top',
+                        'align'     => 'center',
+                        'paragraphs' => [
+                            'Costo de ventas reúne insumos o costos directamente relacionados con lo vendido. Gastos operativos o fijos cubren la operación habitual y Gastos administrativos, la gestión del negocio.',
+                            'Un registro confirmado participa en resúmenes y gráficas. Un borrador conserva la carga sin afectar los resultados.',
+                        ],
+                    ]) ?>
+                </div>
                 <p>Ingresá totales agregados. Podés dejar el registro como borrador para excluirlo del resumen.</p>
             </div>
 
@@ -236,11 +315,25 @@ $breakEvenDescription = match ($breakEvenStatus) {
             </div>
         </section>
 
-        <article class="panel chart-panel">
+        <article class="panel chart-panel" id="financeEvolutionPanel" data-context-help-focus-target>
             <div class="panel-heading">
                 <div>
                     <span class="section-kicker">Evolución real</span>
-                    <h3>Ventas frente a costos y gastos</h3>
+                    <div class="finance-help-heading">
+                        <h3>Ventas frente a costos y gastos</h3>
+                        <?= $contextualHelp([
+                            'id'        => 'finances-help-evolution',
+                            'title'     => '¿Qué muestra esta evolución?',
+                            'targetId'  => 'financeEvolutionPanel',
+                            'anchor'    => 'target',
+                            'placement' => 'top',
+                            'align'     => 'center',
+                            'paragraphs' => [
+                                'Compara las ventas con los costos y gastos de los cierres confirmados del período.',
+                                'El desglose acumulado debajo del gráfico permite interpretar cómo se forma el resultado.',
+                            ],
+                        ]) ?>
+                    </div>
                 </div>
                 <span class="chart-legend"><i></i> Ventas <i></i> Costos y gastos</span>
             </div>
@@ -273,11 +366,30 @@ $breakEvenDescription = match ($breakEvenStatus) {
         </article>
         </div>
 
-        <section class="finance-history" aria-labelledby="historyTitle">
+        <section
+            class="finance-history"
+            id="financeHistoryPanel"
+            data-context-help-focus-target
+            aria-labelledby="historyTitle"
+        >
             <div class="history-heading">
                 <div>
                     <p class="eyebrow">Historial del período</p>
-                    <h2 id="historyTitle">Registros diarios</h2>
+                    <div class="finance-help-heading">
+                        <h2 id="historyTitle">Registros diarios</h2>
+                        <?= $contextualHelp([
+                            'id'        => 'finances-help-history',
+                            'title'     => '¿Qué sucede si modifico un cierre anterior?',
+                            'targetId'  => 'financeHistoryPanel',
+                            'anchor'    => 'target',
+                            'placement' => 'top',
+                            'align'     => 'center',
+                            'paragraphs' => [
+                                'Guardar cambios recalcula el resumen y la evolución del período correspondiente.',
+                                'Las ventas provenientes del CRM conservan su vínculo para evitar duplicaciones o modificaciones incompatibles.',
+                            ],
+                        ]) ?>
+                    </div>
                 </div>
                 <span><?= count($entries) ?> registro<?= count($entries) === 1 ? '' : 's' ?></span>
             </div>
@@ -381,5 +493,6 @@ $breakEvenDescription = match ($breakEvenStatus) {
 <?= view('layouts/alpha_frontend_scripts') ?>
 <script src="<?= base_url('assets/js/finances/index.js?v=' . filemtime(FCPATH . 'assets/js/finances/index.js')) ?>" defer></script>
 <script src="<?= base_url('assets/js/alpha-shell.js?v=' . filemtime(FCPATH . 'assets/js/alpha-shell.js')) ?>" defer></script>
+<script src="<?= base_url('assets/js/contextual-help.js?v=' . filemtime(FCPATH . 'assets/js/contextual-help.js')) ?>" defer></script>
 </body>
 </html>

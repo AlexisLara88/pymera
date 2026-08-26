@@ -26,6 +26,10 @@ const priorities = fs.readFileSync(
     path.join(projectRoot, 'app/Views/priorities/index.php'),
     'utf8',
 );
+const finances = fs.readFileSync(
+    path.join(projectRoot, 'app/Views/finances/index.php'),
+    'utf8',
+);
 const script = fs.readFileSync(
     path.join(projectRoot, 'public/assets/js/contextual-help.js'),
     'utf8',
@@ -153,6 +157,26 @@ test('Prioridades explains the matrix and highlights each quadrant independently
     assert.doesNotMatch(priorities, /href="#matrixHelp"|id="matrixHelp"/);
     assert.match(priorities, /'contextual-help\.css'/);
     assert.match(priorities, /assets\/js\/contextual-help\.js/);
+});
+
+test('Finanzas explains its six mapped blocks without duplicating financial indicators', () => {
+    const instances = finances.match(/\$contextualHelp\(\[/g) || [];
+
+    assert.equal(instances.length, 6);
+    assert.match(finances, /finances-help-period/);
+    assert.match(finances, /finances-help-total-sales/);
+    assert.match(finances, /finances-help-indicators/);
+    assert.match(finances, /finances-help-daily-entry/);
+    assert.match(finances, /finances-help-evolution/);
+    assert.match(finances, /finances-help-history/);
+    assert.match(finances, /id="financeMetrics"[\s\S]*?data-context-help-focus-target/);
+    assert.match(finances, /id="financeTotalSalesCard"[\s\S]*?data-context-help-focus-target/);
+    assert.match(finances, /id="create-entry"/);
+    assert.match(finances, /id="financeEvolutionPanel" data-context-help-focus-target/);
+    assert.match(finances, /id="financeHistoryPanel"[\s\S]*?data-context-help-focus-target/);
+    assert.match(finances, /'contextual-help\.css'/);
+    assert.match(finances, /assets\/js\/contextual-help\.js/);
+    assert.doesNotMatch(finances, /alpha-future-indicators|<section class="indicator-row"/);
 });
 
 test('the interaction builds a focused backdrop without affecting business state', () => {

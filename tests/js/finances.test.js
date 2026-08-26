@@ -59,6 +59,8 @@ test('finance scope remains explicitly preliminary and aggregate', () => {
     assert.match(styles, /\.finance-main \.finance-metrics\s*\{[\s\S]*?grid-template-columns:\s*repeat\(5, minmax\(0, 1fr\)\)/);
     assert.match(view, /alpha-finance-workspace/);
     assert.match(view, /bar-chart/);
+    assert.match(view, /'contextual-help\.css'/);
+    assert.match(view, /assets\/js\/contextual-help\.js/);
 });
 
 test('finance JavaScript only provides progressive enhancement', () => {
@@ -87,7 +89,7 @@ test('finance JavaScript only provides progressive enhancement', () => {
 });
 
 test('finance keeps one total-sales KPI with a native collapsed origin breakdown', () => {
-    assert.match(view, /<details class="metric-card accent-green finance-sales-card">/);
+    assert.match(view, /<details[\s\S]*?class="metric-card accent-green finance-sales-card"[\s\S]*?id="financeTotalSalesCard"/);
     assert.match(view, /Ventas totales/);
     assert.match(view, /Registradas manualmente/);
     assert.match(view, /Provenientes del CRM/);

@@ -6,6 +6,46 @@
     grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
+.finance-metrics-heading,
+.finance-help-heading,
+.period-filter-heading {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.finance-metrics-heading {
+    margin: 0 0 0.55rem 0.2rem;
+}
+
+.finance-help-heading h2,
+.finance-help-heading h3,
+.period-filter-heading label {
+    margin-bottom: 0;
+}
+
+.finance-metric-help-wrapper {
+    position: relative;
+    min-width: 0;
+}
+
+.finance-metric-help-wrapper .finance-sales-card {
+    height: 100%;
+}
+
+.finance-metric-help-wrapper > .context-help {
+    position: absolute;
+    z-index: 4;
+    top: 0.65rem;
+    right: 2.75rem;
+}
+
+.finance-main .finance-create.is-context-help-focus,
+.finance-main .chart-panel.is-context-help-focus,
+.finance-main .finance-history.is-context-help-focus {
+    overflow: visible;
+}
+
 .finance-break-even-card::before {
     background: var(--brand-2);
 }
@@ -121,6 +161,15 @@
     font-weight: 800;
     letter-spacing: 0.1em;
     text-transform: uppercase;
+}
+
+.period-filter-heading {
+    justify-content: space-between;
+    margin-bottom: 0.3rem;
+}
+
+.period-filter-heading label {
+    margin-bottom: 0;
 }
 
 .period-filter-controls {
