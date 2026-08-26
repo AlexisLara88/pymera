@@ -150,6 +150,11 @@ $breakEvenDescription = match ($breakEvenStatus) {
                 <strong class="<?= $resultClass($totals['ebitda_cents']) ?>"><?= $money($totals['ebitda_cents']) ?></strong>
                 <small>Según la fórmula del cliente</small>
             </article>
+            <article class="metric-card finance-break-even-card<?= $breakEvenSales === null ? ' pending' : '' ?>">
+                <span>Punto de equilibrio estimado</span>
+                <strong><?= $breakEvenSales === null ? 'No disponible' : $money((int) $breakEvenSales) ?></strong>
+                <small><?= esc($breakEvenDescription) ?></small>
+            </article>
         </section>
 
         <div class="content-grid alpha-finance-workspace">
@@ -267,25 +272,6 @@ $breakEvenDescription = match ($breakEvenStatus) {
             </div>
         </article>
         </div>
-
-        <section class="indicator-row alpha-future-indicators" aria-label="Indicadores financieros">
-            <article class="indicator-card<?= $breakEvenSales === null ? ' pending' : '' ?>">
-                <span class="indicator-icon">◫</span>
-                <span>
-                    <small>Punto de equilibrio estimado</small>
-                    <strong><?= $breakEvenSales === null ? 'No disponible' : $money((int) $breakEvenSales) ?></strong>
-                    <em><?= esc($breakEvenDescription) ?></em>
-                </span>
-            </article>
-            <article class="indicator-card">
-                <span class="indicator-icon">↗</span>
-                <span><small>Utilidad bruta</small><strong><?= $money($totals['gross_profit_cents']) ?></strong><em>Ventas menos costo de ventas</em></span>
-            </article>
-            <article class="indicator-card">
-                <span class="indicator-icon">◎</span>
-                <span><small>EBITDA</small><strong><?= $money($totals['ebitda_cents']) ?></strong><em>Fórmula confirmada por el cliente</em></span>
-            </article>
-        </section>
 
         <section class="finance-history" aria-labelledby="historyTitle">
             <div class="history-heading">

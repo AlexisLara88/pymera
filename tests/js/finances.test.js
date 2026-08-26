@@ -54,6 +54,9 @@ test('finance scope remains explicitly preliminary and aggregate', () => {
     assert.match(view, /Venta mínima estimada del período/);
     assert.doesNotMatch(view, /Sujeto a validación|Fórmula no confirmada/);
     assert.match(view, /finance-metrics/);
+    assert.match(view, /finance-break-even-card/);
+    assert.doesNotMatch(view, /alpha-future-indicators|<section class="indicator-row"/);
+    assert.match(styles, /\.finance-main \.finance-metrics\s*\{[\s\S]*?grid-template-columns:\s*repeat\(5, minmax\(0, 1fr\)\)/);
     assert.match(view, /alpha-finance-workspace/);
     assert.match(view, /bar-chart/);
 });

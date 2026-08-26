@@ -2,6 +2,14 @@
     width: min(82rem, 100%);
 }
 
+.finance-main .finance-metrics {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.finance-break-even-card::before {
+    background: var(--brand-2);
+}
+
 .finance-sales-card {
     padding: 0;
 }
@@ -417,6 +425,10 @@
 }
 
 @media (max-width: 800px) {
+    .finance-main .finance-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .period-filter {
         width: min(100%, 20rem);
     }
@@ -427,6 +439,7 @@
 }
 
 @media (max-width: 680px) {
+    .finance-main .finance-metrics,
     .summary-grid,
     .finance-form-grid,
     .finance-entry summary,
