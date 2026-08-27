@@ -35,6 +35,11 @@ $jsonAttribute = static fn (array $value): string => esc(
     ) ?: '{}',
     'attr',
 );
+$contextualHelp = static fn (array $configuration): string => view(
+    'components/contextual_help',
+    ['contextualHelp' => $configuration],
+    ['saveData' => false],
+);
 ?>
 <!doctype html>
 <html lang="es">
@@ -47,6 +52,7 @@ $jsonAttribute = static fn (array $value): string => esc(
         'business/profile.css',
         'crm/index.css',
         'alpha-shell.css',
+        'contextual-help.css',
     ]]) ?>
 </head>
 <body class="business-module-body" data-active-crm-form="<?= esc((string) ($crmFormKey ?? ''), 'attr') ?>">
@@ -63,9 +69,24 @@ $jsonAttribute = static fn (array $value): string => esc(
             'title'    => 'Clientes y ventas',
         ]) ?>
 
+        <div class="crm-workflow-content" id="crmWorkflowContent" data-context-help-focus-target>
         <header class="module-header module-header-compact crm-header">
             <div>
-                <h2>Convertí cada consulta en una oportunidad atendida</h2>
+                <div class="context-help-heading crm-main-help-heading">
+                    <h2>Convertí cada consulta en una oportunidad atendida</h2>
+                    <?= $contextualHelp([
+                        'id' => 'crm-help-workflow',
+                        'title' => '¿Cómo se organiza el seguimiento comercial?',
+                        'paragraphs' => [
+                            'Primero registrás el contacto. Después creás sus oportunidades, actualizás el estado y definís cuándo retomarlas.',
+                            'Una oportunidad ganada afecta Finanzas solamente cuando confirmás el registro de la venta.',
+                        ],
+                        'targetId' => 'crmWorkflowContent',
+                        'anchor' => 'trigger',
+                        'placement' => 'right',
+                        'align' => 'start',
+                    ]) ?>
+                </div>
                 <p>Organizá contactos, próximos seguimientos y ventas posibles desde un mismo lugar.</p>
             </div>
         </header>
@@ -78,7 +99,22 @@ $jsonAttribute = static fn (array $value): string => esc(
             <div class="module-alert module-alert-error" role="alert"><?= esc($operationError) ?></div>
         <?php endif ?>
 
-        <section class="crm-metrics" aria-label="Resumen comercial">
+        <section class="crm-metrics" id="crmMetrics" data-context-help-focus-target aria-labelledby="crmMetricsTitle">
+            <header class="crm-metrics-heading">
+                <span class="section-kicker" id="crmMetricsTitle">Resumen comercial</span>
+                <?= $contextualHelp([
+                    'id' => 'crm-help-summary',
+                    'title' => '¿Qué muestran estos indicadores?',
+                    'paragraphs' => [
+                        'Prospectos y clientes cuentan contactos activos. Las oportunidades abiertas y su valor consideran ventas que todavía siguen en proceso.',
+                        'Los seguimientos vencidos usan la fecha del negocio. El valor estimado orienta el seguimiento, pero todavía no es una venta confirmada.',
+                    ],
+                    'targetId' => 'crmMetrics',
+                    'anchor' => 'target',
+                    'placement' => 'top',
+                    'align' => 'center',
+                ]) ?>
+            </header>
             <article class="crm-metric crm-metric-prospects">
                 <small>Prospectos</small>
                 <strong><?= (int) $crm_summary['prospect_count'] ?></strong>
@@ -158,6 +194,18 @@ $jsonAttribute = static fn (array $value): string => esc(
                             <span class="section-kicker">Ventas posibles</span>
                             <div class="crm-panel-title-row">
                                 <h3>Oportunidades</h3>
+                                <?= $contextualHelp([
+                                    'id' => 'crm-help-opportunities',
+                                    'title' => '¿Qué representa una oportunidad?',
+                                    'paragraphs' => [
+                                        'Es una venta posible asociada a un contacto. Un mismo contacto puede tener varias necesidades u oportunidades.',
+                                        'El valor es una estimación comercial. Archivar quita la oportunidad del seguimiento activo sin borrar su historial.',
+                                    ],
+                                    'targetId' => 'crmOpportunitiesPanel',
+                                    'anchor' => 'target',
+                                    'placement' => 'top',
+                                    'align' => 'center',
+                                ]) ?>
                                 <span class="crm-count"><?= count($opportunities) ?> registradas</span>
                             </div>
                         </div>
@@ -219,16 +267,64 @@ $jsonAttribute = static fn (array $value): string => esc(
                             <p>Creá una oportunidad para registrar qué necesita el contacto y cuándo retomarlo.</p>
                         </div>
                     <?php else: ?>
-                        <div class="crm-table-wrap">
+                        <div class="crm-table-wrap" id="crmOpportunitiesTable" data-context-help-focus-target>
                             <table class="crm-table">
                                 <thead>
                                 <tr>
                                     <th>Contacto</th>
                                     <th>Necesidad</th>
-                                    <th>Estado</th>
-                                    <th>Finanzas</th>
+                                    <th>
+                                        <span class="crm-table-heading-help">
+                                            <span>Estado</span>
+                                            <?= $contextualHelp([
+                                                'id' => 'crm-help-status',
+                                                'title' => '¿Cómo cambia el estado de una oportunidad?',
+                                                'paragraphs' => [
+                                                    'Podés avanzar entre Nueva, Contactada, Propuesta enviada, Negociación, Ganada o Perdida desde el selector.',
+                                                    'El cambio se confirma antes de guardarse. Al marcar Ganada podés registrar la venta; si luego salís de ese estado, también se confirma la reversión financiera.',
+                                                ],
+                                                'targetId' => 'crmOpportunitiesTable',
+                                                'anchor' => 'target',
+                                                'placement' => 'top',
+                                                'align' => 'center',
+                                            ]) ?>
+                                        </span>
+                                    </th>
+                                    <th>
+                                        <span class="crm-table-heading-help">
+                                            <span>Finanzas</span>
+                                            <?= $contextualHelp([
+                                                'id' => 'crm-help-finances',
+                                                'title' => '¿Cuándo una oportunidad afecta Finanzas?',
+                                                'paragraphs' => [
+                                                    'Al registrar una oportunidad ganada confirmás el monto y la fecha. Desde ese momento aparece como Incluida y participa en los cálculos financieros.',
+                                                    'La nota de venta es un comprobante comercial no fiscal generado al descargar. Si falta el DNI o CI, se solicita y se guarda en el contacto.',
+                                                ],
+                                                'targetId' => 'crmOpportunitiesTable',
+                                                'anchor' => 'target',
+                                                'placement' => 'top',
+                                                'align' => 'center',
+                                            ]) ?>
+                                        </span>
+                                    </th>
                                     <th>Valor</th>
-                                    <th>Seguimiento</th>
+                                    <th>
+                                        <span class="crm-table-heading-help">
+                                            <span>Seguimiento</span>
+                                            <?= $contextualHelp([
+                                                'id' => 'crm-help-follow-up',
+                                                'title' => '¿Para qué sirve la fecha de seguimiento?',
+                                                'paragraphs' => [
+                                                    'Indica cuándo conviene retomar una oportunidad abierta y permite filtrarla como programada, vencida o sin fecha.',
+                                                    'Por ahora organiza el trabajo comercial; todavía no envía recordatorios ni guarda un historial de conversaciones.',
+                                                ],
+                                                'targetId' => 'crmOpportunitiesTable',
+                                                'anchor' => 'target',
+                                                'placement' => 'top',
+                                                'align' => 'center',
+                                            ]) ?>
+                                        </span>
+                                    </th>
                                     <th><span class="visually-hidden">Acciones</span></th>
                                 </tr>
                                 </thead>
@@ -376,6 +472,18 @@ $jsonAttribute = static fn (array $value): string => esc(
                             <span class="section-kicker">Directorio</span>
                             <div class="crm-panel-title-row">
                                 <h3 id="crmContactsTitle">Contactos</h3>
+                                <?= $contextualHelp([
+                                    'id' => 'crm-help-contacts',
+                                    'title' => '¿Cómo se clasifica un contacto?',
+                                    'paragraphs' => [
+                                        'Persona o empresa describe qué tipo de contacto es. Prospecto o cliente indica la etapa de la relación comercial.',
+                                        'Convertir conserva sus datos y oportunidades. Archivar lo quita del directorio activo y se bloquea si todavía tiene oportunidades abiertas.',
+                                    ],
+                                    'targetId' => 'crmContactsPanel',
+                                    'anchor' => 'target',
+                                    'placement' => 'top',
+                                    'align' => 'center',
+                                ]) ?>
                                 <span class="crm-count"><?= count($contacts) ?></span>
                             </div>
                         </div>
@@ -464,6 +572,7 @@ $jsonAttribute = static fn (array $value): string => esc(
                 </div>
             </section>
         <?php endif ?>
+        </div>
     </main>
 </div>
 
@@ -479,6 +588,7 @@ $jsonAttribute = static fn (array $value): string => esc(
 
 <?= view('layouts/alpha_frontend_scripts') ?>
 <script src="<?= base_url('assets/js/crm/index.js?v=' . filemtime(FCPATH . 'assets/js/crm/index.js')) ?>" defer></script>
+<script src="<?= base_url('assets/js/contextual-help.js?v=' . filemtime(FCPATH . 'assets/js/contextual-help.js')) ?>" defer></script>
 <script src="<?= base_url('assets/js/alpha-shell.js?v=' . filemtime(FCPATH . 'assets/js/alpha-shell.js')) ?>" defer></script>
 </body>
 </html>

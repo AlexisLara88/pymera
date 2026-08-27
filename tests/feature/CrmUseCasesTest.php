@@ -108,6 +108,9 @@ final class CrmUseCasesTest extends CIUnitTestCase
         $result->assertSee('Oportunidades abiertas');
         $result->assertSee('Pedido corporativo');
         $result->assertSee('WhatsApp');
+        $this->assertSame(7, substr_count($result->getBody(), 'class="context-help"'));
+        $result->assertSee('¿Cómo se organiza el seguimiento comercial?');
+        $result->assertSee('¿Cuándo una oportunidad afecta Finanzas?');
         $this->assertStringContainsString(
             '&lt;script&gt;alert("crm")&lt;/script&gt;',
             $result->getBody(),
@@ -136,6 +139,10 @@ final class CrmUseCasesTest extends CIUnitTestCase
         $result->assertSee('Empezá por tu primer contacto');
         $result->assertSee('Crear primer contacto');
         $result->assertDontSee('+ Nueva oportunidad');
+        $this->assertSame(2, substr_count($result->getBody(), 'class="context-help"'));
+        $result->assertSee('¿Cómo se organiza el seguimiento comercial?');
+        $result->assertSee('¿Qué muestran estos indicadores?');
+        $result->assertDontSee('¿Cómo se clasifica un contacto?');
     }
 
     public function testContactCreationUsesSessionBusinessAndCreatesAuditEvent(): void

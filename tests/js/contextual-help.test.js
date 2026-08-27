@@ -30,6 +30,10 @@ const finances = fs.readFileSync(
     path.join(projectRoot, 'app/Views/finances/index.php'),
     'utf8',
 );
+const crm = fs.readFileSync(
+    path.join(projectRoot, 'app/Views/crm/index.php'),
+    'utf8',
+);
 const script = fs.readFileSync(
     path.join(projectRoot, 'public/assets/js/contextual-help.js'),
     'utf8',
@@ -191,6 +195,40 @@ test('Finanzas explains the screen, its five metrics and its operational blocks'
     assert.doesNotMatch(finances, /finance-overview|finance-metrics-heading|Resumen del período/);
     assert.doesNotMatch(finances, /finance-metric-help-wrapper/);
     assert.doesNotMatch(finances, /alpha-future-indicators|<section class="indicator-row"/);
+});
+
+test('CRM explains its commercial flow once across both visual compositions', () => {
+    const instances = crm.match(/\$contextualHelp\(\[/g) || [];
+    const helpIds = [
+        'crm-help-workflow',
+        'crm-help-summary',
+        'crm-help-contacts',
+        'crm-help-opportunities',
+        'crm-help-status',
+        'crm-help-follow-up',
+        'crm-help-finances',
+    ];
+
+    assert.equal(instances.length, 7);
+    helpIds.forEach((helpId) => assert.equal((crm.match(new RegExp(helpId, 'g')) || []).length, 1));
+    assert.match(crm, /id="crmWorkflowContent" data-context-help-focus-target/);
+    assert.match(crm, /id="crmMetrics" data-context-help-focus-target/);
+    assert.match(crm, /id="crmOpportunitiesTable" data-context-help-focus-target/);
+    assert.match(crm, /'targetId'\s*=>\s*'crmContactsPanel'/);
+    assert.match(crm, /'targetId'\s*=>\s*'crmOpportunitiesPanel'/);
+    assert.equal((crm.match(/'targetId'\s*=>\s*'crmOpportunitiesTable'/g) || []).length, 3);
+    assert.match(crm, /crm-table-heading-help/);
+    assert.match(crm, /'contextual-help\.css'/);
+    assert.match(crm, /assets\/js\/contextual-help\.js/);
+    assert.ok(
+        crm.indexOf('assets/js/crm/index.js') < crm.indexOf('assets/js/contextual-help.js'),
+        'Vue must mount before contextual help binds to the final CRM nodes',
+    );
+
+    const opportunityRows = crm.match(/<tbody data-crm-opportunity-rows>[\s\S]*?<\/tbody>/)?.[0] || '';
+    const contactCards = crm.match(/<div class="crm-contact-list">[\s\S]*?<\/div>\s*<div class="crm-contact-search-empty"/)?.[0] || '';
+    assert.doesNotMatch(opportunityRows, /\$contextualHelp|data-context-help/);
+    assert.doesNotMatch(contactCards, /\$contextualHelp|data-context-help/);
 });
 
 test('the interaction builds a focused backdrop without affecting business state', () => {

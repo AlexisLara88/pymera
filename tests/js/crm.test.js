@@ -58,6 +58,26 @@ test('CRM is published as a functional MVP module with clear empty states', () =
     assert.match(styles, /\.crm-stage-prospect\s*\{\s*color:\s*var\(--blue\);\s*background:\s*var\(--blue-soft\);\s*\}/);
 });
 
+test('CRM contextual help remains semantic and independent from rows and view preference', () => {
+    const instances = view.match(/\$contextualHelp\(\[/g) || [];
+
+    assert.equal(instances.length, 7);
+    assert.match(view, /crm-help-workflow/);
+    assert.match(view, /crm-help-summary/);
+    assert.match(view, /crm-help-contacts/);
+    assert.match(view, /crm-help-opportunities/);
+    assert.match(view, /crm-help-status/);
+    assert.match(view, /crm-help-follow-up/);
+    assert.match(view, /crm-help-finances/);
+    assert.match(view, /id="crmWorkflowContent" data-context-help-focus-target/);
+    assert.match(view, /id="crmMetrics" data-context-help-focus-target/);
+    assert.match(view, /id="crmOpportunitiesTable" data-context-help-focus-target/);
+    assert.match(view, /'contextual-help\.css'/);
+    assert.ok(view.indexOf('assets/js/crm/index.js') < view.indexOf('assets/js/contextual-help.js'));
+    assert.match(styles, /\.crm-table-heading-help \.context-help-card/);
+    assert.match(styles, /\.crm-table-wrap\.is-context-help-focus/);
+});
+
 test('CRM consumes the personal composition and keeps accessible tabs', () => {
     assert.match(view, /data-crm-view-switcher data-crm-view="<\?= esc\(\$crmView, 'attr'\) \?>"/);
     assert.doesNotMatch(view, /data-crm-view-option/);
@@ -149,7 +169,7 @@ test('opportunity status changes are explicit and can coordinate one financial s
 });
 
 test('opportunity rows preserve native table layout in both CRM views', () => {
-    assert.match(view, /<th>Estado<\/th>\s*<th>Finanzas<\/th>\s*<th>Valor<\/th>/);
+    assert.match(view, /<span>Estado<\/span>[\s\S]*?<span>Finanzas<\/span>[\s\S]*?<th>Valor<\/th>/);
     assert.match(view, /class="crm-finance-cell"/);
     assert.match(view, /aria-label="Venta incluida en Finanzas">Incluida<\/small>/);
     assert.match(view, /class="crm-finance-empty"/);
