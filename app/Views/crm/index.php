@@ -380,7 +380,24 @@ $contextualHelp = static fn (array $configuration): string => view(
                                             ]) ?>
                                         </span>
                                     </th>
-                                    <th><span class="visually-hidden">Acciones</span></th>
+                                    <th>
+                                        <span class="crm-table-heading-help">
+                                            <span>Acciones</span>
+                                            <?= $contextualHelp([
+                                                'id' => 'crm-help-actions',
+                                                'title' => '¿Para qué sirve cada acción?',
+                                                'paragraphs' => [
+                                                    'Editar abre todos los datos de la oportunidad para modificarlos y guardar los cambios.',
+                                                    'Descargar aparece cuando la oportunidad está Ganada e Incluida en Finanzas y genera una nota de venta no fiscal en ese momento.',
+                                                    'Archivar la retira del seguimiento activo con confirmación, sin borrar su historial.',
+                                                ],
+                                                'targetId' => 'crmOpportunitiesTable',
+                                                'anchor' => 'target',
+                                                'placement' => 'top',
+                                                'align' => 'center',
+                                            ]) ?>
+                                        </span>
+                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody data-crm-opportunity-rows>

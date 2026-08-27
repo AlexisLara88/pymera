@@ -211,9 +211,10 @@ test('CRM explains its commercial flow once across both visual compositions', ()
         'crm-help-status',
         'crm-help-follow-up',
         'crm-help-finances',
+        'crm-help-actions',
     ];
 
-    assert.equal(instances.length, 11);
+    assert.equal(instances.length, 12);
     helpIds.forEach((helpId) => assert.equal((crm.match(new RegExp(helpId, 'g')) || []).length, 1));
     assert.match(crm, /id="crmWorkflowContent" data-context-help-focus-target/);
     assert.match(crm, /id="crmProspectsMetric" data-context-help-focus-target/);
@@ -225,7 +226,7 @@ test('CRM explains its commercial flow once across both visual compositions', ()
     assert.match(crm, /id="crmOpportunitiesTable" data-context-help-focus-target/);
     assert.match(crm, /'targetId'\s*=>\s*'crmContactsPanel'/);
     assert.match(crm, /'targetId'\s*=>\s*'crmOpportunitiesPanel'/);
-    assert.equal((crm.match(/'targetId'\s*=>\s*'crmOpportunitiesTable'/g) || []).length, 3);
+    assert.equal((crm.match(/'targetId'\s*=>\s*'crmOpportunitiesTable'/g) || []).length, 4);
     assert.match(crm, /crm-table-heading-help/);
     assert.match(crm, /'contextual-help\.css'/);
     assert.match(crm, /assets\/js\/contextual-help\.js/);

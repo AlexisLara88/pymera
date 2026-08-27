@@ -108,11 +108,12 @@ final class CrmUseCasesTest extends CIUnitTestCase
         $result->assertSee('Oportunidades abiertas');
         $result->assertSee('Pedido corporativo');
         $result->assertSee('WhatsApp');
-        $this->assertSame(11, substr_count($result->getBody(), 'class="context-help"'));
+        $this->assertSame(12, substr_count($result->getBody(), 'class="context-help"'));
         $result->assertSee('¿Cómo se organiza el seguimiento comercial?');
         $result->assertSee('¿Qué cuenta como prospecto?');
         $result->assertSee('¿Qué representa el valor estimado?');
         $result->assertSee('¿Cuándo una oportunidad afecta Finanzas?');
+        $result->assertSee('¿Para qué sirve cada acción?');
         $this->assertStringContainsString(
             '&lt;script&gt;alert("crm")&lt;/script&gt;',
             $result->getBody(),

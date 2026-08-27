@@ -61,7 +61,7 @@ test('CRM is published as a functional MVP module with clear empty states', () =
 test('CRM contextual help remains semantic and independent from rows and view preference', () => {
     const instances = view.match(/\$contextualHelp\(\[/g) || [];
 
-    assert.equal(instances.length, 11);
+    assert.equal(instances.length, 12);
     assert.match(view, /crm-help-workflow/);
     assert.match(view, /crm-help-prospects/);
     assert.match(view, /crm-help-clients/);
@@ -73,6 +73,9 @@ test('CRM contextual help remains semantic and independent from rows and view pr
     assert.match(view, /crm-help-status/);
     assert.match(view, /crm-help-follow-up/);
     assert.match(view, /crm-help-finances/);
+    assert.match(view, /crm-help-actions/);
+    assert.match(view, /<span>Acciones<\/span>/);
+    assert.doesNotMatch(view, /visually-hidden">Acciones/);
     assert.match(view, /id="crmWorkflowContent" data-context-help-focus-target/);
     assert.match(view, /id="crmProspectsMetric" data-context-help-focus-target/);
     assert.match(view, /id="crmOverdueFollowUpsMetric" data-context-help-focus-target/);
