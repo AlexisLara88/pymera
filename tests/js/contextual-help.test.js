@@ -201,7 +201,11 @@ test('CRM explains its commercial flow once across both visual compositions', ()
     const instances = crm.match(/\$contextualHelp\(\[/g) || [];
     const helpIds = [
         'crm-help-workflow',
-        'crm-help-summary',
+        'crm-help-prospects',
+        'crm-help-clients',
+        'crm-help-open-opportunities',
+        'crm-help-estimated-value',
+        'crm-help-overdue-follow-ups',
         'crm-help-contacts',
         'crm-help-opportunities',
         'crm-help-status',
@@ -209,10 +213,15 @@ test('CRM explains its commercial flow once across both visual compositions', ()
         'crm-help-finances',
     ];
 
-    assert.equal(instances.length, 7);
+    assert.equal(instances.length, 11);
     helpIds.forEach((helpId) => assert.equal((crm.match(new RegExp(helpId, 'g')) || []).length, 1));
     assert.match(crm, /id="crmWorkflowContent" data-context-help-focus-target/);
-    assert.match(crm, /id="crmMetrics" data-context-help-focus-target/);
+    assert.match(crm, /id="crmProspectsMetric" data-context-help-focus-target/);
+    assert.match(crm, /id="crmClientsMetric" data-context-help-focus-target/);
+    assert.match(crm, /id="crmOpenOpportunitiesMetric" data-context-help-focus-target/);
+    assert.match(crm, /id="crmEstimatedValueMetric" data-context-help-focus-target/);
+    assert.match(crm, /id="crmOverdueFollowUpsMetric" data-context-help-focus-target/);
+    assert.doesNotMatch(crm, /crm-help-summary|crm-metrics-heading|id="crmMetrics"/);
     assert.match(crm, /id="crmOpportunitiesTable" data-context-help-focus-target/);
     assert.match(crm, /'targetId'\s*=>\s*'crmContactsPanel'/);
     assert.match(crm, /'targetId'\s*=>\s*'crmOpportunitiesPanel'/);

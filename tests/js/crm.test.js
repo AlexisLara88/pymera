@@ -61,21 +61,29 @@ test('CRM is published as a functional MVP module with clear empty states', () =
 test('CRM contextual help remains semantic and independent from rows and view preference', () => {
     const instances = view.match(/\$contextualHelp\(\[/g) || [];
 
-    assert.equal(instances.length, 7);
+    assert.equal(instances.length, 11);
     assert.match(view, /crm-help-workflow/);
-    assert.match(view, /crm-help-summary/);
+    assert.match(view, /crm-help-prospects/);
+    assert.match(view, /crm-help-clients/);
+    assert.match(view, /crm-help-open-opportunities/);
+    assert.match(view, /crm-help-estimated-value/);
+    assert.match(view, /crm-help-overdue-follow-ups/);
     assert.match(view, /crm-help-contacts/);
     assert.match(view, /crm-help-opportunities/);
     assert.match(view, /crm-help-status/);
     assert.match(view, /crm-help-follow-up/);
     assert.match(view, /crm-help-finances/);
     assert.match(view, /id="crmWorkflowContent" data-context-help-focus-target/);
-    assert.match(view, /id="crmMetrics" data-context-help-focus-target/);
+    assert.match(view, /id="crmProspectsMetric" data-context-help-focus-target/);
+    assert.match(view, /id="crmOverdueFollowUpsMetric" data-context-help-focus-target/);
+    assert.doesNotMatch(view, /crm-help-summary|crm-metrics-heading|id="crmMetrics"/);
     assert.match(view, /id="crmOpportunitiesTable" data-context-help-focus-target/);
     assert.match(view, /'contextual-help\.css'/);
     assert.ok(view.indexOf('assets/js/crm/index.js') < view.indexOf('assets/js/contextual-help.js'));
     assert.match(styles, /\.crm-table-heading-help \.context-help-card/);
     assert.match(styles, /\.crm-table-wrap\.is-context-help-focus/);
+    assert.match(styles, /\.crm-metric\.is-context-help-focus/);
+    assert.doesNotMatch(styles, /\.crm-workflow-content\.is-context-help-focus\s*\{[^}]*background:\s*transparent/);
 });
 
 test('CRM consumes the personal composition and keeps accessible tabs', () => {

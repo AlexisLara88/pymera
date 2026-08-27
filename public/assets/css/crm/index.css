@@ -3,7 +3,7 @@
 }
 
 .crm-main-help-heading,
-.crm-metrics-heading,
+.crm-metric-heading,
 .crm-table-heading-help {
     display: flex;
     align-items: center;
@@ -14,10 +14,6 @@
     margin: 0;
 }
 
-.crm-workflow-content.is-context-help-focus {
-    background: transparent;
-}
-
 .crm-metrics {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -25,23 +21,26 @@
     margin-bottom: 20px;
 }
 
-.crm-metrics-heading {
-    grid-column: 1 / -1;
-    justify-content: flex-start;
-    min-height: 24px;
-}
-
-.crm-metrics-heading .section-kicker {
-    margin: 0;
-}
-
 .crm-main-help-heading .context-help-trigger,
 .crm-panel-title-row .context-help-trigger,
-.crm-metrics-heading .context-help-trigger,
+.crm-metric-heading .context-help-trigger,
 .crm-table-heading-help .context-help-trigger {
     width: 1.45rem;
     height: 1.45rem;
     min-height: 1.45rem;
+}
+
+.crm-metric-heading {
+    min-width: 0;
+    justify-content: space-between;
+}
+
+.crm-metric-heading small {
+    min-width: 0;
+}
+
+.crm-metric.is-context-help-focus {
+    overflow: visible;
 }
 
 .crm-metric {

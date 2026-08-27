@@ -99,44 +99,99 @@ $contextualHelp = static fn (array $configuration): string => view(
             <div class="module-alert module-alert-error" role="alert"><?= esc($operationError) ?></div>
         <?php endif ?>
 
-        <section class="crm-metrics" id="crmMetrics" data-context-help-focus-target aria-labelledby="crmMetricsTitle">
-            <header class="crm-metrics-heading">
-                <span class="section-kicker" id="crmMetricsTitle">Resumen comercial</span>
-                <?= $contextualHelp([
-                    'id' => 'crm-help-summary',
-                    'title' => '¿Qué muestran estos indicadores?',
-                    'paragraphs' => [
-                        'Prospectos y clientes cuentan contactos activos. Las oportunidades abiertas y su valor consideran ventas que todavía siguen en proceso.',
-                        'Los seguimientos vencidos usan la fecha del negocio. El valor estimado orienta el seguimiento, pero todavía no es una venta confirmada.',
-                    ],
-                    'targetId' => 'crmMetrics',
-                    'anchor' => 'target',
-                    'placement' => 'top',
-                    'align' => 'center',
-                ]) ?>
-            </header>
-            <article class="crm-metric crm-metric-prospects">
-                <small>Prospectos</small>
+        <section class="crm-metrics" aria-label="Resumen comercial">
+            <article class="crm-metric crm-metric-prospects" id="crmProspectsMetric" data-context-help-focus-target>
+                <div class="crm-metric-heading">
+                    <small>Prospectos</small>
+                    <?= $contextualHelp([
+                        'id' => 'crm-help-prospects',
+                        'title' => '¿Qué cuenta como prospecto?',
+                        'paragraphs' => [
+                            'Cuenta los contactos activos que todavía están clasificados como Prospecto.',
+                            'Convertir un prospecto en cliente conserva sus datos y oportunidades, pero deja de contarlo en esta tarjeta.',
+                        ],
+                        'targetId' => 'crmProspectsMetric',
+                        'anchor' => 'target',
+                        'placement' => 'top',
+                        'align' => 'center',
+                    ]) ?>
+                </div>
                 <strong><?= (int) $crm_summary['prospect_count'] ?></strong>
                 <span>Contactos por convertir</span>
             </article>
-            <article class="crm-metric crm-metric-clients">
-                <small>Clientes</small>
+            <article class="crm-metric crm-metric-clients" id="crmClientsMetric" data-context-help-focus-target>
+                <div class="crm-metric-heading">
+                    <small>Clientes</small>
+                    <?= $contextualHelp([
+                        'id' => 'crm-help-clients',
+                        'title' => '¿Qué cuenta como cliente?',
+                        'paragraphs' => [
+                            'Cuenta los contactos activos clasificados como Cliente dentro del directorio comercial.',
+                            'Esta clasificación describe la relación con el negocio y no significa por sí sola que exista una venta registrada.',
+                        ],
+                        'targetId' => 'crmClientsMetric',
+                        'anchor' => 'target',
+                        'placement' => 'top',
+                        'align' => 'center',
+                    ]) ?>
+                </div>
                 <strong><?= (int) $crm_summary['client_count'] ?></strong>
                 <span>Relaciones activas</span>
             </article>
-            <article class="crm-metric crm-metric-open">
-                <small>Oportunidades abiertas</small>
+            <article class="crm-metric crm-metric-open" id="crmOpenOpportunitiesMetric" data-context-help-focus-target>
+                <div class="crm-metric-heading">
+                    <small>Oportunidades abiertas</small>
+                    <?= $contextualHelp([
+                        'id' => 'crm-help-open-opportunities',
+                        'title' => '¿Cuándo una oportunidad está abierta?',
+                        'paragraphs' => [
+                            'Incluye oportunidades en estado Nueva, Contactada, Propuesta enviada o Negociación.',
+                            'Las oportunidades Ganadas o Perdidas ya no forman parte de este total.',
+                        ],
+                        'targetId' => 'crmOpenOpportunitiesMetric',
+                        'anchor' => 'target',
+                        'placement' => 'top',
+                        'align' => 'center',
+                    ]) ?>
+                </div>
                 <strong><?= (int) $crm_summary['open_opportunity_count'] ?></strong>
                 <span>En seguimiento</span>
             </article>
-            <article class="crm-metric crm-metric-value">
-                <small>Valor estimado</small>
+            <article class="crm-metric crm-metric-value" id="crmEstimatedValueMetric" data-context-help-focus-target>
+                <div class="crm-metric-heading">
+                    <small>Valor estimado</small>
+                    <?= $contextualHelp([
+                        'id' => 'crm-help-estimated-value',
+                        'title' => '¿Qué representa el valor estimado?',
+                        'paragraphs' => [
+                            'Suma el valor esperado de todas las oportunidades que todavía están abiertas.',
+                            'Es una referencia comercial: no representa dinero cobrado ni una venta confirmada en Finanzas.',
+                        ],
+                        'targetId' => 'crmEstimatedValueMetric',
+                        'anchor' => 'target',
+                        'placement' => 'top',
+                        'align' => 'center',
+                    ]) ?>
+                </div>
                 <strong><?= esc($money((int) $crm_summary['open_value_cents'])) ?></strong>
                 <span>Oportunidades abiertas</span>
             </article>
-            <article class="crm-metric crm-metric-overdue">
-                <small>Seguimientos vencidos</small>
+            <article class="crm-metric crm-metric-overdue" id="crmOverdueFollowUpsMetric" data-context-help-focus-target>
+                <div class="crm-metric-heading">
+                    <small>Seguimientos vencidos</small>
+                    <?= $contextualHelp([
+                        'id' => 'crm-help-overdue-follow-ups',
+                        'title' => '¿Cuándo vence un seguimiento?',
+                        'paragraphs' => [
+                            'Cuenta oportunidades abiertas cuya fecha de próximo seguimiento ya pasó según la zona horaria del negocio.',
+                            'Las oportunidades cerradas no se consideran vencidas aunque conserven una fecha anterior.',
+                        ],
+                        'targetId' => 'crmOverdueFollowUpsMetric',
+                        'anchor' => 'target',
+                        'placement' => 'top',
+                        'align' => 'center',
+                    ]) ?>
+                </div>
                 <strong><?= (int) $crm_summary['overdue_follow_up_count'] ?></strong>
                 <span>Requieren atención</span>
             </article>
