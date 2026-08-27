@@ -395,7 +395,7 @@ $contextualHelp = static fn (array $configuration): string => view(
                                                     [
                                                         'icon' => 'download',
                                                         'label' => 'Descargar',
-                                                        'description' => 'Aparece cuando está Ganada e Incluida en Finanzas y genera la nota de venta no fiscal.',
+                                                        'description' => 'Genera una nota de venta no fiscal cuando la oportunidad está Ganada e Incluida. Después podés compartirla o imprimirla.',
                                                     ],
                                                     [
                                                         'icon' => 'archive',

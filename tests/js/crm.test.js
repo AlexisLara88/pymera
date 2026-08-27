@@ -77,6 +77,7 @@ test('CRM contextual help remains semantic and independent from rows and view pr
     assert.match(view, /<span>Acciones<\/span>/);
     assert.match(view, /'label'\s*=>\s*'Editar'/);
     assert.match(view, /'label'\s*=>\s*'Descargar'/);
+    assert.match(view, /Después podés compartirla o imprimirla\./);
     assert.match(view, /'label'\s*=>\s*'Archivar'/);
     assert.doesNotMatch(view, /visually-hidden">Acciones/);
     assert.match(view, /id="crmWorkflowContent" data-context-help-focus-target/);
