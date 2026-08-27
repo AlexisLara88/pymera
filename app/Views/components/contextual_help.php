@@ -8,6 +8,7 @@
  *     title: string,
  *     paragraphs?: list<string>,
  *     items?: list<string>,
+ *     iconItems?: list<array{icon: string, label: string, description: string}>,
  *     example?: string|null,
  *     targetId?: string|null,
  *     anchor?: string|null,
@@ -20,6 +21,13 @@ $id           = $contextualHelp['id'];
 $title        = $contextualHelp['title'];
 $paragraphs   = $contextualHelp['paragraphs'] ?? [];
 $items        = $contextualHelp['items'] ?? [];
+$iconItems    = array_values(array_filter(
+    $contextualHelp['iconItems'] ?? [],
+    static fn (mixed $item): bool => is_array($item)
+        && in_array($item['icon'] ?? null, ['edit', 'download', 'archive'], true)
+        && is_string($item['label'] ?? null)
+        && is_string($item['description'] ?? null),
+));
 $example      = $contextualHelp['example'] ?? null;
 $targetId     = $contextualHelp['targetId'] ?? null;
 $anchor       = in_array($contextualHelp['anchor'] ?? null, ['trigger', 'target'], true)
@@ -75,6 +83,28 @@ $contentId   = $id . '-content';
                 <ul>
                     <?php foreach ($items as $item): ?>
                         <li><?= esc($item) ?></li>
+                    <?php endforeach ?>
+                </ul>
+            <?php endif ?>
+
+            <?php if ($iconItems !== []): ?>
+                <ul class="context-help-icon-list">
+                    <?php foreach ($iconItems as $iconItem): ?>
+                        <li>
+                            <span class="context-help-action-icon context-help-action-icon-<?= esc($iconItem['icon'], 'attr') ?>" aria-hidden="true">
+                                <?php if ($iconItem['icon'] === 'edit'): ?>
+                                    <svg viewBox="0 0 24 24"><path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4Z"></path><path d="m13.5 6.5 4 4"></path></svg>
+                                <?php elseif ($iconItem['icon'] === 'download'): ?>
+                                    <svg viewBox="0 0 24 24"><path d="M12 3v11"></path><path d="m7.5 10 4.5 4.5 4.5-4.5"></path><path d="M5 20h14"></path></svg>
+                                <?php else: ?>
+                                    <svg viewBox="0 0 24 24"><path d="M4 7h16v13H4V7Z"></path><path d="M3 4h18v3H3V4Z"></path><path d="M9 11h6"></path></svg>
+                                <?php endif ?>
+                            </span>
+                            <span class="context-help-icon-copy">
+                                <strong><?= esc($iconItem['label']) ?></strong>
+                                <span><?= esc($iconItem['description']) ?></span>
+                            </span>
+                        </li>
                     <?php endforeach ?>
                 </ul>
             <?php endif ?>

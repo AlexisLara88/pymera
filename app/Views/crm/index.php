@@ -386,10 +386,22 @@ $contextualHelp = static fn (array $configuration): string => view(
                                             <?= $contextualHelp([
                                                 'id' => 'crm-help-actions',
                                                 'title' => '¿Para qué sirve cada acción?',
-                                                'paragraphs' => [
-                                                    'Editar abre todos los datos de la oportunidad para modificarlos y guardar los cambios.',
-                                                    'Descargar aparece cuando la oportunidad está Ganada e Incluida en Finanzas y genera una nota de venta no fiscal en ese momento.',
-                                                    'Archivar la retira del seguimiento activo con confirmación, sin borrar su historial.',
+                                                'iconItems' => [
+                                                    [
+                                                        'icon' => 'edit',
+                                                        'label' => 'Editar',
+                                                        'description' => 'Abre todos los datos de la oportunidad para modificarlos y guardar los cambios.',
+                                                    ],
+                                                    [
+                                                        'icon' => 'download',
+                                                        'label' => 'Descargar',
+                                                        'description' => 'Aparece cuando está Ganada e Incluida en Finanzas y genera la nota de venta no fiscal.',
+                                                    ],
+                                                    [
+                                                        'icon' => 'archive',
+                                                        'label' => 'Archivar',
+                                                        'description' => 'La retira del seguimiento activo con confirmación, sin borrar su historial.',
+                                                    ],
                                                 ],
                                                 'targetId' => 'crmOpportunitiesTable',
                                                 'anchor' => 'target',

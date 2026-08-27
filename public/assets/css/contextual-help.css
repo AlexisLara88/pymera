@@ -254,6 +254,69 @@ body.context-help-is-open .module-sidebar {
     padding-left: 1.15rem;
 }
 
+.context-help-copy .context-help-icon-list {
+    gap: 0.65rem;
+    padding: 0;
+    list-style: none;
+}
+
+.context-help-icon-list li {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.7rem;
+    align-items: center;
+}
+
+.context-help-action-icon {
+    display: inline-grid;
+    width: 2rem;
+    height: 2rem;
+    place-items: center;
+    border: 1px solid var(--line);
+    border-radius: 0.65rem;
+}
+
+.context-help-action-icon svg {
+    width: 0.95rem;
+    height: 0.95rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+.context-help-action-icon-edit {
+    color: var(--blue);
+    background: var(--blue-soft);
+}
+
+.context-help-action-icon-download {
+    color: var(--green);
+    background: var(--green-soft);
+}
+
+.context-help-action-icon-archive {
+    color: var(--red);
+    background: var(--red-soft);
+}
+
+.context-help-icon-copy {
+    display: grid;
+    gap: 0.1rem;
+}
+
+.context-help-icon-copy strong {
+    color: var(--ink);
+    font-size: 0.82rem;
+}
+
+.context-help-icon-copy > span {
+    color: var(--muted);
+    font-size: 0.76rem;
+    line-height: 1.4;
+}
+
 .context-help-example {
     padding: 0.75rem 0.8rem;
     border-left: 3px solid var(--orange);

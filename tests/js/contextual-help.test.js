@@ -59,6 +59,11 @@ test('contextual help is server-rendered, escaped and progressively enhanced', (
     assert.match(component, /esc\(\$title/);
     assert.match(component, /esc\(\$paragraph\)/);
     assert.match(component, /esc\(\$item\)/);
+    assert.match(component, /\$contextualHelp\['iconItems'\]/);
+    assert.match(component, /\['edit', 'download', 'archive'\]/);
+    assert.match(component, /esc\(\$iconItem\['label'\]\)/);
+    assert.match(component, /esc\(\$iconItem\['description'\]\)/);
+    assert.match(component, /context-help-action-icon-/);
     assert.match(component, /esc\(\$example\)/);
     assert.doesNotMatch(component, /\{!{2}|innerHTML/);
 });
@@ -224,6 +229,9 @@ test('CRM explains its commercial flow once across both visual compositions', ()
     assert.match(crm, /id="crmOverdueFollowUpsMetric" data-context-help-focus-target/);
     assert.doesNotMatch(crm, /crm-help-summary|crm-metrics-heading|id="crmMetrics"/);
     assert.match(crm, /id="crmOpportunitiesTable" data-context-help-focus-target/);
+    assert.match(crm, /'icon'\s*=>\s*'edit'/);
+    assert.match(crm, /'icon'\s*=>\s*'download'/);
+    assert.match(crm, /'icon'\s*=>\s*'archive'/);
     assert.match(crm, /'targetId'\s*=>\s*'crmContactsPanel'/);
     assert.match(crm, /'targetId'\s*=>\s*'crmOpportunitiesPanel'/);
     assert.equal((crm.match(/'targetId'\s*=>\s*'crmOpportunitiesTable'/g) || []).length, 4);
@@ -300,6 +308,10 @@ test('the visual component spotlights its target without altering the sidebar', 
     assert.match(styles, /max-height:\s*min\(24rem, calc\(100vh - 2rem\)\)/);
     assert.match(styles, /overflow:\s*auto/);
     assert.match(styles, /\.context-help-trigger:focus-visible/);
+    assert.match(styles, /\.context-help-icon-list li/);
+    assert.match(styles, /\.context-help-action-icon-edit/);
+    assert.match(styles, /\.context-help-action-icon-download/);
+    assert.match(styles, /\.context-help-action-icon-archive/);
     assert.match(styles, /\.context-help-close > span::before/);
     assert.match(styles, /\.context-help-close > span::after/);
     assert.match(styles, /\.context-help-close:hover > span\s*\{[\s\S]*?transform:\s*rotate\(90deg\)/);
